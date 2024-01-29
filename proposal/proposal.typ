@@ -104,7 +104,8 @@ We will build a mobile delivery robot. Upon activation, the robot will identify 
 - Motion control module to power motors and follow the trajectory.
 
 == PCB
-We will create a PCB to activate power to the system and include LEDs to indicate the system's state (on, making delivery, etc.).
+We will create a PCB to activate power to the system and include LEDs to indicate the system's state (powered on, identifying recipient, planning path, making delivery).
+// Add LED indicators for supply quantity
 
 = Prototyping
 All three team members are in Mechatronics and SLAM, and we have experience with all system components. We view this project as an opportunity to "put it all together" and feel confident in our ability to build a functioning prototype.
