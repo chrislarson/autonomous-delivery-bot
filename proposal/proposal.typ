@@ -80,21 +80,20 @@ Budget: \$300 (\$100 per team member).
 
 = System Components
 
-== Sensors
-- Stereo camera (RGB-D) for visual odometry, depth estimation, and object detection.
-- Wheel encoders for motion control.
+== Sensing and Affecting
 
-== Affectors
-- DC motors to rotate wheels and drive the robot.
+- #strong("Sensors:") Stereo camera (RGB-D) for visual odometry, depth estimation, and object detection. Wheel encoders for motion control.
+
+- #strong("Affectors:") DC motors to rotate wheels and drive the robot.
 
 == Software
 - Visual odometry module for depth perception and pose estimation.
 - Object detection module for person identification.
 - Path planning module for trajectory generation.
-- Motion control module to power motors and follow trajectory.
+- Motion control module to power motors and follow the trajectory.
 
 == PCB
 - Require PCB Development
 
-== Prototype
+= Prototyping
 - Result in a functional prototype
