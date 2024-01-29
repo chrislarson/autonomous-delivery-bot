@@ -36,49 +36,58 @@ We will build a mobile delivery robot. Upon activation, the robot will identify 
   [Material acquisition and planning],
   [
     - Bill of Materials created
+    - Ordered necessary materials
   ],
   // Milestone 2
   [2],
   [2024-02-21],
   [Software module design],
   [
-  ...
+  - Project repo instantiated
+  - Module specifications created
+  - ROS framework installed
   ],
   // Milestone 3
   [3],
   [2024-03-06],
   [Prototype build and PCB design],
-  [...],
+  [
+    - PCB design finalized
+    - Materials assembled
+  ],
   // Milestone 4
   [4],
   [2024-03-20],
   [Software implementation],
-  [...],
+  [
+    - Visual odometry module implemented
+    - Object detection module implemented
+  ],
   // Milestone 5
   [5],
   [2024-04-10],
   [Software implementation],
-  [...],
+  [
+    - Path planning module implemented
+    - Motion control module implemented
+  ],
   // Milestone 6
   [6],
   [2024-04-24],
   [Prototype refinement],
-  [...],
+  [
+    - PCB installed/integrated
+    - Path planning and motion control tuned
+  ],
   // Milestone 7
   [7],
   [2024-04-30],
-  [Demonstration],
+  [Deliverables],
   [
     - Project is demonstrated to the class.
+    - The project report is submitted.
   ],
-  // Milestone 8
-  [8],
-  [2024-05-05],
-  [Report],
-  [
-    - The project report is finalized and submitted.
-  ],
-), caption: "Initial project plan.") <project_plan>
+), caption: "Tentative project plan.") <project_plan>
 
 = System Components
 
@@ -95,7 +104,7 @@ We will build a mobile delivery robot. Upon activation, the robot will identify 
 - Motion control module to power motors and follow the trajectory.
 
 == PCB
-- We will 
+We will create a PCB to activate power to the system and include LEDs to indicate the system's state (on, making delivery, etc.).
 
 = Prototyping
-- Result in a functional prototype
+All three team members are in Mechatronics and SLAM, and we have experience with all system components. We view this project as an opportunity to "put it all together" and feel confident in our ability to build a functioning prototype.
