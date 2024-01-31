@@ -10,7 +10,11 @@ Sebastian Negrete-Alamillo, Keenan Buckley, Chris Larson
 #set align(left)
 
 = Concept and Requirements
-We will build a mobile delivery robot. Upon activation, the robot will identify the person nearest to it, drive to that person, and deliver a payload. The system must have the ability to:
+We will build a mobile delivery robot. Upon activation, the robot will identify
+the person nearest to it, drive to that person, and deliver a payload. Many use
+cases exist for such a robot, including beverage and medication delivery. The
+robot's capabilities are relevant in industry, so building it will be a good
+experience for us. The system must have the ability to:
 
 1. Listen for and react to an activation signal.
 2. Identify persons in its FOV and target the nearest person to it (if any).
@@ -18,9 +22,15 @@ We will build a mobile delivery robot. Upon activation, the robot will identify 
 3. Stop upon arriving at the person and deliver the payload.
 
 = Budget and Plan
-#strong("Budget:") \$300 (\$100 per team member).
+#strong("Budget:") \$300 (\$100 per team member). Our team agreed on this as the
+upper limit, based upon initial exploration of components we know we need to
+purchase (chassis, Arduino, motors, and motor controllers) and our purchasing
+power. We own several more expensive components, including an NVIDIA Jetson Orin
+Nano and a Stereo RGB-D camera.
 
-#strong("Initial Plan:") We will plan our work/deliverables in two-week increments to keep tabs on progress and enable us to react quickly to any issues that arise. @project_plan shows a first-pass plan describing these increments.
+#strong("Initial Plan:") We will plan our work/deliverables in two-week
+increments to keep tabs on progress and enable us to react quickly to any
+issues. @project_plan shows a first-pass plan describing these increments.
 
 #figure(table(
   columns: (auto, auto, auto, auto),
@@ -43,9 +53,9 @@ We will build a mobile delivery robot. Upon activation, the robot will identify 
   [2024-02-21],
   [Software module design],
   [
-  - Project repo instantiated
-  - Module specifications created
-  - ROS framework installed
+    - Project repo instantiated
+    - Module specifications created
+    - ROS framework installed
   ],
   // Milestone 3
   [3],
@@ -93,9 +103,11 @@ We will build a mobile delivery robot. Upon activation, the robot will identify 
 
 == Sensing and Affecting
 
-- #strong("Sensors:") Stereo camera (RGB-D) for visual odometry, depth estimation, and object detection. Wheel encoders for motion control.
+- #strong("Sensors:") Stereo camera (RGB-D) for visual odometry, depth estimation,
+  and object detection. Wheel encoders for motion control.
 
-- #strong("Affectors:") DC motors to power the robot's drivetrain. Servos to actuate the payload delivery mechanism.
+- #strong("Affectors:") DC motors to power the robot's drivetrain. Servos to
+  actuate the payload delivery mechanism.
 
 == Software
 - Visual odometry module for depth perception and pose estimation.
@@ -104,8 +116,12 @@ We will build a mobile delivery robot. Upon activation, the robot will identify 
 - Motion control module to power motors and follow the trajectory.
 
 == PCB
-We will create a PCB which includes LEDs to indicate the system's state (powered on, identifying recipient, planning path, making delivery).
-// Add LED indicators for supply quantity
+We will create a PCB with LEDs to indicate the system's state (powered on,
+identifying recipients, planning the path, and making the delivery). This PCB
+will allow us to build something useful for the robot while not greatly
+exceeding our current abilities.
 
 = Prototyping
-All three team members are in Mechatronics and SLAM, and we have experience with all system components. We view this project as an opportunity to "put it all together" and feel confident in our ability to build a functioning prototype.
+All three team members are in Mechatronics and SLAM, and we have experience with
+all system components. We view this project as an opportunity to "put it all
+together" and feel confident in our ability to build a functioning prototype.
