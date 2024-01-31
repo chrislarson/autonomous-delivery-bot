@@ -104,7 +104,7 @@ We will build a mobile delivery robot. Upon activation, the robot will identify 
 - Motion control module to power motors and follow the trajectory.
 
 == PCB
-We will create a PCB to activate power to the system and include LEDs to indicate the system's state (powered on, identifying recipient, planning path, making delivery).
+We will create a PCB which includes LEDs to indicate the system's state (powered on, identifying recipient, planning path, making delivery).
 // Add LED indicators for supply quantity
 
 = Prototyping
