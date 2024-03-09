@@ -49,3 +49,7 @@ qtcreator-*
 
 # Catkin custom files
 CATKIN_IGNORE
+
+# kicad files
+pcb-project-backups/
+pcb-demo/
