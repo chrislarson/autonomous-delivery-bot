@@ -6,14 +6,15 @@ import depthai as dai
 # Create pipeline
 pipeline = dai.Pipeline()
 
+
 # Define sources and outputs
 monoLeft = pipeline.create(dai.node.MonoCamera)
 monoRight = pipeline.create(dai.node.MonoCamera)
 xoutLeft = pipeline.create(dai.node.XLinkOut)
 xoutRight = pipeline.create(dai.node.XLinkOut)
 
-xoutLeft.setStreamName('left')
-xoutRight.setStreamName('right')
+xoutLeft.setStreamName("left")
+xoutRight.setStreamName("right")
 
 # Properties
 monoLeft.setCamera("left")
@@ -43,5 +44,5 @@ with dai.Device(pipeline) as device:
         if inRight is not None:
             cv2.imshow("right", inRight.getCvFrame())
 
-        if cv2.waitKey(1) == ord('q'):
+        if cv2.waitKey(1) == ord("q"):
             break

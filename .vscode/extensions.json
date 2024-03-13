@@ -1,6 +1,9 @@
 {
     "recommendations": [
         "nvarner.typst-lsp",
-        "tomoki1207.pdf"
+        "tomoki1207.pdf",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-python.python",
+        "ms-python.black-formatter"
     ]
 }
