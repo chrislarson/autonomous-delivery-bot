@@ -1,0 +1,23 @@
+{
+  "name": "aifr3d_dev_container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "nvarner.typst-lsp",
+        "tomoki1207.pdf",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-python.python",
+        "ms-python.black-formatter"
+      ]
+    }
+  },
+  "mounts": [
+    "type=bind,source=/dev/,target=/dev/"
+  ],
+  "runArgs": [
+    "--privileged"
+  ]
+}
