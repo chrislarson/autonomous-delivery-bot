@@ -66,8 +66,8 @@ ability to:
   indicate our robot's status (locating a target, planning, delivery in progress,
   delivered, ready, error, etc.) visually without occupying too many pins on our
   microcontroller. Our PCB will incorporate a 3 to 8 demuxer, a resistor, and
-  ports for 8 LEDs to achieve this. The PCB will clean up our robot's wiring as a
-  second-order effect by supplying 5V power rails. Our initial PCB design is in
+  ports for 8 LEDs to achieve this. The PCB will also clean up our robot's wiring
+  by supplying 5V power rails for our sensors. Our initial PCB design is in
   @completed_works.
 
 == Software
@@ -193,9 +193,9 @@ works are shown in @completed_works.
 == Work Split
 // How have you split up the work?
 
-We have combined work in areas where we individually have less experience and
-assigned individual responsibilities where we have more experience. The work
-split is as follows:
+We have combined work in areas where we have less experience and assigned
+individual work in areas where we have more experience. The work split is as
+follows:
 
 - Planning and design (team)
 - Prototype build (team)
@@ -219,9 +219,9 @@ Critical Path 1:
 Critical Path 2:
 - PCB integration and assembly. Our second critical path is printing and
   integrating our PCB into our mechatronic system. We have a prototype mechatronic
-  system, but a successful outcome requires the PCB, so we are working diligently
-  to order it as soon as possible, with enough time remaining to re-order if
-  necessary.
+  system, but a successful project outcome requires incorporating a custom PCB, so
+  we are working diligently to order the PCB as soon as possible. That should give
+  us enough time to re-order if necessary.
 
 = Budget Estimate
 // What is your current budget estimate?
@@ -248,11 +248,11 @@ Jetson. Given Nvidia has unique hardware and proprietary software integration,
 there is a risk that as we develop code individually on our machines, it simply
 won't work on the Jetson with Nvidia SDKs. To mitigate this risk, we compiled
 Docker images on the Jetson that contain a replica of its environment. We will
-launch containers from these images to use as a development environment while
-coding on our machines. We feel this approach will mitigate most risks. Still,
-to ensure we have our eyes on this issue, we plan to frequently deploy our
-codebase on the Jetson through the remainder of the semester to ensure no hidden
-issues show up while changing our code.
+launch containers from these images for development environments while coding on
+our machines. We feel this approach will mitigate most risks. Still, to ensure
+we have our eyes on this issue, we plan to deploy our codebase on the Jetson
+frequently through the remainder of the semester to ensure no hidden issues show
+up while changing our code.
 
 == Programmatic
 // What is your highest programmatic risk, and how are you mitigating that risk?
