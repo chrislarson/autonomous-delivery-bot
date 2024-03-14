@@ -1,50 +1,111 @@
 #set page(margin: (top: 1.75cm, bottom: 1.75cm, left: 1.75cm, right: 1.75cm))
 #set math.equation(numbering: "(1)")
 #set align(center)
-#show figure.where(kind: table): set figure.caption(position: top)
 
-= MEGN540 Project Progress Report: Delivery Rover
+#show figure.where(kind: table): set figure.caption(position: top)
+#show heading: it => {
+  it
+  v(0.25em)
+}
+
+= MEGN540 Project Progress Report
 Sebastian Negrete-Alamillo, Keenan Buckley, Chris Larson
 
 #set heading(numbering: "1.")
 #set align(left)
 
+// ====================
 // Part 1: Technical
+// ====================
 
-= Problem Statement
+= Problem:
 // What problem are you solving?
+Many people are unable (or unwilling) to get up, walk to, and grab an item they
+need or desire around their home. Examples include elderly persons who need to
+take medication at a specific time daily but may be forgetful, and college
+students who are thirsty but too incapacitated to get their next beverage for
+themselves.
 
-= Design Concept
+We are designing and building a product that can deliver a necessary item to
+those people when they need it.
+
+= Design Concept:
 // What is your design concept?
 
-We are building a mobile delivery robot. Upon activation, the robot will identify
-the person nearest to it, drive to that person, and deliver a payload. Many use
-cases exist for such a robot, including beverage and medication delivery. The
-robot's capabilities are relevant in industry, so building it will be a good
-experience for us. The system must have the ability to:
+We are building a two-platform tank-drive mobile delivery robot. The lower
+platform will secure our electronics, and the upper platform will carry the
+delivery payload. Upon activation, our robot will identify the person nearest
+it, drive to that person, and deliver the payload. Our robot will have the
+ability to:
 
-1. Listen for and react to an activation signal.
+1. Listen for and react to an activation signal. To begin, this will be a serial
+  command issued via SSH.
 2. Identify persons in its FOV and target the nearest person to it (if any).
-2. Drive to that person in a straight line on a flat, carpeted surface.
-3. Stop upon arriving at the person and deliver the payload.
+3. Orient itself toward the person and drive to them in a straight line on a flat,
+  carpeted surface.
+4. Carry a payload of at least 16oz.
+5. Stop within arm's reach of the target person to deliver the payload.
 
-== Sensors and Actuators
-// What Sensors and Actuators will you use?
+== Sensors
+// What sensors will you use?
+- #strong("Stereo camera:") Luxonis Oak-D Lite for visual odometry, depth
+  estimation, and object detection.
+- #strong("IMU:") MPU-6050 sensor for pose estimation and motion control feedback.
+- #strong("Load sensor:") MPS20N00400 pressure sensor and HX711 amplifier to
+  measure payload.
+- #strong("Wheel encoder (x2):") Hall encoders for motion control feedback.
 
-== Custom PCB 
+== Actuators
+// What actuators will you use?
+- #strong("DC motor (x2):") 12V, 150rpm DC motors to power the robot's drivetrain.
+
+== PCB
 // What will your PCB do?
+- #strong("LED Demuxer:") Our circuit board's primary purpose is to enable us to
+  indicate our robot's status visually without occupying too many pins on our
+  microcontroller. To do so, the PCB will include a 3 to 8 demuxer, a resistor,
+  and ports for 8 LEDs. As a second-order effect, the PCB will clean up our
+  robot's wiring by supplying 5V power rails.
 
-= Integration Plan 
+== Software
+- Visual odometry module for depth perception and pose estimation.
+- Object detection module for person identification.
+- Path planning module for trajectory generation.
+- Motion control module to power motors and follow the trajectory.
+
+= System Integration:
 // What is your high-level integration plan?
+We worked as a team to assemble our robot's chassis and prototype mechatronic
+system. We are working in parallel on our robot's software modules, and to
+simplify integration, we are using Docker containers to assist with environment
+compatibility and a GitHub branch/pull/merge workflow to manage our codebase.
+During April, we will resume working as a team to finalize the integration of
+our systems and tune the robot.
 
-
+// ====================
 // Part 2: Programmatic
+// ====================
 
-= Schedule and Milestones
+= Project Plan:
 // What is your project schedule and key milestones?
-#strong("Initial Plan:") We've planned our work/deliverables in two-week
-increments to keep tabs on progress and enable us to react quickly to any
-issues. @project_plan shows our milestones and current status. We have completed the first three, and are progressing on the remaining. 
+Our work/deliverables are planned in two-week increments to keep tabs on
+progress and enable us to react quickly to issues that arise. We have created a
+backlog of deliverables on GitHub and are organizing our work using a Kanban
+board. @project_plan shows our milestones and their current status. We have
+completed the first three milestones and are progressing on the rest. Completed
+works are shown in @completed_works.
+
+#figure(
+  stack(
+    dir: ltr,
+    spacing: 1em,
+    image("prototype_build.jpg", height: 22%),
+    image("pcb_build.png", height: 22%),
+    image("pcb_render.png", height: 22%),
+  ),
+  placement: auto,
+  caption: [Works completed to date. (L) Prototype mechatronic system, (R) PCB design.],
+) <completed_works>
 
 #figure(table(
   columns: (auto, auto, auto, auto, auto),
@@ -121,17 +182,16 @@ issues. @project_plan shows our milestones and current status. We have completed
   ],
 ), caption: "Project plan and status.") <project_plan>
 
-#figure(stack(dir: ltr, spacing: 1em, image("prototype_build.jpg", height: 22%), image("pcb_build.png", height: 22%), image("pcb_render.png", height: 22%)), placement: auto, caption: [Completed works. (L) Prototype mechatronic system, (R) PCB design.])
-
-
-
-== Work Split 
+== Work Split
 // How have you split up the work?
+- #strong("As a team:")
 
-== Critical Paths 
+- #strong("Individually:")
+
+== Critical Paths
 // What are your critical paths?
 
-= Budget Estimate 
+= Budget Estimate
 // What is your current budget estimate?
 #strong("Budget:") \$300 (\$100 per team member). Our team agreed on this as the
 upper limit, based upon initial exploration of components we know we need to
@@ -139,37 +199,8 @@ purchase (chassis, Arduino, motors, and motor controllers) and our purchasing
 power. We own several more expensive components, including an NVIDIA Jetson Orin
 Nano and a Stereo RGB-D camera.
 
-= Risks 
+= Risks
 == Technical
-// What is your highest technical risk and how are you mitigating that risk?
-== Programmatic 
-// What is your highest programmatic risk and how are you mitigating that risk?
-
-
-
-= System Components
-
-== Sensing and Affecting
-
-- #strong("Sensors:") Stereo camera (RGB-D) for visual odometry, depth estimation,
-  and object detection. Wheel encoders for motion control.
-
-- #strong("Affectors:") DC motors to power the robot's drivetrain. Servos to
-  actuate the payload delivery mechanism.
-
-== Software
-- Visual odometry module for depth perception and pose estimation.
-- Object detection module for person identification.
-- Path planning module for trajectory generation.
-- Motion control module to power motors and follow the trajectory.
-
-== PCB
-We will create a PCB with LEDs to indicate the system's state (powered on,
-identifying recipients, planning the path, and making the delivery). This PCB
-will allow us to build something useful for the robot while not greatly
-exceeding our current abilities.
-
-= Prototyping
-All three team members are in Mechatronics and SLAM, and we have experience with
-all system components. We view this project as an opportunity to "put it all
-together" and feel confident in our ability to build a functioning prototype.
+// What is your highest technical risk, and how are you mitigating that risk?
+== Programmatic
+// What is your highest programmatic risk, and how are you mitigating that risk?
