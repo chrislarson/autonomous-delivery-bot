@@ -23,7 +23,7 @@ Sebastian Negrete-Alamillo, Keenan Buckley, Chris Larson
 Many people are unable (or unwilling) to get up, walk to, and grab an item they
 need or desire around their home. Examples include elderly persons who need to
 take medication at a specific time daily but may be forgetful, and college
-students who are thirsty but too incapacitated to get their next beverage for
+students who are thirsty but too incapacitated to get their next beverage
 themselves.
 
 We are designing and building a product that can deliver a necessary item to
@@ -48,39 +48,39 @@ ability to:
 
 == Sensors
 // What sensors will you use?
-- #strong("Stereo camera:") Luxonis Oak-D Lite for visual odometry, depth
+- #emph("Stereo camera:") Luxonis Oak-D Lite for visual odometry, depth
   estimation, and object detection.
-- #strong("IMU:") MPU-6050 sensor for pose estimation and motion control feedback.
-- #strong("Load sensor:") MPS20N00400 pressure sensor and HX711 amplifier to
-  measure payload.
-- #strong("Wheel encoder (x2):") Hall encoders for motion control feedback.
+- #emph("IMU:") MPU-6050 for pose estimation and motion control feedback.
+- #emph("Load sensor:") MPS20N00400 sensor and HX711 amplifier to measure payload.
+- #emph("Wheel encoder (x2):") Hall encoders for motion control feedback.
 
 == Actuators
 // What actuators will you use?
-- #strong("DC motor (x2):") 12V, 150rpm DC motors to power the robot's drivetrain.
+- #emph("DC motor (x2):") 12V, 150rpm DC motors to power the robot's drivetrain.
 
 == PCB
 // What will your PCB do?
-- #strong("LED Demuxer:") Our circuit board's primary purpose is to enable us to
+- #emph("LED Demuxer:") Our circuit board's primary purpose is to enable us to
   indicate our robot's status visually without occupying too many pins on our
-  microcontroller. To do so, the PCB will include a 3 to 8 demuxer, a resistor,
-  and ports for 8 LEDs. As a second-order effect, the PCB will clean up our
-  robot's wiring by supplying 5V power rails.
+  microcontroller. Our PCB will incorporate a 3 to 8 demuxer, a resistor, and
+  ports for 8 LEDs to achieve this. As a second-order effect, the PCB will clean
+  up our robot's wiring by supplying 5V power rails. Our initial PCB design is in
+  @completed_works.
 
 == Software
-- Visual odometry module for depth perception and pose estimation.
-- Object detection module for person identification.
-- Path planning module for trajectory generation.
-- Motion control module to power motors and follow the trajectory.
+- #emph("Visual odometry") module for depth perception and pose estimation.
+- #emph("Object detection") module for person identification.
+- #emph("Path planning") module for trajectory generation.
+- #emph("Motion control") module to power motors and follow the trajectory.
 
 = System Integration:
 // What is your high-level integration plan?
 We worked as a team to assemble our robot's chassis and prototype mechatronic
-system. We are working in parallel on our robot's software modules, and to
-simplify integration, we are using Docker containers to assist with environment
-compatibility and a GitHub branch/pull/merge workflow to manage our codebase.
-During April, we will resume working as a team to finalize the integration of
-our systems and tune the robot.
+system. We are working in parallel on our robot's software modules. To simplify
+integration, we use Docker containers to ensure environment compatibility and a
+GitHub branch/pull/merge workflow to manage our codebase. During April, as a
+team, we will integrate the software modules with our mechatronic system,
+troubleshoot, and tune our robot.
 
 // ====================
 // Part 2: Programmatic
@@ -193,11 +193,17 @@ works are shown in @completed_works.
 
 = Budget Estimate
 // What is your current budget estimate?
-#strong("Budget:") \$300 (\$100 per team member). Our team agreed on this as the
-upper limit, based upon initial exploration of components we know we need to
-purchase (chassis, Arduino, motors, and motor controllers) and our purchasing
-power. We own several more expensive components, including an NVIDIA Jetson Orin
-Nano and a Stereo RGB-D camera.
+We are aiming to spend \$300 (\$100 per team member) or less on parts. To date,
+we have spent \$254 acquiring our chassis, motors, Arduino, motor controller,
+voltage regulators, batteries, and miscellaneous necessities (wiring, acrylic
+platforms, tape, etc.). The most expensive components we had to purchase were 4S
+LiPo batteries and a compatible charger.
+
+The remaining items to be purchased include the PCB parts: the prints, the 3 to
+8 demuxers, and the LEDs.
+
+We already owned several more expensive components, including an NVIDIA Jetson
+Orin Nano the Luxonis Oak-D Lite.
 
 = Risks
 == Technical
