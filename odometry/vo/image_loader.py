@@ -28,14 +28,13 @@ class ImageLoader:
         self.right_prev = np.zeros((720, 1280), dtype=np.uint8)
         self.left_prev = np.zeros((720, 1280), dtype=np.uint8)
 
-        match image_source:
-            case ImageSource.Local:
-                self.capture = VideoCaptureThreaded(L_src, R_src, (1280, 960), (1280, 720))
-                self.capture.start()
-                print("Initialized Image Loader")
+        if image_source == ImageSource.Local:
+            self.capture = VideoCaptureThreaded(L_src, R_src, (1280, 960), (1280, 720))
+            self.capture.start()
+            print("Initialized Image Loader")
 
-            case ImageSource.KITTI:
-                pass
+        elif image_source == ImageSource.KITTI:
+            pass
 
     def get_frame(self):
         left_frame, right_frame = self.capture.read()

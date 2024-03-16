@@ -26,25 +26,32 @@ class FeatureMatcher:
     # https://datahacker.rs/feature-matching-methods-comparison-in-opencv/
 
     def __init__(self, kind: MatcherType, detector_kind: DetectorType):
-        match kind:
-            case kind.BruteForce:
-                if detector_kind.is_binary():
-                    self._matcher = cv2.BFMatcher.create(cv2.NORM_HAMMING, crossCheck=False)
-                else:
-                    self._matcher = cv2.BFMatcher.create(cv2.NORM_L2, crossCheck=False)
-            case kind.Flann:
-                if detector_kind.is_binary():
-                    FLANN_INDEX_LSH = 6
-                    index_params = dict(
-                        algorithm=FLANN_INDEX_LSH, table_number=6, key_size=12, multi_probe_level=1
-                    )
-                    search_params = dict(checks=50)
-                    self._matcher = cv2.FlannBasedMatcher(index_params, search_params).create()
-                else:
-                    FLANN_INDEX_KDTREE = 1
-                    index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
-                    search_params = dict(checks=50)
-                    self._matcher = cv2.FlannBasedMatcher(index_params, search_params).create()
+
+        if kind == kind.BruteForce:
+            if detector_kind.is_binary():
+                self._matcher = cv2.BFMatcher.create(cv2.NORM_HAMMING, crossCheck=False)
+            else:
+                self._matcher = cv2.BFMatcher.create(cv2.NORM_L2, crossCheck=False)
+        elif kind == kind.Flann:
+            if detector_kind.is_binary():
+                FLANN_INDEX_LSH = 6
+                index_params = dict(
+                    algorithm=FLANN_INDEX_LSH,
+                    table_number=6,
+                    key_size=12,
+                    multi_probe_level=1,
+                )
+                search_params = dict(checks=50)
+                self._matcher = cv2.FlannBasedMatcher(
+                    index_params, search_params
+                ).create()
+            else:
+                FLANN_INDEX_KDTREE = 1
+                index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
+                search_params = dict(checks=50)
+                self._matcher = cv2.FlannBasedMatcher(
+                    index_params, search_params
+                ).create()
 
     def match_one(self, query_descriptors, train_descriptors, mask):
         return self._matcher.match(query_descriptors, train_descriptors, mask)
