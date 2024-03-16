@@ -1,0 +1,32 @@
+{
+  "name": "aifr3d_dev_container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "extensions.verifySignature": false
+      },
+      "extensions": [
+        "nvarner.typst-lsp",
+        "tomoki1207.pdf",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-python.python",
+        "ms-python.black-formatter"
+      ]
+    }
+  },
+  "containerEnv": {
+    "DISPLAY": "unix:0"
+  },
+  "mounts": [
+    "type=bind,source=/dev/,target=/dev/",
+    "type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix,consistency=cached",
+    "type=bind,source=/usr/bin/qemu-arm-static,target=/usr/bin/qemu-arm-static"
+  ],
+  "runArgs": [
+    "--privileged"
+    // ,"--runtime=nvidia" // If Nvidia GPU on system, and Nvidia toolkit installed, uncomment this for Nvidia speedup.
+  ]
+}

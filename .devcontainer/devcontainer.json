@@ -14,15 +14,10 @@
       ]
     }
   },
-  "containerEnv": {
-    "DISPLAY": "unix:0"
-  },
   "mounts": [
-    "type=bind,source=/dev/,target=/dev/",
-    "type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix,consistency=cached"
+    "type=bind,source=/dev/,target=/dev/"
   ],
   "runArgs": [
     "--privileged"
-    // ,"--runtime=nvidia" // If Nvidia GPU on system, and Nvidia toolkit installed, uncomment this for Nvidia speedup.
   ]
 }
