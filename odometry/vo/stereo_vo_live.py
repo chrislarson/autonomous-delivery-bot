@@ -50,12 +50,12 @@ def main():
     est_poses = []
     H_tot = np.eye(4)
 
-    calib = CalibrationLoader(CalibrationType.Local)
-    k_left = calib.k_left
-    t_left = calib.t_left
-    t_right = calib.t_right
+    # calib = CalibrationLoader(CalibrationType.Local)
+    # k_left = calib.k_left
+    # t_left = calib.t_left
+    # t_right = calib.t_right
 
-    image_loader = ImageLoader(ImageSource.Local, L_src, R_src)
+    image_loader = ImageLoader(ImageSource.Video, L_src, R_src)
 
     # Algorithm(s) Configuration
     max_depth = 3000
@@ -64,18 +64,18 @@ def main():
     stereo_matcher = StereoMatcher(StereoMatcherType.SGBM)
 
     image_loader.get_frame()
-    time.sleep(0.25)
+    # time.sleep(0.25)
     image_loader.get_frame()
-    time.sleep(0.25)
+    # time.sleep(0.25)
     image_loader.get_frame()
-    time.sleep(0.25)
+    # time.sleep(0.25)
 
-    cv_file = cv2.FileStorage()
-    cv_file.open("../../calibration/stereoMap.xml", cv2.FileStorage_READ)
-    stereoMapL_x = cv_file.getNode("stereoMapL_x").mat()
-    stereoMapL_y = cv_file.getNode("stereoMapL_y").mat()
-    stereoMapR_x = cv_file.getNode("stereoMapR_x").mat()
-    stereoMapR_y = cv_file.getNode("stereoMapR_y").mat()
+    # cv_file = cv2.FileStorage()
+    # cv_file.open("../../calibration/stereoMap.xml", cv2.FileStorage_READ)
+    # stereoMapL_x = cv_file.getNode("stereoMapL_x").mat()
+    # stereoMapL_y = cv_file.getNode("stereoMapL_y").mat()
+    # stereoMapR_x = cv_file.getNode("stereoMapR_x").mat()
+    # stereoMapR_y = cv_file.getNode("stereoMapR_y").mat()
     start = datetime.now()
 
     # Algorithm
@@ -87,14 +87,29 @@ def main():
         image_left_curr = cv2.cvtColor(image_loader.left_curr, cv2.COLOR_BGR2GRAY)
 
         image_right_prev = cv2.remap(
-            image_right_prev, stereoMapR_x, stereoMapR_y, cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0
+            image_right_prev,
+            stereoMapR_x,
+            stereoMapR_y,
+            cv2.INTER_LANCZOS4,
+            cv2.BORDER_CONSTANT,
+            0,
         )
 
         image_left_prev = cv2.remap(
-            image_left_prev, stereoMapL_x, stereoMapL_y, cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0
+            image_left_prev,
+            stereoMapL_x,
+            stereoMapL_y,
+            cv2.INTER_LANCZOS4,
+            cv2.BORDER_CONSTANT,
+            0,
         )
         image_left_curr = cv2.remap(
-            image_left_curr, stereoMapL_x, stereoMapL_y, cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0
+            image_left_curr,
+            stereoMapL_x,
+            stereoMapL_y,
+            cv2.INTER_LANCZOS4,
+            cv2.BORDER_CONSTANT,
+            0,
         )
 
         disp_map = stereo_matcher.compute_disparity(image_left_prev, image_right_prev)
@@ -137,8 +152,12 @@ def main():
         images_left.append(image_left_prev)
         images_right.append(image_right_prev)
 
-        img_kp_0 = np.array([kp_0[m.queryIdx].pt for m in filtered_matches], dtype=np.float32)
-        img_kp_1 = np.array([kp_1[m.trainIdx].pt for m in filtered_matches], dtype=np.float32)
+        img_kp_0 = np.array(
+            [kp_0[m.queryIdx].pt for m in filtered_matches], dtype=np.float32
+        )
+        img_kp_1 = np.array(
+            [kp_1[m.trainIdx].pt for m in filtered_matches], dtype=np.float32
+        )
 
         cx = k_left[0, 2]
         cy = k_left[1, 2]
@@ -212,31 +231,41 @@ def main():
     for i in range(len(images_left)):
         cv2.imshow("Left camera", images_left[i])
         cv2.imwrite(
-            "/Users/chris/development/csci507-project/data_us/seq_hall2/L" + str(i) + ".png",
+            "/Users/chris/development/csci507-project/data_us/seq_hall2/L"
+            + str(i)
+            + ".png",
             images_left[i],
         )
 
         cv2.imshow("Right camera", images_right[i])
         cv2.imwrite(
-            "/Users/chris/development/csci507-project/data_us/seq_hall2/R" + str(i) + ".png",
+            "/Users/chris/development/csci507-project/data_us/seq_hall2/R"
+            + str(i)
+            + ".png",
             images_right[i],
         )
 
         cv2.imshow("Disparity Map", images_disparity[i])
         cv2.imwrite(
-            "/Users/chris/development/csci507-project/data_us/seq_hall2/D" + str(i) + ".png",
+            "/Users/chris/development/csci507-project/data_us/seq_hall2/D"
+            + str(i)
+            + ".png",
             images_disparity[i],
         )
 
         cv2.imshow("Unfiltered Matches", images_unfiltered[i])
         cv2.imwrite(
-            "/Users/chris/development/csci507-project/data_us/seq_hall2/U" + str(i) + ".png",
+            "/Users/chris/development/csci507-project/data_us/seq_hall2/U"
+            + str(i)
+            + ".png",
             images_unfiltered[i],
         )
 
         cv2.imshow("Filtered Matches", images_filtered[i])
         cv2.imwrite(
-            "/Users/chris/development/csci507-project/data_us/seq_hall2/F" + str(i) + ".png",
+            "/Users/chris/development/csci507-project/data_us/seq_hall2/F"
+            + str(i)
+            + ".png",
             images_filtered[i],
         )
 

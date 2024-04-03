@@ -54,3 +54,5 @@ CATKIN_IGNORE
 pcb-project-backups/
 pcb-demo/
 kicad/pcb-project/#auto_saved_files#
+
+sample_data/

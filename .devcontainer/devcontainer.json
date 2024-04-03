@@ -14,8 +14,12 @@
       ]
     }
   },
+  "containerEnv": {
+    "DISPLAY": "docker.for.mac.host.internal:0"
+  },
   "mounts": [
     "type=bind,source=/dev/,target=/dev/"
+    // "type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix,consistency=cached"
   ],
   "runArgs": [
     "--privileged"

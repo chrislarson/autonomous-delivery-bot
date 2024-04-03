@@ -12,17 +12,17 @@ class CalibrationType(Enum):
 
 
 class CalibrationLoader:
-    k_left: np.ndarray[Any, np.dtype]
-    k_right: np.ndarray[Any, np.dtype]
+    k_left: Any
+    k_right: Any
 
-    k_left_udst: np.ndarray[Any, np.dtype]
-    k_right_udst: np.ndarray[Any, np.dtype]
+    k_left_udst: Any
+    k_right_udst: Any
 
-    t_left: np.ndarray[Any, np.dtype]
-    t_right: np.ndarray[Any, np.dtype]
+    t_left: Any
+    t_right: Any
 
-    dist_left: np.ndarray[Any, np.dtype]
-    dist_right: np.ndarray[Any, np.dtype]
+    dist_left: Any
+    dist_right: Any
 
     roi_left: Sequence[int]
     roi_right: Sequence[int]

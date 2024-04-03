@@ -1,15 +1,24 @@
 import threading
+from typing import Tuple, Union
 
 import cv2
 
 
 class VideoCaptureThreaded:
-    def __init__(self, src_left: int, src_right: int, left_dim: (int, int), right_dim: (int, int)):
+    def __init__(
+        self,
+        src_left: Union[int, str],
+        src_right: Union[int, str],
+        left_dim: Tuple[int, int],
+        right_dim: Tuple[int, int],
+    ):
         self.thread = None
         self.src_left = src_left
         self.src_right = src_right
         self.cap_left = cv2.VideoCapture(self.src_left)
+        self.cap_left.set(cv2.CAP_PROP_FPS, 30)
         self.cap_right = cv2.VideoCapture(self.src_right)
+        self.cap_right.set(cv2.CAP_PROP_FPS, 30)
         self.cap_left.set(cv2.CAP_PROP_FRAME_WIDTH, left_dim[0])
         self.cap_left.set(cv2.CAP_PROP_FRAME_HEIGHT, left_dim[1])
         self.cap_right.set(cv2.CAP_PROP_FRAME_WIDTH, right_dim[0])

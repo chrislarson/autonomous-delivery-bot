@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Any, Union
 
 import cv2 as cv
 
@@ -13,7 +14,7 @@ class DetectorType(Enum):
 
 
 class FeatureDetector:
-    _detector: cv.AKAZE | cv.SIFT | cv.ORB
+    _detector: Union[cv.AKAZE, cv.SIFT, cv.ORB]
 
     # if we have CUDA ..
     def __init__(self, kind: DetectorType):
@@ -24,5 +25,5 @@ class FeatureDetector:
         elif kind == kind.AKAZE:
             self._detector = cv.AKAZE.create()
 
-    def detect_and_compute(self, image: cv.Mat, mask: cv.Mat | None):
+    def detect_and_compute(self, image: Any, mask: Any):
         return self._detector.detectAndCompute(image, mask)

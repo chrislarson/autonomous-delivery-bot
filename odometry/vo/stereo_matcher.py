@@ -2,6 +2,7 @@ from enum import Enum
 
 import cv2
 import numpy as np
+from typing import Any
 
 
 class StereoMatcherType(Enum):
@@ -28,11 +29,13 @@ def calc_depth_map(disp_left, k_left, t_left, t_right, rectified=True):
 
 
 class StereoMatcher:
+    # TODO: If we have CUDA, use cuda.StereoSGM
     def __init__(self, kind: StereoMatcherType):
         sad_window = 6
         num_disparities = sad_window * 16
         # num_disparities = 32
         block_size = 11
+        # cv2.cuda.ste
         if kind == StereoMatcherType.SGBM:
             self._matcher = cv2.StereoSGBM.create(
                 numDisparities=num_disparities,
@@ -54,7 +57,7 @@ class StereoMatcher:
                 blockSize=15,
             )
 
-    def compute_disparity(self, img_left: cv2.Mat, img_right: cv2.Mat):
+    def compute_disparity(self, img_left: Any, img_right: Any):
         disp = self._matcher.compute(img_left, img_right).astype(np.float32) / 16
         return disp
 

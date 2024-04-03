@@ -59,7 +59,9 @@ def load_image_sequence(seq: str, side: str, len=1000) -> List[Mat]:
     if side == "left":
         # filepath = os.path.join(dir_path, "data", seq, "L")
         filepath = f"/Users/chris/kitti_dataset/sequences/{seq}/image_0"
-        image_paths = [os.path.join(filepath, file) for file in sorted(os.listdir(filepath))]
+        image_paths = [
+            os.path.join(filepath, file) for file in sorted(os.listdir(filepath))
+        ]
         # print("Left: ", image_paths)
         for i in range(0, len):
             images.append(cv2.imread(image_paths[i]))
@@ -67,7 +69,9 @@ def load_image_sequence(seq: str, side: str, len=1000) -> List[Mat]:
     else:
         # filepath = os.path.join(dir_path, "data", seq, "R")
         filepath = f"/Users/chris/kitti_dataset/sequences/{seq}/image_1"
-        image_paths = [os.path.join(filepath, file) for file in sorted(os.listdir(filepath))]
+        image_paths = [
+            os.path.join(filepath, file) for file in sorted(os.listdir(filepath))
+        ]
         # print("Right: ", image_paths)
         for i in range(0, len):
             images.append(cv2.imread(image_paths[i]))
@@ -83,10 +87,10 @@ def decompose_projection_matrix(p: np.ndarray[Any, np.dtype[np.generic]]):
 
 def main():
     # KITTI Sequence
-    seq = "00"
+    # seq = "00"
 
     # Pose
-    gt_poses = load_gt_poses(seq)
+    # gt_poses = load_gt_poses(seq)
     est_poses = []
     H_tot = np.eye(4)
 
@@ -154,8 +158,12 @@ def main():
         cv2.imshow("Filtered Matches", filtered_matched_img)
         cv2.waitKey(500)
 
-        img_kp_0 = np.array([kp_0[m.queryIdx].pt for m in filtered_matches], dtype=np.float32)
-        img_kp_1 = np.array([kp_1[m.trainIdx].pt for m in filtered_matches], dtype=np.float32)
+        img_kp_0 = np.array(
+            [kp_0[m.queryIdx].pt for m in filtered_matches], dtype=np.float32
+        )
+        img_kp_1 = np.array(
+            [kp_1[m.trainIdx].pt for m in filtered_matches], dtype=np.float32
+        )
 
         cx = k_left[0, 2]
         cy = k_left[1, 2]
@@ -177,7 +185,9 @@ def main():
         img_kp_1 = np.delete(img_kp_1, delete, 0)
 
         # Use PnP algorithm with RANSAC for robustness to outliers
-        _, rvec, tvec, inliers = cv2.solvePnPRansac(object_points, img_kp_1, k_left, np.array([]))
+        _, rvec, tvec, inliers = cv2.solvePnPRansac(
+            object_points, img_kp_1, k_left, np.array([])
+        )
         rmat = cv2.Rodrigues(rvec)[0]
 
         H = form_transform(rmat, tvec.T)

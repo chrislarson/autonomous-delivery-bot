@@ -1,9 +1,9 @@
 from enum import Enum
-from typing import Sequence
+from typing import Any, Sequence
 
 import cv2
 
-from vo.feature_detector import DetectorType
+from feature_detector import DetectorType
 
 
 class MatcherType(Enum):
@@ -11,7 +11,7 @@ class MatcherType(Enum):
     Flann = 2
 
 
-def filter_matches(matches: Sequence[Sequence[cv2.DMatch]], dist_ratio: float):
+def filter_matches(matches: Sequence[Sequence[Any]], dist_ratio: float):
     filtered = []
     for match in matches:
         match_1 = match[0]
@@ -56,5 +56,5 @@ class FeatureMatcher:
     def match_one(self, query_descriptors, train_descriptors, mask):
         return self._matcher.match(query_descriptors, train_descriptors, mask)
 
-    def match_knn(self, query_descriptors: cv2.Mat, train_descriptors: cv2.Mat, k: int):
+    def match_knn(self, query_descriptors: Any, train_descriptors: Any, k: int):
         return self._matcher.knnMatch(query_descriptors, train_descriptors, k)
