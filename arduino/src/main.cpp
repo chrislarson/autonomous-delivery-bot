@@ -145,13 +145,16 @@ encoderFrame updateEncoderFrame(const encoderFrame *lastFrame, int newPos, doubl
   return newFrame;
 }
 
-void setLed(int id, bool enable) {
-  digitalWrite(LED_Enable, 0);
-  if (enable && id < 8) {
+void setLed(byte id) {
+  if (id == 0) {
+    digitalWrite(LED_Enable, LOW);
+  } else if (id <= 8) {
+    id -= 1;
+    digitalWrite(LED_Enable, LOW);
     digitalWrite(LED_0, id & 0b001);
     digitalWrite(LED_1, id & 0b010);
     digitalWrite(LED_2, id & 0b100);
-    digitalWrite(LED_Enable, 1);
+    digitalWrite(LED_Enable, HIGH);
   }
 }
 
@@ -186,7 +189,7 @@ void setup() {
   setRightDirection(0);
 
   // Set LED
-  setLed(0, true);
+  setLed(0);
 }
 
 //============
