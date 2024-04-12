@@ -48,6 +48,9 @@ encoderFrame rightEncoderFrame;
 # define LED_2 A1
 void setLed(int id, bool enable);
 
+// LED IDs
+# define LED_ERR_ID 1
+
 // global variables to more efficiently control tank drive
 bool leftDir = 0;
 bool rightDir = 0;
@@ -80,10 +83,7 @@ const byte numChars = 32;
 char receivedChars[numChars];
 char tempChars[numChars];  // Temporary array for use while parsing serial com.
 
-// Variables from serial com.
-char messageFromPC[numChars] = {0};
-float theta = 999.9;
-
+boolean parse_error = false;
 boolean newData = false;
 
 //============
@@ -216,6 +216,10 @@ void loop() {
   if (newData == true) {
     strcpy(tempChars, receivedChars);
     parseData();
+    if (parse_error) {
+      setLed(LED_ERR_ID);
+      parse_error = false;
+    }
     // showParsedData();
     newData = false;
   }
@@ -237,8 +241,6 @@ void loop() {
   //   pwmL = pwm + 5;
   //   pwmR = pwm;
   // }
-
-  tankDrive(0, 0);
 
   //showParsedData();
 }
@@ -275,22 +277,76 @@ void recvWithStartEndMarkers() {
 
 //============
 
-void parseData() {  // Split the serial com data into its parts.
+#define BYTE_LEN 1
+byte parseByte() {
+  char* data = strtok(NULL, ",");
+  if (strnlen(data, BYTE_LEN+1) == BYTE_LEN) {
+    return atoi(data);
+  } else {
+    parse_error = true;
+    return 0;
+  }
+}
 
-  char *strtokIndx;
-  // Get first part, the "D".
-  strtokIndx = strtok(tempChars, ",");
-  strcpy(messageFromPC, strtokIndx);
-  // Get second part, the theta value.
-  strtokIndx = strtok(NULL, ",");
-  theta = atof(strtokIndx);
+#define FLOAT_LEN 4
+float parseFloat() {
+  char* data = strtok(NULL, ",");
+  if (strnlen(data, FLOAT_LEN+1) == FLOAT_LEN) {
+    return atof(data);
+  } else {
+    parse_error = true;
+    return 0;
+  }
+}
+
+#define STATUS_MSG_LEN -1
+void parseSetStatus() {
+  byte id = parseByte();
+  if (!parse_error) {
+    setLed(id);
+  }
+}
+
+#define PWM_MSG_LEN -1
+void parseSetMotorOutput() {
+  float leftOutput = parseFloat();
+  float rightOutput = parseFloat();
+  if (!parse_error) {
+    tankDrive(leftOutput, rightOutput);
+  }
+}
+
+void parseData() {  // Split the serial com data into its parts.
+  char cmd;
+  // Get first part, the message type.
+  cmd = strtok(tempChars, ",")[0];
+  switch (cmd)
+  {
+  // Status Message
+  case 's':
+  case 'S':
+    if (strnlen(tempChars, numChars) == STATUS_MSG_LEN) {
+      parseSetStatus();
+    } else {
+      parse_error = true;
+    }
+    break;
+  // PWM Message
+  case 'p':
+  case 'P':
+    if (strnlen(tempChars, numChars) == PWM_MSG_LEN) {
+      parseSetMotorOutput();
+    } else {
+      parse_error = true;
+    }
+    break;
+  default:
+    break;
+  }
 }
 
 //============
 
-void showParsedData() {
-  Serial.println("Recvd:<" + String(messageFromPC) + "," + String(theta) + ">");
-}
 
 void indexLeftEncoderCount() { 
   if (!readEncoderLB()) {
