@@ -299,7 +299,8 @@ float parseFloat() {
   }
 }
 
-#define STATUS_MSG_LEN -1
+// "c,b\0"
+#define STATUS_MSG_LEN 4
 void parseSetStatus() {
   byte id = parseByte();
   if (!parse_error) {
@@ -307,7 +308,8 @@ void parseSetStatus() {
   }
 }
 
-#define PWM_MSG_LEN -1
+// "c,f,f\0"
+#define PWM_MSG_LEN 12
 void parseSetMotorOutput() {
   float leftOutput = parseFloat();
   float rightOutput = parseFloat();
