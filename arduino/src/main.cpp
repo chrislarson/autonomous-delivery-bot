@@ -72,8 +72,8 @@ void indexLeftEncoderCount();
 void indexRightEncoderCount();
 
 // Global statics
-volatile int leftEncoderCount = 0;
-volatile int rightEncoderCount = 0;
+volatile int_fast32_t leftEncoderCount = 0;
+volatile int_fast32_t rightEncoderCount = 0;
 
 void parseData();
 void showParsedData();
@@ -87,12 +87,30 @@ boolean parse_error = false;
 boolean newData = false;
 
 //============
+void printBytes(void* ptr, int len) {
+  char bytes[len];
+  strncpy(bytes, static_cast<const char*>(static_cast<const void*>(ptr)), len);
+  Serial.print(bytes);
+}
+
 void showEncoderCounts(){
-  Serial.println("Counts:<" + String(leftEncoderCount) + ", " + String(rightEncoderCount) + ">");
+  Serial.println("<c," + String(leftEncoderCount) + "," + String(rightEncoderCount) + ">");
+}
+
+void sendEncoderCounts(){
+  Serial.print("<c,");
+  printBytes((void*)&leftEncoderCount, sizeof leftEncoderCount);
+  Serial.print(",");
+  printBytes((void*)&rightEncoderCount, sizeof rightEncoderCount);
+  Serial.print('>');
 }
 
 void showEncoderVelocities(){
-  Serial.println("Velocities:<" + String(leftEncoderFrame.vel) + ", " + String(rightEncoderFrame.vel) + ">");
+  Serial.println("<v," + String(leftEncoderFrame.vel) + "," + String(rightEncoderFrame.vel) + ">");
+}
+
+void sendEncoderVelocities(){
+  Serial.println("<v," + String(leftEncoderFrame.vel) + "," + String(rightEncoderFrame.vel) + ">");
 }
 
 // 0 = 01, 1 = 10; never set dirL1 and dirL2 to 1 at the same time
@@ -207,8 +225,9 @@ void loop() {
     leftEncoderFrame = updateEncoderFrame(&leftEncoderFrame, leftEncoderCount, timeSinceEncoderSampleSec);
     rightEncoderFrame = updateEncoderFrame(&rightEncoderFrame, rightEncoderCount, timeSinceEncoderSampleSec);
     lastSampleTimeMillis = previousMillis;
-    showEncoderCounts();
-    showEncoderVelocities();
+    sendEncoderCounts();
+    //showEncoderCounts();
+    //showEncoderVelocities();
   }
 
   // Reading and parsing new data from serial.
