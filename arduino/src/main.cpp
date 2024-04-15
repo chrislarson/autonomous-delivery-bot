@@ -21,20 +21,20 @@ struct encoderFrame
   double acc;
 };
 
-// Motor A (LEFT) and encoder A (LEFT)
-# define ENL 11
-# define dirL1 10
-# define dirL2 9
+// Motor B (LEFT) and encoder B (LEFT)
+# define ENL 6
+# define dirL1 8
+# define dirL2 7
 # define encoderLA 2  // A-Phase
 # define encoderLB 4  // B-Phase
 # define readEncoderLB() (fastDigitalRead(encoderLB))
 # define invertLeft true
 encoderFrame leftEncoderFrame;
 
-// Motor B (RIGHT) and encoder B (RIGHT)
-# define ENR 8
-# define dirR1 7
-# define dirR2 6
+// Motor A (RIGHT) and encoder A (RIGHT)
+# define ENR 11
+# define dirR1 10
+# define dirR2 9
 # define encoderRA 3  // A-Phase
 # define encoderRB 5  // B-Phase
 # define readEncoderRB() (fastDigitalRead(encoderRB))
@@ -46,6 +46,7 @@ encoderFrame rightEncoderFrame;
 # define LED_0 A3
 # define LED_1 A2
 # define LED_2 A1
+# define LED_Disable A4
 void setLed(int id, bool enable);
 
 // LED IDs
@@ -102,7 +103,7 @@ void sendEncoderCounts(){
   printBytes((void*)&leftEncoderCount, sizeof leftEncoderCount);
   Serial.print(",");
   printBytes((void*)&rightEncoderCount, sizeof rightEncoderCount);
-  Serial.print('>');
+  Serial.println('>');
 }
 
 void showEncoderVelocities(){
@@ -201,13 +202,15 @@ void setup() {
   pinMode(LED_0, OUTPUT);
   pinMode(LED_1, OUTPUT);
   pinMode(LED_2, OUTPUT);
+  pinMode(LED_Disable, OUTPUT);
+  digitalWrite(LED_Disable, LOW);
 
   // Set initial motor directions
   setLeftDirection(0);
   setRightDirection(0);
 
   // Set LED
-  setLed(0);
+  setLed(1);
 }
 
 //============
@@ -225,7 +228,7 @@ void loop() {
     leftEncoderFrame = updateEncoderFrame(&leftEncoderFrame, leftEncoderCount, timeSinceEncoderSampleSec);
     rightEncoderFrame = updateEncoderFrame(&rightEncoderFrame, rightEncoderCount, timeSinceEncoderSampleSec);
     lastSampleTimeMillis = previousMillis;
-    sendEncoderCounts();
+    //sendEncoderCounts();
     //showEncoderCounts();
     //showEncoderVelocities();
   }
@@ -319,9 +322,10 @@ float parseFloat() {
 }
 
 // "c,b\0"
-#define STATUS_MSG_LEN 4
+#define STATUS_MSG_LEN 3
 void parseSetStatus() {
   byte id = parseByte();
+  Serial.println(id);
   if (!parse_error) {
     setLed(id);
   }
@@ -341,14 +345,16 @@ void parseData() {  // Split the serial com data into its parts.
   char cmd;
   // Get first part, the message type.
   cmd = strtok(tempChars, ",")[0];
+  Serial.println(cmd);
   switch (cmd)
   {
   // Status Message
   case 's':
   case 'S':
-    if (strnlen(tempChars, numChars) == STATUS_MSG_LEN) {
+    if (strnlen(receivedChars, numChars) == STATUS_MSG_LEN) {
       parseSetStatus();
     } else {
+      //Serial.println(strnlen(receivedChars, numChars));
       parse_error = true;
     }
     break;
@@ -362,6 +368,7 @@ void parseData() {  // Split the serial com data into its parts.
     }
     break;
   default:
+    parse_error = true;
     break;
   }
 }
