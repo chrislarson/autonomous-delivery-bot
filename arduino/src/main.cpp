@@ -43,11 +43,11 @@ encoderFrame rightEncoderFrame;
 
 // LED Control
 # define LED_Enable A0
-# define LED_0 A3
+# define LED_0 A1
 # define LED_1 A2
-# define LED_2 A1
+# define LED_2 A3
 # define LED_Disable A4
-void setLed(int id, bool enable);
+void setLed(byte id);
 
 // LED IDs
 # define LED_ERR_ID 1
@@ -165,10 +165,12 @@ encoderFrame updateEncoderFrame(const encoderFrame *lastFrame, int newPos, doubl
 }
 
 void setLed(byte id) {
-  if (id == 0) {
-    digitalWrite(LED_Enable, LOW);
-  } else if (id <= 8) {
-    id -= 1;
+  id -= 1;
+  digitalWrite(LED_Enable, LOW);
+  digitalWrite(LED_0, LOW);
+  digitalWrite(LED_1, LOW);
+  digitalWrite(LED_2, LOW);
+  if (id >= 0 && id < 8) {
     digitalWrite(LED_Enable, LOW);
     digitalWrite(LED_0, id & 0b001);
     digitalWrite(LED_1, id & 0b010);
