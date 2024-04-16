@@ -1,5 +1,7 @@
 #include <Arduino.h>
 
+#include "led.h"
+
 // Pin definitions
 // MOTOR WIRES
 
@@ -41,17 +43,6 @@ encoderFrame leftEncoderFrame;
 # define invertRight true
 encoderFrame rightEncoderFrame;
 
-// LED Control
-# define LED_Enable A0
-# define LED_0 A1
-# define LED_1 A2
-# define LED_2 A3
-# define LED_Disable A4
-void setLed(byte id);
-
-// LED IDs
-# define LED_ERR_ID 1
-
 // global variables to more efficiently control tank drive
 bool leftDir = 0;
 bool rightDir = 0;
@@ -81,7 +72,7 @@ void periodic();
 void parseData();
 void showParsedData();
 void recvWithStartEndMarkers();
-void led_rainbow();
+void LEDRainbow();
 
 const byte numChars = 32;
 char receivedChars[numChars];
@@ -169,21 +160,6 @@ encoderFrame updateEncoderFrame(const encoderFrame *lastFrame, int newPos, doubl
   return newFrame;
 }
 
-void setLed(byte id) {
-  id -= 1;
-  digitalWrite(LED_Enable, LOW);
-  digitalWrite(LED_0, LOW);
-  digitalWrite(LED_1, LOW);
-  digitalWrite(LED_2, LOW);
-  if (id >= 0 && id < 8) {
-    digitalWrite(LED_Enable, LOW);
-    digitalWrite(LED_0, id & 0b001);
-    digitalWrite(LED_1, id & 0b010);
-    digitalWrite(LED_2, id & 0b100);
-    digitalWrite(LED_Enable, HIGH);
-  }
-}
-
 void setup() {
   // Open serial connection.
   Serial.begin(9600);
@@ -205,12 +181,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(encoderRA), indexRightEncoderCount, RISING);
 
   // LED Control
-  pinMode(LED_Enable, OUTPUT);
-  pinMode(LED_0, OUTPUT);
-  pinMode(LED_1, OUTPUT);
-  pinMode(LED_2, OUTPUT);
-  pinMode(LED_Disable, OUTPUT);
-  digitalWrite(LED_Disable, LOW);
+  setupLEDs();
 
   // Set initial motor directions
   setLeftDirection(0);
@@ -227,7 +198,7 @@ void loop() {
   if (enable) {
     periodic();
   } else {
-    led_rainbow();
+    LEDRainbow();
   }
   //showParsedData();
 }
@@ -279,18 +250,6 @@ void periodic() {
   //   pwmL = pwm + 5;
   //   pwmR = pwm;
   // }
-}
-
-byte led_rainbow_state = 0;
-int led_rainbow_prev_state_time = 0;
-#define LED_RAINBOW_PERIOD 500
-void led_rainbow() {
-  int currTime = millis();
-  if (currTime - led_rainbow_prev_state_time > LED_RAINBOW_PERIOD) {
-    setLed(led_rainbow_state+1);
-    led_rainbow_state = (led_rainbow_state+1)%8;
-    led_rainbow_prev_state_time = currTime;
-  }
 }
 
 //============
