@@ -18,9 +18,9 @@
 
 struct encoderFrame
 {
-int pos;
-double vel;
-double acc;
+int pos = 0;
+double vel = 0.0;
+double acc = 0.0;
 };
 
 // Motor B (LEFT) and encoder B (LEFT)

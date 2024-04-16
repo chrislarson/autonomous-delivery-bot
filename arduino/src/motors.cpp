@@ -1,13 +1,6 @@
 #include "motors.h"
 
-bool leftDir = 0;
-encoderFrame leftEncoderFrame;
 volatile int leftEncoderCount = 0;
-
-bool rightDir = 0;
-encoderFrame rightEncoderFrame;
-volatile int rightEncoderCount = 0;
-
 void indexLeftEncoderCount() { 
   if (!readEncoderLB()) {
     leftEncoderCount++;
@@ -16,6 +9,7 @@ void indexLeftEncoderCount() {
   }
 }
 
+volatile int rightEncoderCount = 0;
 void indexRightEncoderCount() { 
   if (readEncoderRB()) {
     rightEncoderCount++;
@@ -46,6 +40,7 @@ void setupMotors() {
     setRightDirection(0);
 }
 
+bool leftDir = 0;
 // 0 = 01, 1 = 10; never set dirL1 and dirL2 to 1 at the same time
 void setLeftDirection(bool direction){
   if (direction != invertLeft) {
@@ -58,6 +53,7 @@ void setLeftDirection(bool direction){
   leftDir = direction;
 }
 
+bool rightDir = 0;
 // 0 = 01, 1 = 10; never set dirL1 and dirL2 to 1 at the same time
 void setRightDirection(bool direction){
   if (direction != invertRight) {
@@ -96,6 +92,8 @@ encoderFrame updateEncoderFrame(const encoderFrame *lastFrame, int newPos, doubl
   return newFrame;
 }
 
+encoderFrame leftEncoderFrame;
+encoderFrame rightEncoderFrame;
 int lastSampleTimeMillis = millis();
 void updateEncoders() {
     int currMillis = millis();
