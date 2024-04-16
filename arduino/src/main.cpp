@@ -76,9 +76,12 @@ void indexRightEncoderCount();
 volatile int_fast32_t leftEncoderCount = 0;
 volatile int_fast32_t rightEncoderCount = 0;
 
+void read_msgs();
+void periodic();
 void parseData();
 void showParsedData();
 void recvWithStartEndMarkers();
+void led_rainbow();
 
 const byte numChars = 32;
 char receivedChars[numChars];
@@ -86,6 +89,8 @@ char tempChars[numChars];  // Temporary array for use while parsing serial com.
 
 boolean parse_error = false;
 boolean newData = false;
+
+boolean enable = false;
 
 //============
 void printBytes(void* ptr, int len) {
@@ -210,9 +215,6 @@ void setup() {
   // Set initial motor directions
   setLeftDirection(0);
   setRightDirection(0);
-
-  // Set LED
-  setLed(1);
 }
 
 //============
@@ -221,6 +223,31 @@ long previousMillis = 0;
 long lastSampleTimeMillis = 0;
 
 void loop() {
+  read_msgs();
+  if (enable) {
+    periodic();
+  } else {
+    led_rainbow();
+  }
+  //showParsedData();
+}
+
+void read_msgs() {
+  // Reading and parsing new data from serial.
+  recvWithStartEndMarkers();
+  if (newData == true) {
+    strcpy(tempChars, receivedChars);
+    parseData();
+    if (parse_error) {
+      setLed(LED_ERR_ID);
+      parse_error = false;
+    }
+    // showParsedData();
+    newData = false;
+  }
+}
+
+void periodic() {
   previousMillis = millis();
 
   // Update encoder velocity
@@ -233,19 +260,6 @@ void loop() {
     //sendEncoderCounts();
     //showEncoderCounts();
     //showEncoderVelocities();
-  }
-
-  // Reading and parsing new data from serial.
-  recvWithStartEndMarkers();
-  if (newData == true) {
-    strcpy(tempChars, receivedChars);
-    parseData();
-    if (parse_error) {
-      setLed(LED_ERR_ID);
-      parse_error = false;
-    }
-    // showParsedData();
-    newData = false;
   }
 
   // // Setting controller values.
@@ -265,8 +279,18 @@ void loop() {
   //   pwmL = pwm + 5;
   //   pwmR = pwm;
   // }
+}
 
-  //showParsedData();
+byte led_rainbow_state = 0;
+int led_rainbow_prev_state_time = 0;
+#define LED_RAINBOW_PERIOD 500
+void led_rainbow() {
+  int currTime = millis();
+  if (currTime - led_rainbow_prev_state_time > LED_RAINBOW_PERIOD) {
+    setLed(led_rainbow_state+1);
+    led_rainbow_state = (led_rainbow_state+1)%8;
+    led_rainbow_prev_state_time = currTime;
+  }
 }
 
 //============
@@ -277,9 +301,8 @@ void recvWithStartEndMarkers() {
   static byte ndx = 0;
   char startMarker = '<';
   char endMarker = '>';
-  char rc;
   while (Serial.available() > 0 && newData == false) {
-    rc = Serial.read();
+    char rc = Serial.read();
     if (recvInProgress == true) {
       if (rc != endMarker) {
         receivedChars[ndx] = rc;
@@ -327,7 +350,7 @@ float parseFloat() {
 #define STATUS_MSG_LEN 3
 void parseSetStatus() {
   byte id = parseByte();
-  Serial.println(id);
+  //Serial.println(id);
   if (!parse_error) {
     setLed(id);
   }
@@ -347,9 +370,16 @@ void parseData() {  // Split the serial com data into its parts.
   char cmd;
   // Get first part, the message type.
   cmd = strtok(tempChars, ",")[0];
-  Serial.println(cmd);
+  //Serial.println(cmd);
   switch (cmd)
   {
+  // Enable Message
+  case 'e':
+  case 'E':
+    enable = true;
+    Serial.println("<e>");
+    setLed(0);
+    break;
   // Status Message
   case 's':
   case 'S':
