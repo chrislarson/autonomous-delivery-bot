@@ -34,6 +34,20 @@ void echoCommand() {
         sendCommand(cmd, &pwmCmd);
         break;
     }
+    case SYS_ID:
+    {
+        SysIDCmd sysIdCmd;
+        cmdReadInto(&sysIdCmd, sizeof(sysIdCmd));
+        sendCommand(cmd, &sysIdCmd);
+        break;
+    }
+    case WAYPOINT:
+    {
+        WayPointCmd wayPointCmd;
+        cmdReadInto(&wayPointCmd, sizeof(wayPointCmd));
+        sendCommand(cmd, &wayPointCmd);
+        break;
+    }
     }
 }
 
@@ -83,6 +97,21 @@ void sendCommand(Command cmd, void* cmdStruct) {
         Serial.write(pwmCmd->cmd);
         Serial.write(pwmCmd->left);
         Serial.write(pwmCmd->right);
+        break;
+    }
+    case SYS_ID:
+    {
+        SysIDCmd* sysIDCmd = (SysIDCmd*) cmdStruct;
+        Serial.write(sysIDCmd->cmd);
+        Serial.write(sysIDCmd->period)
+        break;
+    }
+    case WAYPOINT:
+    {
+        WayPointCmd* wayPointCmd = (WayPointCmd*) cmdStruct;
+        Serial.write(wayPointCmd->cmd);
+        Serial.write(wayPointCmd->x_coord);
+        Serial.write(wayPointCmd->y_coord);
         break;
     }
     }
