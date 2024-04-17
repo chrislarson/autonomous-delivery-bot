@@ -30,7 +30,7 @@ double acc = 0.0;
 # define encoderLA 2  // A-Phase
 # define encoderLB 4  // B-Phase
 # define readEncoderLB() (fastDigitalRead(encoderLB))
-# define invertLeft true
+# define invertLeft false
 
 
 // Motor A (RIGHT) and encoder A (RIGHT)
@@ -40,7 +40,7 @@ double acc = 0.0;
 # define encoderRA 3  // A-Phase
 # define encoderRB 5  // B-Phase
 # define readEncoderRB() (fastDigitalRead(encoderRB))
-# define invertRight true
+# define invertRight false
 
 // Drive train characteristics
 #define LRRatio 1.0 // value <= 1.0; multiply rightVal by LRRatio to get equivalent leftVal
