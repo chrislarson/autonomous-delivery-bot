@@ -20,6 +20,7 @@ _DEPTH_STREAM_NAME = "depth"
 _DETECTIONS_STREAM_NAME = "detections"
 _RGB_STREAM_NAME = "rgb"
 _MOBILENET_PERSON_LABEL = 15
+_TARGET_LOCK_THRESHOLD = 15
 
 
 def add_person_bounding_box(frame, confidence, x1, x2, y1, y2):
@@ -286,7 +287,7 @@ with dai.Device(pipeline) as device:
             missed_match_frames = missed_match_frames + 1
             if missed_match_frames > 4:
                 print(
-                    "Number of target matches during iteration == 0 for 5 consecutive frames. Restarting tracking session."
+                    "Number of target matches != number persons detected for 5 consecutive frames. Restarting tracking session."
                 )
                 is_new_tracking_session = True
                 persons_tracked = []
@@ -294,7 +295,9 @@ with dai.Device(pipeline) as device:
         else:
             missed_match_frames = 0
             if len(persons_tracked) > 0:
-                all_locked = all(p.match_count > 30 for p in persons_tracked)
+                all_locked = all(
+                    p.match_count > _TARGET_LOCK_THRESHOLD for p in persons_tracked
+                )
                 print("Targets locked status: ", all_locked)
                 if all_locked:
                     tracking_in_progress = False

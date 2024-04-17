@@ -21,8 +21,8 @@ class Person:
         # Increment match count.
         self.match_count = self.match_count + 1
 
-        # Compute new moving average. If there are more than 5 coordinates, use last 5. Else use all coordinates.
-        window = min(len(self.coordinates), 5)
+        # Compute new moving average. If there are more than 3 coordinates, use last 3. Else use all coordinates.
+        window = min(len(self.coordinates), 3)
         ma = np.ma.average(self.coordinates[:window], axis=0, keepdims=True)
         self.ma_coord = ma
 
