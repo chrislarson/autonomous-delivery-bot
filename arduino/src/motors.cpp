@@ -66,10 +66,10 @@ void setRightDirection(bool direction){
   rightDir = direction;
 }
 
-void setMotorOutputs(float leftVal, float rightVal) {
+void setMotorOutputs(byte leftVal, byte rightVal) {
   # ifdef LRRatio
-  analogWrite(ENR, (int) 255 * rightVal);
-  analogWrite(ENL, (int) 255 * leftVal * LRRatio);
+  analogWrite(ENR, 255 * rightVal / 100);
+  analogWrite(ENL, 255 * leftVal / 100);
   # endif
   # ifdef RLRatio
   analogWrite(ENR, (int) 255 * rightVal * RLRatio);
@@ -78,7 +78,7 @@ void setMotorOutputs(float leftVal, float rightVal) {
 }
 
 // function to control tank drive
-void tankDrive(float leftVal, float rightVal) {
+void tankDrive(int8_t leftVal, int8_t rightVal) {
   if ((leftVal < 0) != leftDir) setLeftDirection(leftVal < 0);
   if ((rightVal < 0) != rightDir) setRightDirection(rightVal < 0);
   setMotorOutputs(abs(leftVal), abs(rightVal));

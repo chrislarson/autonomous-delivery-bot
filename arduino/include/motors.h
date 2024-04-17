@@ -58,7 +58,7 @@ double acc = 0.0;
 void setupMotors();
 void setLeftDirection(bool direction);
 void setRightDirection(bool direction);
-void tankDrive(float leftVal, float rightVal);
+void tankDrive(int8_t leftVal, int8_t rightVal);
 void updateEncoders();
 encoderFrame* getLeftEncoderFrame();
 encoderFrame* getRightEncoderFrame();
