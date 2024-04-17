@@ -24,7 +24,7 @@ void execPWMCmd() {
     PwmCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
     tankDrive(cmd.left, cmd.right);
-    sendCommand(PWM, &cmd);
+    //sendCommand(PWM, &cmd);
 }
 
 /// Public Functions

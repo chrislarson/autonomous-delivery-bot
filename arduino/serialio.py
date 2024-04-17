@@ -53,8 +53,8 @@ if __name__ == "__main__":
     print(msg)
 
     # Read response
-    response = recieveCommand(ser)
-    print(response)
+    # response = recieveCommand(ser)
+    # print(response)
 
     i = 0
     while True:
