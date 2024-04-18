@@ -1,11 +1,8 @@
 #include "serial.h"
 
-#define command_buffer_size 8
 #define receive_buffer_size sizeof(PwmCmd)+1
 byte receive_buffer[receive_buffer_size];
 byte receive_buffer_len;
-void* cmd_buffer[command_buffer_size];
-byte cmd_buffer_len;
 
 /// Private Functions
 
