@@ -7,6 +7,9 @@ enum Command {
     ENABLE = 1,
     STATUS = 2,
     PWM = 3,
+    SYS_ID = 4,
+    SYS_RESPONSE = 5,
+    WAYPOINT = 6
 };
 
 struct __attribute__( ( __packed__ ) ) EnableCmd {
@@ -22,6 +25,17 @@ struct __attribute__( ( __packed__ ) ) PwmCmd {
     unsigned char cmd;
     signed char left;
     signed char right;
+};
+
+struct __attribute__( ( __packed__ ) ) SysIDCmd {
+    unsigned char cmd;
+    signed short period;
+};
+
+struct __attribute__( ( __packed__ ) ) WayPointCmd {
+    unsigned char cmd;
+    float x_coord;
+    float y_coord;
 };
 
 // Functions

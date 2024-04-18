@@ -8,12 +8,17 @@ class Command(Enum):
     ENABLE = 1
     STATUS = 2
     PWM = 3
+    SYS_ID = 4
+    SYS_RESPONSE = 5
+    WAYPOINT = 6
 
 
 cmd_fmts = {
     Command.ENABLE: "B",
     Command.STATUS: "BB",
     Command.PWM: "Bbb",
+    Command.SYS_ID: "Bh",
+    Command.WAYPOINT: "Bff"
 }
 
 
