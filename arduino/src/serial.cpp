@@ -38,6 +38,8 @@ void echoCommand() {
         sendCommand(cmd, &sysIdCmd);
         break;
     }
+    case SYS_RESPONSE:
+        break;
     case WAYPOINT:
     {
         WayPointCmd wayPointCmd;
@@ -103,6 +105,8 @@ void sendCommand(Command cmd, void* cmdStruct) {
         Serial.write(sysIDCmd->period);
         break;
     }
+    case SYS_RESPONSE:
+        break;
     case WAYPOINT:
     {
         WayPointCmd* wayPointCmd = (WayPointCmd*) cmdStruct;
