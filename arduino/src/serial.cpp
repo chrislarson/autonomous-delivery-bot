@@ -100,15 +100,15 @@ void sendCommand(Command cmd, void* cmdStruct) {
     {
         SysIDCmd* sysIDCmd = (SysIDCmd*) cmdStruct;
         Serial.write(sysIDCmd->cmd);
-        Serial.write(sysIDCmd->period)
+        Serial.write(sysIDCmd->period);
         break;
     }
     case WAYPOINT:
     {
         WayPointCmd* wayPointCmd = (WayPointCmd*) cmdStruct;
         Serial.write(wayPointCmd->cmd);
-        Serial.write(wayPointCmd->x_coord);
-        Serial.write(wayPointCmd->y_coord);
+        Serial.write(&wayPointCmd->x_coord.bt[0], 4);
+        Serial.write(&wayPointCmd->y_coord.bt[0], 4);
         break;
     }
     }

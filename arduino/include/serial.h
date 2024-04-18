@@ -12,6 +12,13 @@ enum Command {
     WAYPOINT = 6
 };
 
+typedef union
+{
+    float fp;
+    byte bt[4];
+} binaryFloat;
+
+
 struct __attribute__( ( __packed__ ) ) EnableCmd {
     unsigned char cmd;
 };
@@ -34,8 +41,8 @@ struct __attribute__( ( __packed__ ) ) SysIDCmd {
 
 struct __attribute__( ( __packed__ ) ) WayPointCmd {
     unsigned char cmd;
-    float x_coord;
-    float y_coord;
+    binaryFloat x_coord;
+    binaryFloat y_coord;
 };
 
 // Functions
