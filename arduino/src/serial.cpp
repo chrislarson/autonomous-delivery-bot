@@ -1,6 +1,6 @@
 #include "serial.h"
 
-#define receive_buffer_size sizeof(PwmCmd)+1
+#define receive_buffer_size sizeof(WayPointCmd)+1
 byte receive_buffer[receive_buffer_size];
 byte receive_buffer_len;
 
@@ -39,7 +39,9 @@ void echoCommand() {
         break;
     }
     case SYS_RESPONSE:
-        break;
+        SysResponseCmd sysResponseCmd;
+        cmdReadInto(&sysResponseCmd, sizeof(sysResponseCmd));
+        sendCommand(cmd, &sysResponseCmd);
     case WAYPOINT:
     {
         WayPointCmd wayPointCmd;
@@ -73,7 +75,6 @@ bool updateSerial() {
     return false;
 }
 
-#define maxFmtLen 4
 void sendCommand(Command cmd, void* cmdStruct) {
     switch (cmd)
     {
@@ -106,7 +107,12 @@ void sendCommand(Command cmd, void* cmdStruct) {
         break;
     }
     case SYS_RESPONSE:
-        break;
+        SysResponseCmd* sysResponseCmd = (SysResponseCmd*) cmdStruct;
+        Serial.write(sysResponseCmd->cmd);
+        Serial.write(sysResponseCmd->left_pwm);
+        Serial.write(sysResponseCmd->right_pwm);
+        Serial.write(sysResponseCmd->left_enc);
+        Serial.write(sysResponseCmd->right_enc);
     case WAYPOINT:
     {
         WayPointCmd* wayPointCmd = (WayPointCmd*) cmdStruct;

@@ -27,7 +27,7 @@ void execPWMCmd() {
     //sendCommand(PWM, &cmd);
 }
 
-void execSYS_IDCmd() {
+void execSysIDCmd() {
     SysIDCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
     // use period to request sys id
@@ -58,7 +58,7 @@ void execCmd(Command cmd){
         if(isEnabled()) execPWMCmd();
         break;
     case SYS_ID:
-        if(isEnabled()) execSYS_IDCmd();
+        if(isEnabled()) execSysIDCmd();
         break;
     case WAYPOINT:
         if(isEnabled()) execWayPointCmd();

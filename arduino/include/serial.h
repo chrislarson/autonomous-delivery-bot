@@ -39,6 +39,15 @@ struct __attribute__( ( __packed__ ) ) SysIDCmd {
     signed short period;
 };
 
+struct __attribute__( ( __packed__ ) ) SysResponseCmd {
+    unsigned char cmd;
+    uint32_t time_millis;
+    signed char left_pwm;
+    signed char right_pwm;
+    uint32_t left_enc;
+    uint32_t right_enc;
+};
+
 struct __attribute__( ( __packed__ ) ) WayPointCmd {
     unsigned char cmd;
     binaryFloat x_coord;
