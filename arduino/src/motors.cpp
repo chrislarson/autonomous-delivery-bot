@@ -1,5 +1,7 @@
 #include "motors.h"
 
+#include "serial.h"
+
 volatile int leftEncoderCount = 0;
 void indexLeftEncoderCount() { 
   if (!readEncoderLB()) {
@@ -118,4 +120,28 @@ encoderFrame* getLeftEncoderFrame() {
 
 encoderFrame* getRightEncoderFrame() {
     return &rightEncoderFrame;
+}
+
+int16_t sys_id_period = -1;
+void setSysIDPeriod(int16_t period) {
+  sys_id_period = period;
+}
+
+unsigned long sys_id_prev_time = 0;
+void sendSysID() {
+  if (sys_id_period >= 0) {
+    unsigned long currTime = millis();
+    signed long deltaTime = currTime - sys_id_prev_time;
+    if (deltaTime >= sys_id_period) {
+      sys_id_prev_time = currTime;
+      SysResponseCmd sysResponseCmd;
+      sysResponseCmd.data.cmd = SYS_RESPONSE;
+      sysResponseCmd.data.time_millis = currTime;
+      sysResponseCmd.data.left_pwm = leftPWM;
+      sysResponseCmd.data.right_pwm = rightPWM;
+      sysResponseCmd.data.left_enc = leftEncoderCount;
+      sysResponseCmd.data.right_enc = rightEncoderCount;
+      sendCommand(SYS_RESPONSE, &sysResponseCmd);
+    }
+  }
 }

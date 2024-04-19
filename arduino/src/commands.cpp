@@ -31,6 +31,9 @@ void execPWMCmd() {
 void execSysIDCmd() {
     SysIDCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
+    setSysIDPeriod(cmd.data.period);
+    // sendCommand(SYS_ID, &cmd);
+    sendSysID();
     // use period to request sys id
     //  every X ms (stored in cmd.period)
     

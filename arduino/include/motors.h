@@ -62,5 +62,7 @@ void tankDrive(int8_t leftVal, int8_t rightVal);
 void updateEncoders();
 encoderFrame* getLeftEncoderFrame();
 encoderFrame* getRightEncoderFrame();
+void setSysIDPeriod(int period);
+void sendSysID();
 
 #endif

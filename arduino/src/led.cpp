@@ -29,8 +29,8 @@ int led_rainbow_prev_state_time = 0;
 void LEDRainbow() {
   int currTime = millis();
   if (currTime - led_rainbow_prev_state_time > LED_RAINBOW_PERIOD) {
+    led_rainbow_prev_state_time = currTime;
     setLed(led_rainbow_state+1);
     led_rainbow_state = (led_rainbow_state+1)%8;
-    led_rainbow_prev_state_time = currTime;
   }
 }

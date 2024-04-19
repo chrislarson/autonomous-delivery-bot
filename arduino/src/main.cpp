@@ -39,6 +39,7 @@ void loop() {
 
 void periodic() {
   updateEncoders();
+  sendSysID();
 
   // // Setting controller values.
   // if (theta > 900)  // Dummy value to signal program end.
