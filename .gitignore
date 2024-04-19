@@ -54,5 +54,5 @@ CATKIN_IGNORE
 pcb-project-backups/
 pcb-demo/
 kicad/pcb-project/#auto_saved_files#
-
+.vscode/c_cpp_properties.json
 .venv
