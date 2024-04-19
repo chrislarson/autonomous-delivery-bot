@@ -2,21 +2,45 @@
 
 #include "serial.h"
 
-volatile int leftEncoderCount = 0;
-void indexLeftEncoderCount() { 
-  if (!readEncoderLB()) {
-    leftEncoderCount++;
-  } else {
+volatile int32_t leftEncoderCount = 0;
+void indexLeftEncoderCount() {
+  byte encoder_phase = (bool) readEncoderLB();
+  encoder_phase |= (bool) readEncoderLA() << 1;
+  switch (encoder_phase)
+  {
+  case 0b00:
     leftEncoderCount--;
+    break;
+  case 0b01:
+    leftEncoderCount++;
+    break;
+  case 0b10:
+    leftEncoderCount++;
+    break;
+  case 0b11:
+    leftEncoderCount--;
+    break;
   }
 }
 
-volatile int rightEncoderCount = 0;
+volatile int32_t rightEncoderCount = 0;
 void indexRightEncoderCount() { 
-  if (readEncoderRB()) {
+  byte encoder_phase = (bool) readEncoderRB();
+  encoder_phase |= (bool) readEncoderRA() << 1;
+  switch (encoder_phase)
+  {
+  case 0b00:
     rightEncoderCount++;
-  } else {
+    break;
+  case 0b01:
     rightEncoderCount--;
+    break;
+  case 0b10:
+    rightEncoderCount--;
+    break;
+  case 0b11:
+    rightEncoderCount++;
+    break;
   }
 }
 
@@ -27,7 +51,7 @@ void setupMotors() {
     pinMode(dirL2, OUTPUT);
     pinMode(encoderLA, INPUT);
     pinMode(encoderLB, INPUT);
-    attachInterrupt(digitalPinToInterrupt(encoderLA), indexLeftEncoderCount, RISING);
+    attachInterrupt(digitalPinToInterrupt(encoderLA), indexLeftEncoderCount, CHANGE);
 
     // Motor B (RIGHT) pin setup.
     pinMode(ENR, OUTPUT);
@@ -35,7 +59,7 @@ void setupMotors() {
     pinMode(dirR2, OUTPUT);
     pinMode(encoderRA, INPUT);
     pinMode(encoderRB, INPUT);
-    attachInterrupt(digitalPinToInterrupt(encoderRA), indexRightEncoderCount, RISING);
+    attachInterrupt(digitalPinToInterrupt(encoderRA), indexRightEncoderCount, CHANGE);
 
     // Set initial motor directions
     setLeftDirection(0);
