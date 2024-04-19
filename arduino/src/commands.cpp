@@ -8,6 +8,7 @@
 bool enabled = false;
 void execEnableCmd() {
     EnableCmd cmd;
+    cmd.data.cmd = ENABLE;
     cmdReadInto(&cmd, sizeof(cmd));
     sendCommand(ENABLE, &cmd);
     setLed(0);
@@ -17,13 +18,13 @@ void execEnableCmd() {
 void execStatusCmd() {
     StatusCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
-    setLed(cmd.status);
+    setLed(cmd.data.status);
 }
 
 void execPWMCmd() {
     PwmCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
-    tankDrive(cmd.left, cmd.right);
+    tankDrive(cmd.data.left, cmd.data.right);
     //sendCommand(PWM, &cmd);
 }
 
@@ -59,6 +60,8 @@ void execCmd(Command cmd){
         break;
     case SYS_ID:
         if(isEnabled()) execSysIDCmd();
+        break;
+    case SYS_RESPONSE:
         break;
     case WAYPOINT:
         if(isEnabled()) execWayPointCmd();

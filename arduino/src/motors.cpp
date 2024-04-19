@@ -78,10 +78,14 @@ void setMotorOutputs(byte leftVal, byte rightVal) {
 }
 
 // function to control tank drive
+int32_t leftPWM = 0;
+int32_t rightPWM = 0;
 void tankDrive(int8_t leftVal, int8_t rightVal) {
   if ((leftVal < 0) != leftDir) setLeftDirection(leftVal < 0);
   if ((rightVal < 0) != rightDir) setRightDirection(rightVal < 0);
-  setMotorOutputs(abs(leftVal), abs(rightVal));
+  leftPWM = (255 * leftVal) / 100;
+  rightPWM = (255 * rightVal) / 100;
+  setMotorOutputs(abs(leftPWM), abs(rightPWM));
 }
 
 encoderFrame updateEncoderFrame(const encoderFrame *lastFrame, int newPos, double timeSinceLast) {

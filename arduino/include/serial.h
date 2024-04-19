@@ -12,46 +12,58 @@ enum Command {
     WAYPOINT = 6
 };
 
-typedef union
+union EnableCmd {
+    struct __attribute__( ( __packed__ ) ) {
+        unsigned char cmd;
+    } data;
+    byte raw[1];
+};
+
+union StatusCmd {
+    struct __attribute__( ( __packed__ ) ) {
+        unsigned char cmd;
+        unsigned char status;
+    } data;
+    byte raw[2];
+};
+
+union PwmCmd {
+    struct __attribute__( ( __packed__ ) ) {
+        unsigned char cmd;
+        signed char left;
+        signed char right;
+    } data;
+    byte raw[3];
+};
+
+union SysIDCmd {
+    struct __attribute__( ( __packed__ ) ) {
+        unsigned char cmd;
+        int32_t period;
+    } data;
+    byte raw[5];  
+};
+
+union SysResponseCmd {
+    struct __attribute__( ( __packed__ ) ) {
+        unsigned char cmd;
+        uint32_t time_millis;
+        int32_t left_pwm;
+        int32_t right_pwm;
+        int32_t left_enc;
+        int32_t right_enc;
+    } data;
+    byte raw[21];
+};
+
+union WayPointCmd
 {
-    float fp;
-    byte bt[4];
-} binaryFloat;
-
-
-struct __attribute__( ( __packed__ ) ) EnableCmd {
-    unsigned char cmd;
-};
-
-struct __attribute__( ( __packed__ ) ) StatusCmd {
-    unsigned char cmd;
-    unsigned char status;
-};
-
-struct __attribute__( ( __packed__ ) ) PwmCmd {
-    unsigned char cmd;
-    signed char left;
-    signed char right;
-};
-
-struct __attribute__( ( __packed__ ) ) SysIDCmd {
-    unsigned char cmd;
-    signed short period;
-};
-
-struct __attribute__( ( __packed__ ) ) SysResponseCmd {
-    unsigned char cmd;
-    uint32_t time_millis;
-    signed char left_pwm;
-    signed char right_pwm;
-    uint32_t left_enc;
-    uint32_t right_enc;
-};
-
-struct __attribute__( ( __packed__ ) ) WayPointCmd {
-    unsigned char cmd;
-    binaryFloat x_coord;
-    binaryFloat y_coord;
+    struct __attribute__( ( __packed__ ) ) {
+        unsigned char cmd;
+        float x_coord;
+        float y_coord;
+    } data;
+    byte raw[9];
 };
 
 // Functions

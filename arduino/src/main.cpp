@@ -25,6 +25,8 @@ void loop() {
   while (Serial.available()) {
     if (updateSerial()) {
       execCmd(nextCmdType());
+    } else {
+      break;
     }
   }
 

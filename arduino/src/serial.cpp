@@ -81,44 +81,37 @@ void sendCommand(Command cmd, void* cmdStruct) {
     case ENABLE:
     {
         EnableCmd* enableCmd = (EnableCmd*) cmdStruct;
-        Serial.write(enableCmd->cmd);
+        Serial.write(&enableCmd->raw[0], sizeof(enableCmd->raw));
         break;
     }
     case STATUS:
     {
         StatusCmd* statusCmd = (StatusCmd*) cmdStruct;
-        Serial.write(statusCmd->cmd);
-        Serial.write(statusCmd->status);
+        Serial.write(&statusCmd->raw[0], sizeof(statusCmd->raw));
         break;
     }
     case PWM:
     {
         PwmCmd* pwmCmd = (PwmCmd*) cmdStruct;
-        Serial.write(pwmCmd->cmd);
-        Serial.write(pwmCmd->left);
-        Serial.write(pwmCmd->right);
+        Serial.write(&pwmCmd->raw[0], sizeof(pwmCmd->raw));
         break;
     }
     case SYS_ID:
     {
         SysIDCmd* sysIDCmd = (SysIDCmd*) cmdStruct;
-        Serial.write(sysIDCmd->cmd);
-        Serial.write(sysIDCmd->period);
+        Serial.write(&sysIDCmd->raw[0], sizeof(sysIDCmd->raw));
         break;
     }
     case SYS_RESPONSE:
+    {
         SysResponseCmd* sysResponseCmd = (SysResponseCmd*) cmdStruct;
-        Serial.write(sysResponseCmd->cmd);
-        Serial.write(sysResponseCmd->left_pwm);
-        Serial.write(sysResponseCmd->right_pwm);
-        Serial.write(sysResponseCmd->left_enc);
-        Serial.write(sysResponseCmd->right_enc);
+        Serial.write(&sysResponseCmd->raw[0], sizeof(sysResponseCmd->raw));
+        break;
+    }
     case WAYPOINT:
     {
         WayPointCmd* wayPointCmd = (WayPointCmd*) cmdStruct;
-        Serial.write(wayPointCmd->cmd);
-        Serial.write(&wayPointCmd->x_coord.bt[0], 4);
-        Serial.write(&wayPointCmd->y_coord.bt[0], 4);
+        Serial.write(&wayPointCmd->raw[0], sizeof(wayPointCmd->raw));
         break;
     }
     }

@@ -17,13 +17,14 @@ cmd_fmts = {
     Command.ENABLE: "B",
     Command.STATUS: "BB",
     Command.PWM: "Bbb",
-    Command.SYS_ID: "Bh",
-    Command.WAYPOINT: "Bff"
+    Command.SYS_ID: "Bi",
+    Command.WAYPOINT: "Bff",
+    Command.SYS_RESPONSE: "BIiiii",
 }
 
 
 def genCmd(cmd: Command, *args):
-    return struct.pack(cmd_fmts[cmd], cmd.value, *args) + b'\n'
+    return struct.pack("<" + cmd_fmts[cmd], cmd.value, *args) + b'\n'
 
 
 def sendCommand(ser: serial.Serial, cmd: Command, *args):
@@ -33,9 +34,11 @@ def sendCommand(ser: serial.Serial, cmd: Command, *args):
 
 
 def recieveCommand(ser: serial.Serial):
-    msg = ser.readline().rstrip()
+    msg = ser.readline()
     if len(msg) > 0:
-        return struct.unpack(cmd_fmts[Command(msg[0])], msg)
+        print(len(msg), msg)
+        msg = msg.rstrip()
+        return struct.unpack("<" + cmd_fmts[Command(msg[0])], msg)
     else:
         return None
 
@@ -54,18 +57,21 @@ if __name__ == "__main__":
         print(response)
 
     # Send new instruction
-    msg = sendCommand(ser, Command.PWM, -100, -100)
+    msg = sendCommand(ser, Command.SYS_ID, 1000)
     print(msg)
 
-    # Read response
-    # response = recieveCommand(ser)
-    # print(response)
+    msg = sendCommand(ser, Command.PWM, 0, 0)
+    print(msg)
 
-    i = 0
+    # i = 0
     while True:
-        # Send new instruction
-        msg = sendCommand(ser, Command.STATUS, i+1)
-        print(msg)
+        # Read response
+        response = recieveCommand(ser)
+        print(response)
 
-        time.sleep(0.2)
-        i = (i+1) % 8
+        # # Send new instruction
+        # msg = sendCommand(ser, Command.STATUS, i+1)
+        # print(msg)
+
+        time.sleep(0.1)
+        # i = (i+1) % 8
