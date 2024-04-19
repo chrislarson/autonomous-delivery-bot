@@ -5,9 +5,11 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 import time
+import os
 
 
 class StepTrajectory:
+    _test_dir: str
     _duration_sec: int
     _dt_sec: int
     _pwm_max: int
@@ -18,6 +20,7 @@ class StepTrajectory:
 
     def __init__(
         self,
+        test_dir: str,
         duration_sec: int,
         dt_sec: float,
         pwm_max: int = 100,
@@ -25,6 +28,7 @@ class StepTrajectory:
         include_turn_dynamics=True,
         exclude_deadband: bool = True,
     ):
+        self._test_dir = test_dir
         self._duration_sec = duration_sec
         self._dt_sec = dt_sec
         self._pwm_max = pwm_max
@@ -36,7 +40,7 @@ class StepTrajectory:
     # Generates the step trajectory.
     # Note: Initial implementation sets pwm_l and pwm_r to equivalent values,
     # which does not include turning dynamics.
-    def generate_trajectory(self) -> np.ndarray:
+    def generate_trajectory(self, test_dir: str) -> np.ndarray:
         pwm_signs = [-1, 1]
         pwm_values = (
             np.arange(self._pwm_deadband, self._pwm_max)
@@ -70,10 +74,12 @@ class StepTrajectory:
 
         traj = np.stack((times, pwm_left, pwm_right), axis=-1)
         self._trajectory = traj
+        csv_path = os.path.join(test_dir, "step_traj.csv")
+        np.savetxt(csv_path, traj, delimiter=",", fmt="%10.2f")
         return traj
 
     # Plots the step trajectory.
-    def plot_trajectory(self):
+    def plot_trajectory(self, test_dir: str, save_fig=True):
         if self._trajectory is None:
             self.generate_trajectory()
         fig, ax = plt.subplots()
@@ -104,33 +110,46 @@ class StepTrajectory:
             label="- Deadband",
         )
         ax.set_ylim(ymin=-self._pwm_max, ymax=self._pwm_max)
-        plt.show()
+        if save_fig:
+            fig_path = os.path.join(test_dir, "step_trajectory.png")
+            plt.savefig(fig_path)
+        else:
+            plt.show()
 
 
 if __name__ == "__main__":
 
+    # 0. Create a directory to store data.
+    test_id = "sysid_" + str(int(time.monotonic()))
+    test_dir = os.path.join("data", test_id)
+    os.mkdir(test_dir)
+
     # 1. Generate step trajectory.
     TEST_DURATION_SEC = 20
     DT_SEC = 0.02
-    step_traj = StepTrajectory(TEST_DURATION_SEC, DT_SEC, 100, 20, True, True)
-    traj = step_traj.generate_trajectory()
-    step_traj.plot_trajectory()
+    step_traj = StepTrajectory(test_dir, TEST_DURATION_SEC, DT_SEC, 100, 20, True, True)
+    traj = step_traj.generate_trajectory(test_dir)
+    step_traj.plot_trajectory(test_dir, True)
 
-    print(traj[-1])
-
-    # 2. Connect to serial and initiate loop.
+    # 2. Connect to serial.
     # ser = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
     # ser.reset_input_buffer()
 
+    # 3. Iterate through trajectory
+    # -> Reads in received lines on every iteration.
+    # -> Sends new PWM commands when command has changed (new PMW != prev PWM)
     sys_id_in_progress = True
 
     cmd_idx = 0
     next_cmd = traj[cmd_idx, :]
     start_time = time.monotonic_ns()
-
     last_sent_cmd = None
 
     while sys_id_in_progress:
+
+        # 1. Read in serial & write to output file.
+        # TODO
+
         cmd_time = next_cmd[0]
         dt_ns = time.monotonic_ns() - start_time
         if dt_ns >= cmd_time * 1_000_000_000:
@@ -139,6 +158,7 @@ if __name__ == "__main__":
                 or last_sent_cmd[1] != next_cmd[1]
                 or last_sent_cmd[2] != next_cmd[2]
             ):
+                # 2. Send via serial.
                 print(next_cmd)  # TODO: Send via serial here.
                 last_sent_cmd = next_cmd
 
@@ -148,8 +168,4 @@ if __name__ == "__main__":
             else:
                 next_cmd = traj[cmd_idx, :]
 
-        # read
-
-    # 3. For each iteration, read in Serial and send result to CSV.
-
-    # 4. For each iteration, if DT has passed, send new PWM command.
+    # 3. Final read from serial and close out program.
