@@ -36,7 +36,7 @@ def sendCommand(ser: serial.Serial, cmd: Command, *args):
 def receiveCommand(ser: serial.Serial):
     msg = ser.readline()
     if len(msg) > 0:
-        print(len(msg), msg)
+        # print(len(msg), msg)
         msg = msg.rstrip()
         try:
             return struct.unpack("<" + cmd_fmts[Command(msg[0])], msg)
@@ -50,10 +50,7 @@ def receiveCommand(ser: serial.Serial):
         return None
 
 
-if __name__ == "__main__":
-    ser = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
-    ser.reset_input_buffer()
-
+def enableArduino(ser: serial.Serial):
     response = None
     while (response is None):
         msg = sendCommand(ser, Command.ENABLE)
@@ -63,12 +60,19 @@ if __name__ == "__main__":
         response = receiveCommand(ser)
         print(response)
 
+
+if __name__ == "__main__":
+    ser = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
+    ser.reset_input_buffer()
+
+    enableArduino(ser)
+
     # Send new instruction
-    msg = sendCommand(ser, Command.SYS_ID, 1000)
+    msg = sendCommand(ser, Command.SYS_ID, 100)
     print(msg)
 
-    # msg = sendCommand(ser, Command.PWM, 0, 0)
-    # print(msg)
+    msg = sendCommand(ser, Command.PWM, 10, 10)
+    print(msg)
 
     # i = 0
     while True:
