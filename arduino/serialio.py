@@ -33,12 +33,19 @@ def sendCommand(ser: serial.Serial, cmd: Command, *args):
     return msg
 
 
-def recieveCommand(ser: serial.Serial):
+def receiveCommand(ser: serial.Serial):
     msg = ser.readline()
     if len(msg) > 0:
         print(len(msg), msg)
         msg = msg.rstrip()
-        return struct.unpack("<" + cmd_fmts[Command(msg[0])], msg)
+        try:
+            return struct.unpack("<" + cmd_fmts[Command(msg[0])], msg)
+        except struct.error as e:
+            print(e)
+            return None
+        except ValueError as e:
+            print(e)
+            return None
     else:
         return None
 
@@ -53,20 +60,20 @@ if __name__ == "__main__":
         print(msg)
 
         # Read response
-        response = recieveCommand(ser)
+        response = receiveCommand(ser)
         print(response)
 
     # Send new instruction
     msg = sendCommand(ser, Command.SYS_ID, 1000)
     print(msg)
 
-    msg = sendCommand(ser, Command.PWM, 0, 0)
-    print(msg)
+    # msg = sendCommand(ser, Command.PWM, 0, 0)
+    # print(msg)
 
     # i = 0
     while True:
         # Read response
-        response = recieveCommand(ser)
+        response = receiveCommand(ser)
         print(response)
 
         # # Send new instruction
