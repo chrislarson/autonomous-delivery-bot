@@ -95,7 +95,7 @@ bool updateSerial() {
         receive_buffer_len++;
         if (receive_buffer[receive_buffer_len-1] == '\n') {
             //echoCommand();
-            int cmd_len = static_cast<Command>(receive_buffer[0]);
+            int cmd_len = cmdSize(static_cast<Command>(receive_buffer[0]));
             return cmd_len == receive_buffer_len;
         } else if (receive_buffer_len >= receive_buffer_size) {
             receive_buffer_len = 0;
