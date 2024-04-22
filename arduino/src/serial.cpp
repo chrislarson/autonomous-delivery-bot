@@ -67,13 +67,36 @@ void setupSerial() {
     receive_buffer_len = 0;
 }
 
+int cmdSize(Command cmd) {
+    switch (cmd)
+    {
+    case ENABLE:
+        return sizeof(EnableCmd);
+    case STATUS:
+        return sizeof(StatusCmd);
+    case PWM:
+        return sizeof(PwmCmd);
+    case SYS_ID:
+        return sizeof(SysIDCmd);
+    case SYS_RESPONSE:
+        return sizeof(SysResponseCmd);
+    case WAYPOINT:
+        return sizeof(WayPointCmd);
+    case DISABLE:
+        return sizeof(DisableCmd);
+    default:
+        return -1;
+    }
+}
+
 bool updateSerial() {
     while(Serial.available()) {
         receive_buffer[receive_buffer_len] = Serial.read();
         receive_buffer_len++;
         if (receive_buffer[receive_buffer_len-1] == '\n') {
             //echoCommand();
-            return true;
+            int cmd_len = static_cast<Command>(receive_buffer[0]);
+            return cmd_len == receive_buffer_len;
         } else if (receive_buffer_len >= receive_buffer_size) {
             receive_buffer_len = 0;
             return false;
