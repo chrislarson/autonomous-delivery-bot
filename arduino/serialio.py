@@ -54,7 +54,7 @@ def receiveCommand(ser: serial.Serial):
 
 def enableArduino(ser: serial.Serial):
     response = None
-    while (response is None):
+    while (response is None or response[0] != 1):
         msg = sendCommand(ser, Command.ENABLE)
         print(msg)
 
@@ -76,15 +76,18 @@ if __name__ == "__main__":
     msg = sendCommand(ser, Command.PWM, 10, 10)
     print(msg)
 
-    # i = 0
-    while True:
-        # Read response
-        response = receiveCommand(ser)
-        print(response)
+    msg = sendCommand(ser, Command.DISABLE)
+    print(msg)
 
-        # # Send new instruction
-        # msg = sendCommand(ser, Command.STATUS, i+1)
-        # print(msg)
+    # # i = 0
+    # while True:
+    #     # Read response
+    #     response = receiveCommand(ser)
+    #     print(response)
 
-        time.sleep(0.1)
-        # i = (i+1) % 8
+    #     # # Send new instruction
+    #     # msg = sendCommand(ser, Command.STATUS, i+1)
+    #     # print(msg)
+
+    #     time.sleep(0.1)
+    #     # i = (i+1) % 8
