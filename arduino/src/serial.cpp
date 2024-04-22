@@ -56,7 +56,7 @@ void echoCommand() {
 
 void setupSerial() {
     // Open serial connection.
-    Serial.begin(9600);
+    Serial.begin(115200);
     receive_buffer_len = 0;
 }
 
