@@ -49,6 +49,13 @@ void echoCommand() {
         sendCommand(cmd, &wayPointCmd);
         break;
     }
+    case DISABLE:
+    {
+        DisableCmd disableCmd;
+        cmdReadInto(&disableCmd, sizeof(disableCmd));
+        sendCommand(cmd, &disableCmd);
+        break;
+    }
     }
 }
 
@@ -56,7 +63,7 @@ void echoCommand() {
 
 void setupSerial() {
     // Open serial connection.
-    Serial.begin(9600);
+    Serial.begin(115200);
     receive_buffer_len = 0;
 }
 
@@ -112,6 +119,12 @@ void sendCommand(Command cmd, void* cmdStruct) {
     {
         WayPointCmd* wayPointCmd = (WayPointCmd*) cmdStruct;
         Serial.write(&wayPointCmd->raw[0], sizeof(wayPointCmd->raw));
+        break;
+    }
+    case DISABLE:
+    {
+        DisableCmd* disableCmd = (disableCmd*) cmdStruct;
+        Serial.write(&disableCmd->raw[0], sizeof(disableCmd->raw));
         break;
     }
     }

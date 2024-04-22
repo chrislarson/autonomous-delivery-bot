@@ -11,6 +11,7 @@ class Command(Enum):
     SYS_ID = 4
     SYS_RESPONSE = 5
     WAYPOINT = 6
+    DISABLE = 7
 
 
 cmd_fmts = {
@@ -20,6 +21,7 @@ cmd_fmts = {
     Command.SYS_ID: "Bi",
     Command.WAYPOINT: "Bff",
     Command.SYS_RESPONSE: "BIiiii",
+    Command.DISABLE: "B"
 }
 
 
@@ -62,7 +64,7 @@ def enableArduino(ser: serial.Serial):
 
 
 if __name__ == "__main__":
-    ser = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
+    ser = serial.Serial("/dev/ttyACM0", 115200, timeout=1)
     ser.reset_input_buffer()
 
     enableArduino(ser)

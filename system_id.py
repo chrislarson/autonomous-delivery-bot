@@ -144,7 +144,7 @@ if __name__ == "__main__":
 
     # 2. Connect to serial.
     if _SERIAL_ENABLED:
-        ser = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
+        ser = serial.Serial("/dev/ttyACM0", 115200, timeout=1)
         ser.reset_input_buffer()
         enableArduino(ser)
 
