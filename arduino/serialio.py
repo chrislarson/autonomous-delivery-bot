@@ -36,19 +36,29 @@ def sendCommand(ser: serial.Serial, cmd: Command, *args):
 
 
 def receiveCommand(ser: serial.Serial):
-    msg = ser.readline()
-    if len(msg) > 0:
-        # print(len(msg), msg)
-        msg = msg.rstrip()
-        try:
-            return struct.unpack("<" + cmd_fmts[Command(msg[0])], msg)
-        except struct.error as e:
-            print(e)
-            return None
-        except ValueError as e:
-            print(e)
-            return None
-    else:
+    cmd = ser.read(size=1)
+    if len(cmd) != 1 or cmd == 0:
+        print("CMD ERR:", len(cmd), ",", cmd)
+        return None
+    msg_len = struct.calcsize("<" + cmd_fmts[Command(cmd[0])])
+    msg = ser.read(msg_len)
+    if len(msg) != msg_len or msg[-1] != ord('\n'):
+        print("MSG ERR:", len(msg), ",", msg)
+        print(msg_len, '!=', len(msg))
+        print(msg[-1], '!=', ord('\n'))
+        return None
+
+    # print(len(msg), msg)
+    # msg = msg.rstrip()
+    try:
+        return struct.unpack("<" + cmd_fmts[Command(cmd[0])], cmd + msg.rstrip())
+    except struct.error as e:
+        print(e)
+        print(len(msg), ",", msg)
+        return None
+    except ValueError as e:
+        print(e)
+        print(len(msg), ",", msg)
         return None
 
 
@@ -70,24 +80,28 @@ if __name__ == "__main__":
     enableArduino(ser)
 
     # Send new instruction
-    msg = sendCommand(ser, Command.SYS_ID, 100)
+    msg = sendCommand(ser, Command.SYS_ID, 10)
     print(msg)
 
     msg = sendCommand(ser, Command.PWM, 10, 10)
     print(msg)
 
-    msg = sendCommand(ser, Command.DISABLE)
-    print(msg)
+    # msg = sendCommand(ser, Command.DISABLE)
+    # print(msg)
 
     # # i = 0
-    # while True:
-    #     # Read response
-    #     response = receiveCommand(ser)
-    #     print(response)
+    try:
+        while True:
+            # Read response
+            response = receiveCommand(ser)
+            print(response)
+    except KeyboardInterrupt:
+        msg = sendCommand(ser, Command.DISABLE)
+        print(msg)
 
     #     # # Send new instruction
     #     # msg = sendCommand(ser, Command.STATUS, i+1)
     #     # print(msg)
 
-    #     time.sleep(0.1)
+    # time.sleep(0.1)
     #     # i = (i+1) % 8

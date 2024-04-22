@@ -146,10 +146,11 @@ if __name__ == "__main__":
     if _SERIAL_ENABLED:
         ser = serial.Serial("/dev/ttyACM0", 115200, timeout=1)
         ser.reset_input_buffer()
+        ser.read_all()
         enableArduino(ser)
 
-        msg = sendCommand(ser, Command.SYS_ID, 30)
-        print(msg)
+        msg = sendCommand(ser, Command.SYS_ID, 10)
+        # print(msg)
 
     # 3. Iterate through trajectory
     # -> Reads in received lines on every iteration.
@@ -161,47 +162,54 @@ if __name__ == "__main__":
     start_time = time.monotonic_ns()
     last_sent_cmd = None
 
-    while sys_id_in_progress:
+    try:
+        while sys_id_in_progress:
 
-        # 1. Read in serial & write to output file.
-        if _SERIAL_ENABLED:
-            msg = receiveCommand(ser)
-            if not msg is None and msg[0] == Command.SYS_RESPONSE.value:
-                row_string = "{},{},{},{},{},{}\n".format(
-                    msg[0], msg[1], msg[2], msg[3], msg[4], msg[5]
-                )
-                outfile.write(row_string)
-                print(msg[1:])
-
-        cmd_time = next_cmd[0]
-        dt_ns = time.monotonic_ns() - start_time
-        if dt_ns >= cmd_time * 1_000_000_000:
-            if (
-                last_sent_cmd is None
-                or last_sent_cmd[1] != next_cmd[1]
-                or last_sent_cmd[2] != next_cmd[2]
-            ):
-                # 2. Send via serial.
-                if _SERIAL_ENABLED:
-                    print(
-                        sendCommand(
-                            ser, Command.PWM, int(next_cmd[1]), int(next_cmd[2])
-                        )
+            # 1. Read in serial & write to output file.
+            if _SERIAL_ENABLED:
+                msg = receiveCommand(ser)
+                if not msg is None and msg[0] == Command.SYS_RESPONSE.value:
+                    row_string = "{},{},{},{},{},{}\n".format(
+                        msg[0], msg[1], msg[2], msg[3], msg[4], msg[5]
                     )
-                    last_sent_cmd = next_cmd
+                    outfile.write(row_string)
+                    # print(msg[1:])
 
-            cmd_idx += 1
-            if cmd_idx >= len(traj):
-                sys_id_in_progress = False
-            else:
-                next_cmd = traj[cmd_idx, :]
+            cmd_time = next_cmd[0]
+            dt_ns = time.monotonic_ns() - start_time
+            if dt_ns >= cmd_time * 1_000_000_000:
+                if (
+                    last_sent_cmd is None
+                    or last_sent_cmd[1] != next_cmd[1]
+                    or last_sent_cmd[2] != next_cmd[2]
+                ):
+                    # 2. Send via serial.
+                    if _SERIAL_ENABLED:
+                        print(
+                            sendCommand(
+                                ser, Command.PWM, int(next_cmd[1]), int(next_cmd[2])
+                            )
+                        )
+                        last_sent_cmd = next_cmd
+
+                cmd_idx += 1
+                if cmd_idx >= len(traj):
+                    sys_id_in_progress = False
+                else:
+                    next_cmd = traj[cmd_idx, :]
+    except KeyboardInterrupt:
+        msg = sendCommand(ser, Command.DISABLE)
+        sys_id_in_progress = False
+        outfile.close()
+        exit()
 
     # 3. Final read from serial and close out program.
-    if _SERIAL_ENABLED:
-        msg = receiveCommand(ser)
-        while not msg is None:
-            if msg[0] == Command.SYS_RESPONSE:
-                print(msg[1:])
-            msg = receiveCommand(ser)
+    # if _SERIAL_ENABLED:
+    #     msg = receiveCommand(ser)
+    #     while not msg is None:
+    #         if msg[0] == Command.SYS_RESPONSE:
+    #             print(msg[1:])
+    #         msg = receiveCommand(ser)
 
+    msg = sendCommand(ser, Command.DISABLE)
     outfile.close()
