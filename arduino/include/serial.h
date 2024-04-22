@@ -9,7 +9,8 @@ enum Command {
     PWM = 3,
     SYS_ID = 4,
     SYS_RESPONSE = 5,
-    WAYPOINT = 6
+    WAYPOINT = 6,
+    DISABLE = 7
 };
 
 union EnableCmd {
@@ -64,6 +65,13 @@ union WayPointCmd
         float y_coord;
     } data;
     byte raw[9];
+};
+
+union DisableCmd {
+    struct __attribute__( ( __packed__ ) ) {
+        unsigned char cmd;
+    } data;
+    byte raw[1];
 };
 
 // Functions

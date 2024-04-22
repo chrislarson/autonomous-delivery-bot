@@ -46,6 +46,15 @@ void execWayPointCmd() {
     // convert waypoint into left and right
     //  distance targets and send PWM command
 }
+void execDisableCmd() {
+    DisableCmd cmd;
+    cmd.data.cmd = DISABLE;
+    cmdReadInto(&cmd, sizeof(cmd));
+    sendCommand(DISABLE, &cmd);
+    setLed(0);
+    tankDrive(0,0)
+    enabled = false;
+}
 
 /// Public Functions
 
@@ -68,6 +77,9 @@ void execCmd(Command cmd){
         break;
     case WAYPOINT:
         if(isEnabled()) execWayPointCmd();
+        break;
+    case DISABLE:
+        if(isEnabled()) execDisableCmd();
         break;
     }
 }

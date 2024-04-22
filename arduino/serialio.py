@@ -11,6 +11,7 @@ class Command(Enum):
     SYS_ID = 4
     SYS_RESPONSE = 5
     WAYPOINT = 6
+    DISABLE = 7
 
 
 cmd_fmts = {
@@ -20,6 +21,7 @@ cmd_fmts = {
     Command.SYS_ID: "Bi",
     Command.WAYPOINT: "Bff",
     Command.SYS_RESPONSE: "BIiiii",
+    Command.DISABLE: "B"
 }
 
 
