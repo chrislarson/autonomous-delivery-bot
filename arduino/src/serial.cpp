@@ -123,7 +123,7 @@ void sendCommand(Command cmd, void* cmdStruct) {
     }
     case DISABLE:
     {
-        DisableCmd* disableCmd = (disableCmd*) cmdStruct;
+        DisableCmd* disableCmd = (DisableCmd*) cmdStruct;
         Serial.write(&disableCmd->raw[0], sizeof(disableCmd->raw));
         break;
     }

@@ -52,7 +52,7 @@ void execDisableCmd() {
     cmdReadInto(&cmd, sizeof(cmd));
     sendCommand(DISABLE, &cmd);
     setLed(0);
-    tankDrive(0,0)
+    tankDrive(0,0);
     enabled = false;
 }
 
