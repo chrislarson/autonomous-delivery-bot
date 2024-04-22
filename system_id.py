@@ -134,7 +134,7 @@ if __name__ == "__main__":
     step_traj.plot_trajectory(test_dir, True)
 
     # 2. Connect to serial.
-    ser = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
+    ser = serial.Serial("/dev/ttyACM0", 115200, timeout=1)
     ser.reset_input_buffer()
     enableArduino(ser)
 
