@@ -66,7 +66,10 @@ class StepTrajectory:
             cmd_duration = np.random.choice(cmd_durations)
             cmd_steps = int(cmd_duration / self._dt_sec)
             cmd_steps = min(cmd_steps, cmd_cnt - i)
-            pwm_sign = random.choice(pwm_signs)
+            pwm_sign = 1
+            if i >= 0.75 * cmd_cnt:
+                pwm_sign = -1
+            # pwm_sign = random.choice(pwm_signs)
             pwm_l = np.random.choice(pwm_values) * pwm_sign
             if self._include_turn_dynamics:
                 pwm_r = np.random.choice(pwm_values) * pwm_sign
@@ -136,7 +139,7 @@ if __name__ == "__main__":
     outfile.write(header_string)
 
     # 1. Generate step trajectory.
-    TEST_DURATION_SEC = 20
+    TEST_DURATION_SEC = 30
     DT_SEC = 0.02
     step_traj = StepTrajectory(test_dir, TEST_DURATION_SEC, DT_SEC, 100, 10, True, True)
     traj = step_traj.generate_trajectory(test_dir)
