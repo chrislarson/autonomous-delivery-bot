@@ -40,7 +40,7 @@ class ChirpTrajectory:
         duration_sec: int,
         dt_sec: float,
         start_freq: float = 0.01,
-        end_freq: float = 2.0,
+        end_freq: float = 1.0,
     ):
 
         # Frequency sweep segment
