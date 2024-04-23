@@ -56,6 +56,15 @@ void execDisableCmd() {
     enabled = false;
 }
 
+void execInvalidCmd(int cmd_id) {
+    ErrorCmd cmd;
+    cmd.data.cmd = ERROR;
+    cmd.data.errorCode = INVALID_CMD;
+    cmd.data.arg1 = cmd_id;
+    cmd.data.arg2 = -1;
+    sendCommand(ERROR, &cmd);
+}
+
 /// Public Functions
 
 void execCmd(Command cmd){
@@ -73,16 +82,14 @@ void execCmd(Command cmd){
     case SYS_ID:
         if(isEnabled()) execSysIDCmd();
         break;
-    case SYS_RESPONSE:
-        break;
     case WAYPOINT:
         if(isEnabled()) execWayPointCmd();
         break;
     case DISABLE:
         if(isEnabled()) execDisableCmd();
         break;
-    case ERROR:
-        break;
+    default:
+        execInvalidCmd(nextCmdId());
     }
 }
 

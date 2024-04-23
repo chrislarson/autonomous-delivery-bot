@@ -84,7 +84,7 @@ int cmdSize(Command cmd) {
     case ERROR:
         return sizeof(ErrorCmd);
     default:
-        return -1;
+        return receive_buffer_len-1;
     }
 }
 
@@ -101,7 +101,6 @@ bool updateSerial() {
         receive_buffer[receive_buffer_len] = Serial.read();
         receive_buffer_len++;
         if (receive_buffer[receive_buffer_len-1] == '\n') {
-            //echoCommand();
             int cmd_len = cmdSize(nextCmdType())+1;
             return cmd_len == receive_buffer_len;
         } else if (receive_buffer_len >= receive_buffer_size) {
@@ -166,8 +165,12 @@ void sendCommand(Command cmd, void* cmdStruct) {
     Serial.flush();
 }
 
+int nextCmdId() {
+    return receive_buffer[0];
+}
+
 Command nextCmdType() {
-    return static_cast<Command>(receive_buffer[0]);
+    return static_cast<Command>(nextCmdId());
 }
 
 bool cmdReadInto(void* v_ptr, byte len) {
