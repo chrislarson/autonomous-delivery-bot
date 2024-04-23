@@ -6,11 +6,13 @@ import matplotlib.pyplot as plt
 import time
 import os
 from step_trajectory import StepTrajectory
+from chirp_trajectory import ChirpTrajectory
 
 from arduino.serialio import sendCommand, receiveCommand, Command, enableArduino
 
 
 _SERIAL_ENABLED = False
+_CHIRP_TRAJECTORY = True
 
 
 if __name__ == "__main__":
@@ -27,17 +29,24 @@ if __name__ == "__main__":
     outfile.write(header_string)
 
     # Configure system ID
-    TEST_DURATION_SEC = 40
+    TEST_DURATION_SEC = 20
     DT_SEC = 0.02
 
     # 1A. Generate step trajectory.
-    step_traj = StepTrajectory(test_dir, TEST_DURATION_SEC, DT_SEC, 100, 10, True, True)
-    traj = step_traj.generate_trajectory(test_dir)
-    step_traj.plot_trajectory(test_dir, True)
+    if _CHIRP_TRAJECTORY:
+        chirp_traj = ChirpTrajectory(test_dir, TEST_DURATION_SEC, DT_SEC, 100, 10)
+        traj = chirp_traj.generate_trajectory(
+            test_dir, TEST_DURATION_SEC, dt_sec=DT_SEC
+        )
+        chirp_traj.plot_trajectory(test_dir, True)
+    else:
+        step_traj = StepTrajectory(
+            test_dir, TEST_DURATION_SEC, DT_SEC, 100, 10, True, True
+        )
+        traj = step_traj.generate_trajectory(test_dir)
+        step_traj.plot_trajectory(test_dir, True)
 
     # 1B. Generate chirp trajectory
-    # chirp_traj = ChirpTrajectory()
-    # chirp_traj.generate_trajectory(TEST_DURATION_SEC, DT_SEC)
 
     # 2. Connect to serial.
     if _SERIAL_ENABLED:
