@@ -12,6 +12,14 @@ class Command(Enum):
     SYS_RESPONSE = 5
     WAYPOINT = 6
     DISABLE = 7
+    ERROR = 8
+
+class Error(Enum):
+    PARSE = 1
+    BUFFER_OVERFLOW = 2
+    SIZE_MISMATCH = 3
+    EXEC_FAIL = 4
+    INVALID_CMD = 5
 
 
 cmd_fmts = {
@@ -21,9 +29,24 @@ cmd_fmts = {
     Command.SYS_ID: "Bi",
     Command.WAYPOINT: "Bff",
     Command.SYS_RESPONSE: "BIiiii",
-    Command.DISABLE: "B"
+    Command.DISABLE: "B",
+    Command.ERROR: "BBii"
 }
 
+def decodeError(err: Error, *args):
+    match err:
+        case Error.PARSE:
+            print("ERROR: PARSE ERROR")
+        case Error.BUFFER_OVERFLOW:
+            print("ERROR: BUFFER OVERFLOW")
+        case Error.SIZE_MISMATCH:
+            print("ERROR: SIZE MISMATCH")
+        case Error.EXEC_FAIL:
+            print("ERROR: EXECUTION FAILED")
+        case Error.INVALID_CMD:
+            print("ERROR: INVALID COMMAND")
+        case default:
+            print("ERROR: Unknown")
 
 def genCmd(cmd: Command, *args):
     return struct.pack("<" + cmd_fmts[cmd], cmd.value, *args) + b'\n'
