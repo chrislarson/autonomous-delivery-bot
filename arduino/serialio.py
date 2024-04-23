@@ -14,6 +14,7 @@ class Command(Enum):
     DISABLE = 7
     ERROR = 8
 
+
 class Error(Enum):
     PARSE = 1
     BUFFER_OVERFLOW = 2
@@ -33,6 +34,7 @@ cmd_fmts = {
     Command.ERROR: "BBii"
 }
 
+
 def decodeError(err: Error, *args):
     match err:
         case Error.PARSE:
@@ -40,13 +42,14 @@ def decodeError(err: Error, *args):
         case Error.BUFFER_OVERFLOW:
             print("ERROR: BUFFER OVERFLOW")
         case Error.SIZE_MISMATCH:
-            print("ERROR: SIZE MISMATCH")
+            print("ERROR: SIZE MISMATCH, expected size: %i, received size: %i" % (args[0], args[1]))
         case Error.EXEC_FAIL:
-            print("ERROR: EXECUTION FAILED")
+            print("ERROR: EXECUTION FAILED, ID: %i" % (args[0]))
         case Error.INVALID_CMD:
-            print("ERROR: INVALID COMMAND")
+            print("ERROR: INVALID COMMAND, ID: %i" % (args[0]))
         case default:
             print("ERROR: Unknown")
+
 
 def genCmd(cmd: Command, *args):
     return struct.pack("<" + cmd_fmts[cmd], cmd.value, *args) + b'\n'
@@ -74,7 +77,11 @@ def receiveCommand(ser: serial.Serial):
     # print(len(msg), msg)
     # msg = msg.rstrip()
     try:
-        return struct.unpack("<" + cmd_fmts[Command(cmd[0])], cmd + msg.rstrip())
+        unpacked = struct.unpack("<" + cmd_fmts[Command(cmd[0])], cmd + msg.rstrip())
+        if unpacked[0] == Command.ERROR:
+            decodeError(unpacked[1], unpacked[2:])
+        else:
+            return unpacked
     except struct.error as e:
         print(e)
         print(len(msg), ",", msg)
@@ -103,24 +110,26 @@ if __name__ == "__main__":
     enableArduino(ser)
 
     # Send new instruction
-    msg = sendCommand(ser, Command.SYS_ID, 10)
+    msg = sendCommand(ser, Command.ERROR, 2, 2, 2)
     print(msg)
 
-    msg = sendCommand(ser, Command.PWM, 10, 10)
-    print(msg)
+    response = receiveCommand(ser)
+    print(response)
+
+    # msg = sendCommand(ser, Command.PWM, 10, 10)
+    # print(msg)
 
     # msg = sendCommand(ser, Command.DISABLE)
     # print(msg)
 
-    # # i = 0
-    try:
-        while True:
-            # Read response
-            response = receiveCommand(ser)
-            print(response)
-    except KeyboardInterrupt:
-        msg = sendCommand(ser, Command.DISABLE)
-        print(msg)
+    # try:
+    #     while True:
+    #         # Read response
+    #         response = receiveCommand(ser)
+    #         print(response)
+    # except KeyboardInterrupt:
+    #     msg = sendCommand(ser, Command.DISABLE)
+    #     print(msg)
 
     #     # # Send new instruction
     #     # msg = sendCommand(ser, Command.STATUS, i+1)

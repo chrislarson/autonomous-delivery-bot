@@ -14,6 +14,14 @@ enum Command {
     ERROR = 8
 };
 
+enum Error {
+    PARSE = 1,
+    BUFFER_OVERFLOW = 2,
+    SIZE_MISMATCH = 3,
+    EXEC_FAIL = 4,
+    INVALID_CMD = 5
+};
+
 union EnableCmd {
     struct __attribute__( ( __packed__ ) ) {
         unsigned char cmd;
@@ -89,6 +97,7 @@ union ErrorCmd {
 void setupSerial();
 bool updateSerial();
 void sendCommand(Command cmd, void* cmdStruct);
+int nextCmdId();
 Command nextCmdType();
 bool cmdReadInto(void* v_ptr, byte len);
 
