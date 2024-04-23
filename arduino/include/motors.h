@@ -27,8 +27,8 @@ double acc = 0.0;
 # define ENL 6
 # define dirL1 8
 # define dirL2 7
-# define encoderLA 2  // A-Phase
-# define encoderLB 4  // B-Phase
+# define encoderLA 3  // A-Phase
+# define encoderLB 5  // B-Phase
 # define readEncoderLA() (fastDigitalRead(encoderLA))
 # define readEncoderLB() (fastDigitalRead(encoderLB))
 # define invertLeft false
@@ -38,8 +38,8 @@ double acc = 0.0;
 # define ENR 11
 # define dirR1 10
 # define dirR2 9
-# define encoderRA 3  // A-Phase
-# define encoderRB 5  // B-Phase
+# define encoderRA 2  // A-Phase
+# define encoderRB 4  // B-Phase
 # define readEncoderRA() (fastDigitalRead(encoderRA))
 # define readEncoderRB() (fastDigitalRead(encoderRB))
 # define invertRight false

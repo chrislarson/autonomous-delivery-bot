@@ -110,26 +110,26 @@ if __name__ == "__main__":
     enableArduino(ser)
 
     # Send new instruction
-    msg = sendCommand(ser, Command.ERROR, 2, 2, 2)
-    print(msg)
+    # msg = sendCommand(ser, Command.ERROR, 2, 2, 2)
+    # print(msg)
 
     response = receiveCommand(ser)
     print(response)
 
-    # msg = sendCommand(ser, Command.PWM, 10, 10)
-    # print(msg)
+    msg = sendCommand(ser, Command.SYS_ID, 100)
+    print(msg)
 
     # msg = sendCommand(ser, Command.DISABLE)
     # print(msg)
 
-    # try:
-    #     while True:
-    #         # Read response
-    #         response = receiveCommand(ser)
-    #         print(response)
-    # except KeyboardInterrupt:
-    #     msg = sendCommand(ser, Command.DISABLE)
-    #     print(msg)
+    try:
+        while True:
+            # Read response
+            response = receiveCommand(ser)
+            print(response)
+    except KeyboardInterrupt:
+        msg = sendCommand(ser, Command.DISABLE)
+        print(msg)
 
     #     # # Send new instruction
     #     # msg = sendCommand(ser, Command.STATUS, i+1)

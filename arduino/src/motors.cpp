@@ -21,6 +21,11 @@ void indexLeftEncoderCount() {
     leftEncoderCount--;
     break;
   }
+  // if (!readEncoderLB()) {
+  //   leftEncoderCount++;
+  // } else {
+  //   leftEncoderCount--;
+  // }
 }
 
 volatile int32_t rightEncoderCount = 0;
@@ -42,6 +47,11 @@ void indexRightEncoderCount() {
     rightEncoderCount++;
     break;
   }
+  // if (readEncoderRB()) {
+  //   rightEncoderCount++;
+  // } else {
+  //   rightEncoderCount--;
+  // }
 }
 
 void setupMotors() {
@@ -49,17 +59,17 @@ void setupMotors() {
     pinMode(ENL, OUTPUT);
     pinMode(dirL1, OUTPUT);
     pinMode(dirL2, OUTPUT);
-    pinMode(encoderLA, INPUT);
-    pinMode(encoderLB, INPUT);
-    attachInterrupt(digitalPinToInterrupt(encoderLA), indexLeftEncoderCount, CHANGE);
+    pinMode(encoderLA, INPUT_PULLUP);
+    pinMode(encoderLB, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(encoderLA), indexLeftEncoderCount, RISING);
 
     // Motor B (RIGHT) pin setup.
     pinMode(ENR, OUTPUT);
     pinMode(dirR1, OUTPUT);
     pinMode(dirR2, OUTPUT);
-    pinMode(encoderRA, INPUT);
-    pinMode(encoderRB, INPUT);
-    attachInterrupt(digitalPinToInterrupt(encoderRA), indexRightEncoderCount, CHANGE);
+    pinMode(encoderRA, INPUT_PULLUP);
+    pinMode(encoderRB, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(encoderRA), indexRightEncoderCount, RISING);
 
     // Set initial motor directions
     setLeftDirection(0);
