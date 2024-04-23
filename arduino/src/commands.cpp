@@ -63,6 +63,7 @@ void execInvalidCmd(int cmd_id) {
     cmd.data.arg1 = cmd_id;
     cmd.data.arg2 = -1;
     sendCommand(ERROR, &cmd);
+    setLed(LED_ERR_ID);
 }
 
 /// Public Functions
