@@ -56,15 +56,12 @@ void echoCommand() {
         sendCommand(cmd, &disableCmd);
         break;
     }
+    case ERROR:
+        ErrorCmd errorCmd;
+        cmdReadInto(&errorCmd, sizeof(errorCmd));
+        sendCommand(cmd, &errorCmd);
+        break;
     }
-}
-
-/// Public Functions
-
-void setupSerial() {
-    // Open serial connection.
-    Serial.begin(115200);
-    receive_buffer_len = 0;
 }
 
 int cmdSize(Command cmd) {
@@ -84,9 +81,19 @@ int cmdSize(Command cmd) {
         return sizeof(WayPointCmd);
     case DISABLE:
         return sizeof(DisableCmd);
+    case ERROR:
+        return sizeof(ErrorCmd);
     default:
         return -1;
     }
+}
+
+/// Public Functions
+
+void setupSerial() {
+    // Open serial connection.
+    Serial.begin(115200);
+    receive_buffer_len = 0;
 }
 
 bool updateSerial() {
@@ -95,7 +102,7 @@ bool updateSerial() {
         receive_buffer_len++;
         if (receive_buffer[receive_buffer_len-1] == '\n') {
             //echoCommand();
-            int cmd_len = cmdSize(static_cast<Command>(receive_buffer[0]))+1;
+            int cmd_len = cmdSize(nextCmdType())+1;
             return cmd_len == receive_buffer_len;
         } else if (receive_buffer_len >= receive_buffer_size) {
             receive_buffer_len = 0;
@@ -150,6 +157,9 @@ void sendCommand(Command cmd, void* cmdStruct) {
         Serial.write(&disableCmd->raw[0], sizeof(disableCmd->raw));
         break;
     }
+    case ERROR:
+        ErrorCmd* errorCmd = (ErrorCmd*) cmdStruct;
+        Serial.write(&errorCmd->raw[0], sizeof(errorCmd->raw));
     }
 
     Serial.write('\n');

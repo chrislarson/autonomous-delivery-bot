@@ -81,6 +81,8 @@ void execCmd(Command cmd){
     case DISABLE:
         if(isEnabled()) execDisableCmd();
         break;
+    case ERROR:
+        break;
     }
 }
 
