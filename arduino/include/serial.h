@@ -10,7 +10,8 @@ enum Command {
     SYS_ID = 4,
     SYS_RESPONSE = 5,
     WAYPOINT = 6,
-    DISABLE = 7
+    DISABLE = 7,
+    ERROR = 8
 };
 
 union EnableCmd {
@@ -72,6 +73,16 @@ union DisableCmd {
         unsigned char cmd;
     } data;
     byte raw[1];
+};
+
+union ErrorCmd {
+    struct __attribute__( ( __packed__ ) ) {
+        unsigned char cmd;
+        unsigned char errorCode;
+        int32_t arg1;
+        int32_t arg2;
+    } data;
+    byte raw[10];
 };
 
 // Functions
