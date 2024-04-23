@@ -40,11 +40,11 @@ def decodeError(err: Error, *args):
         case Error.BUFFER_OVERFLOW:
             print("ERROR: BUFFER OVERFLOW")
         case Error.SIZE_MISMATCH:
-            print("ERROR: SIZE MISMATCH")
+            print("ERROR: SIZE MISMATCH, expected size: %i, received size: %i" %(args[0],args[1]))
         case Error.EXEC_FAIL:
-            print("ERROR: EXECUTION FAILED")
+            print("ERROR: EXECUTION FAILED, ID: %i" % (args[0]))
         case Error.INVALID_CMD:
-            print("ERROR: INVALID COMMAND")
+            print("ERROR: INVALID COMMAND, ID: %i" % (args[0]))
         case default:
             print("ERROR: Unknown")
 
@@ -74,7 +74,11 @@ def receiveCommand(ser: serial.Serial):
     # print(len(msg), msg)
     # msg = msg.rstrip()
     try:
-        return struct.unpack("<" + cmd_fmts[Command(cmd[0])], cmd + msg.rstrip())
+        unpacked =  struct.unpack("<" + cmd_fmts[Command(cmd[0])], cmd + msg.rstrip())
+        if unpacked[0] == Command.ERROR:
+            decodeError(unpacked[1],unpacked[2:])
+        else:
+            return unpacked
     except struct.error as e:
         print(e)
         print(len(msg), ",", msg)
