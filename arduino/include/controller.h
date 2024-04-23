@@ -12,6 +12,15 @@ typedef struct
     float output_last = 0;
 } Controller;
 
+
+/**
+ * Function Saturate saturates a value to be within the range.
+ */
+inline float Saturate( float value, float ABS_MAX )
+{
+    return ( value > ABS_MAX ) ? ABS_MAX : ( value < -ABS_MAX ) ? -ABS_MAX : value;
+}
+
 /**
  * Function Initialize_Controller sets up the z-transform based controller for the system.
  */
