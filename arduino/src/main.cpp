@@ -4,6 +4,7 @@
 #include "commands.h"
 #include "led.h"
 #include "motors.h"
+#include "controller.h"
 
 encoderFrame* leftEncoder = getLeftEncoderFrame();
 encoderFrame* rightEncoder = getRightEncoderFrame();
