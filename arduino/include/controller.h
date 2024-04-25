@@ -7,7 +7,7 @@ typedef struct
     float kp;
     float target_pos;
     float target_vel;
-    float update_period;
+    //float update_period;
     float input_last;
     float output_last = 0;
 } Controller;
@@ -24,7 +24,7 @@ inline float Saturate( float value, float ABS_MAX )
 /**
  * Function Initialize_Controller sets up the z-transform based controller for the system.
  */
-void Initialize_Controller(Controller* cont, float kp, float* A, float* B, float update_period);
+void Initialize_Controller(Controller* cont, float kp, float* A, float* B);
 
 /**
  * Function Controller_Set_Target_Velocity sets the target velocity for the
