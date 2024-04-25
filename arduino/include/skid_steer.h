@@ -3,22 +3,22 @@
 
 #include "motors.h"
 
-#define kp_L 1.3752
-#define A1_L -0.568096
-#define B0_L 3.25489
-#define B1_L -2.82299
+#define kp_L 13.752f
+#define A1_L -0.568096f
+#define B0_L 3.25489f
+#define B1_L -2.82299f
 
-#define kp_R 1.3179
-#define A1_R -0.57783
-#define B0_R 2.97670
-#define B1_R -2.55453
+#define kp_R 13.179f
+#define A1_R -0.57783f
+#define B0_R 2.97670f
+#define B1_R -2.55453f
 
-#define max_lin_acc 500
-#define max_lin_vel 500
-#define max_ang_acc 0.0
-#define max_ang_vel 0.0
-#define wheel_base_mm 220
-#define update_period_ms 10
+#define max_lin_acc 50.0f
+#define max_lin_vel 250.0f
+#define max_ang_acc 0.0f
+#define max_ang_vel 0.0f
+#define wheel_base_mm 220.0f
+#define update_period_ms 10.0f
 
 enum ControlMode {
     DISABLED = 0,

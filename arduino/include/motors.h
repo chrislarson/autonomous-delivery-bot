@@ -50,7 +50,7 @@
 // #define RLRatio 1.0 // value <= 1.0; multiply leftVal by LRRatio to get equivalent rightVal
 // #define encoderSamplingTime 100 // sampling time in milliseconds
 // Wheel characteristics
-#define mm_per_count 1.55
+// #define counts_per_mm 1.55
 
 // PD controller gains.
 #define Kp 2

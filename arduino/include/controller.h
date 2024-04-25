@@ -2,13 +2,15 @@
 
 typedef struct
 {
-    float A[2];
-    float B[2];
+    float A_1;
+    float B_0;
+    float B_1;
     float kp;
     float target_pos;
     float target_vel;
     float input_last;
     float output_last;
+    float counts_per_mm;
 } Controller;
 
 
@@ -23,7 +25,7 @@ inline float Saturate( float value, float ABS_MAX )
 /**
  * Function Initialize_Controller sets up the z-transform based controller for the system.
  */
-void Initialize_Controller(Controller* cont, float kp, float* A, float* B);
+void Initialize_Controller(Controller* cont, float kp, float A_1, float B_0, float B_1, float cpmm);
 
 /**
  * Function Controller_Set_Target_Velocity sets the target velocity for the

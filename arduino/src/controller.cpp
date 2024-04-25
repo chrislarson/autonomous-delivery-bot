@@ -3,13 +3,12 @@
 /**
  * Function Initialize_Controller sets up the z-transform based controller for the system.
  */
-void Initialize_Controller(Controller* cont, float kp, float* A, float* B){
-    cont->A[0] = A[0];
-    cont->A[1] = A[1];
-    cont->B[0] = B[0];
-    cont->B[1] = B[1];
+void Initialize_Controller(Controller* cont, float kp, float A_1, float B_0, float B_1, float cpmm){
+    cont->A_1 = A_1;
+    cont->B_0 = B_0;
+    cont->B_1 = B_1;
     cont->kp = kp;
-    //cont->update_period = update_period;
+    cont->counts_per_mm = cpmm;
 }
 
 /**
@@ -35,10 +34,13 @@ void Controller_Set_Target_Position(Controller* cont, float pos ){
  * new control value.
  */
 float Controller_Update(Controller* cont, float measurement, float dt_s){
-    float output_this = cont->B[0]*measurement + cont->B[1]*cont->input_last - cont->A[1]*cont->output_last;
+    float output_this = cont->B_0*measurement + cont->B_1*cont->input_last - cont->A_1*cont->output_last;
     cont->output_last = output_this;
+    cont->input_last = measurement;
+
     cont->target_pos += cont->target_vel*dt_s;
-    float pwm = cont->kp* (cont->target_pos - output_this);
+
+    float pwm = cont->kp * (cont->target_pos - output_this);
     return pwm;
 }
 
