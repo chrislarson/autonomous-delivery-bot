@@ -7,15 +7,14 @@ files = dir("sysid_73916/output.csv");
 
 SECONDS_PER_MICROSECOND = 0.000001;
 SECONDS_PER_MILLISECOND = 0.001;
-WHEEL_DIAMETER = 38 + (2*5); % millimeters (inner circle + track thickness)
-
-MM_PER_REVOLUTION = 2 * pi * WHEEL_DIAMETER; % millimeters
-
-ENCODER_TICKS_PER_REVOLUTION = 400; % approx
-
-MM_PER_ENCODER_TICK = MM_PER_REVOLUTION / ENCODER_TICKS_PER_REVOLUTION;
+% WHEEL_DIAMETER = 38 + (2*5); % millimeters (inner circle + track thickness)
+% MM_PER_REVOLUTION = pi * WHEEL_DIAMETER; % millimeters
+% ENCODER_TICKS_PER_REVOLUTION = 400; % approx
+% MM_PER_ENCODER_TICK = MM_PER_REVOLUTION / ENCODER_TICKS_PER_REVOLUTION;
 
 
+MM_PER_ENCODER_TICK = 1.55; % Experimentally captured
+M_PER_ENCODER_TICK = MM_PER_ENCODER_TICK / 1000;
 
 % 
 % SECONDS_PER_MICROSECOND = 0.000001;
@@ -49,7 +48,7 @@ for f=1:length(files)
     data_l = iddata(y_ls, u_ls, dt_avg);
     data_l.InputName = 'PWM_L';
     data_l.InputUnit = 'PWM_val';
-    data_l.OutputName = 'Position_L (mm)';
+    data_l.OutputName = 'Position_L (m)';
     data_l.OutputUnit = 'mm';
     data_l.TimeUnit = 'seconds';
 
@@ -58,25 +57,25 @@ for f=1:length(files)
     data_r = iddata(y_rs, u_rs, dt_avg);
     data_r.InputName = 'PWM_R';
     data_r.InputUnit = 'PWM_val';
-    data_r.OutputName = 'Position_R (mm)';
+    data_r.OutputName = 'Position_R (m)';
     data_r.OutputUnit = 'mm';
     data_r.TimeUnit = 'seconds';
 
 
     % Estimate transfer functions
-    np = 1;
+    np = 2;
     nz = 0;
 
 
     % TF Left (Position)
-    Gest_l = tfest(data_l, np, nz);
+    Gest_l = tfest(data_l, np, nz)
     % Gest_l_filename = strcat("Gest_L_", file.name(1:end-4), ".mat");
     % Gest_l_filepath = fullfile(pwd, "estimated_tfs", Gest_l_filename);
     % save(Gest_l_filepath, 'Gest_l');
 
 
     % TF Right (Position)
-    Gest_r = tfest(data_r, np, nz);
+    Gest_r = tfest(data_r, np, nz)
     % Gest_r_filename = strcat("Gest_R_vel_", file.name(1:end-4), ".mat");
     % Gest_r_filepath = fullfile(pwd, "estimated_tfs", Gest_r_filename);
     % save(Gest_r_filepath, 'Gest_r');

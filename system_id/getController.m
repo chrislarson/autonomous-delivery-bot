@@ -29,7 +29,7 @@ lambda_step(3,1) = -N*zeta*wn;
 % By Bessel Response
 [~, lambda_bessel, ~] = besself(order, (2*pi)/Tp);
 
-lambda = lambda_step;
+lambda = lambda_bessel;
 
 %% Setup Equations And Calculate Gains/Alpha
 syms kp kd al 'real'
