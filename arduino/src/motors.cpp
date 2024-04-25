@@ -121,6 +121,8 @@ void tankDrive(int16_t leftVal, int16_t rightVal) {
   if ((rightVal < 0) != rightDir) setRightDirection(rightVal < 0);
   // leftPWM = (255 * leftVal) / 100;
   // rightPWM = (255 * rightVal) / 100;
+  leftPWM = leftVal;
+  rightPWM = rightVal;
   setMotorOutputs(abs(leftPWM), abs(rightPWM));
 }
 

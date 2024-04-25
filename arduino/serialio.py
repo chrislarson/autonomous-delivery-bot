@@ -119,6 +119,12 @@ if __name__ == "__main__":
     msg = sendCommand(ser, Command.SYS_ID, 100)
     print(msg)
 
+    msg = sendCommand(ser, Command.WAYPOINT, 0.0, 500)
+    print(msg)
+
+    # msg = sendCommand(ser, Command.PWM, 50, 50)
+    # print(msg)
+
     # msg = sendCommand(ser, Command.DISABLE)
     # print(msg)
 

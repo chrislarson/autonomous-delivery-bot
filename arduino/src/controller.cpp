@@ -10,8 +10,6 @@ void Initialize_Controller(Controller* cont, float kp, float* A, float* B){
     cont->B[1] = B[1];
     cont->kp = kp;
     //cont->update_period = update_period;
-    cont->target_pos = 0;
-    cont->target_vel = 0;
 }
 
 /**
@@ -36,10 +34,10 @@ void Controller_Set_Target_Position(Controller* cont, float pos ){
  * Function Controller_Update takes in a new measurement and returns the
  * new control value.
  */
-float Controller_Update(Controller* cont, float measurement, float dt){
+float Controller_Update(Controller* cont, float measurement, float dt_s){
     float output_this = cont->B[0]*measurement + cont->B[1]*cont->input_last - cont->A[1]*cont->output_last;
     cont->output_last = output_this;
-    cont->target_pos += cont->target_vel*dt;
+    cont->target_pos += cont->target_vel*dt_s;
     float pwm = cont->kp* (cont->target_pos - output_this);
     return pwm;
 }

@@ -7,9 +7,8 @@ typedef struct
     float kp;
     float target_pos;
     float target_vel;
-    //float update_period;
     float input_last;
-    float output_last = 0;
+    float output_last;
 } Controller;
 
 
@@ -42,7 +41,7 @@ void Controller_Set_Target_Position(Controller* cont, float pos );
  * Function Controller_Update takes in a new measurement and returns the
  * new control value.
  */
-float Controller_Update(Controller* cont, float measurement, float dt);
+float Controller_Update(Controller* cont, float measurement, float dt_s);
 
 /**
  * Function Controller_Last returns the last control command

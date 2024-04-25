@@ -25,8 +25,8 @@ void execStatusCmd() {
 void execPWMCmd() {
     PwmCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
+    Skid_Steer_Disable();
     tankDrive(cmd.data.left, cmd.data.right);
-    Skid_Steer_Set_Enabled(false);
     //sendCommand(PWM, &cmd);
 }
 
@@ -45,8 +45,8 @@ void execSysIDCmd() {
 void execWayPointCmd() {
     WayPointCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
-    Skid_Steer_Set_Displacement(cmd.data.y_coord, 0, getLeftEncoderCounts(), getRightEncoderCounts());
-    Skid_Steer_Set_Enabled(true);
+    Skid_Steer_Set_Velocity(cmd.data.y_coord, 0);
+    //Skid_Steer_Set_Displacement(cmd.data.y_coord, 0, getLeftEncoderCounts(), getRightEncoderCounts());
 }
 
 void execDisableCmd() {
@@ -56,7 +56,7 @@ void execDisableCmd() {
     sendCommand(DISABLE, &cmd);
     setLed(0);
     tankDrive(0,0);
-    Skid_Steer_Set_Enabled(false);
+    Skid_Steer_Disable();
     enabled = false;
 }
 
