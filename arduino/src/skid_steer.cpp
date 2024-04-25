@@ -87,6 +87,18 @@ float calcTargetVelocity(float curr_disp, float target_disp, float prev_vel, flo
     return target_vel;
 }
 
+void Saturate_Setpoints(float* left_setpoint, float* right_setpoint, float ABS_MAX){
+    if (*left_setpoint < *right_setpoint) {
+        float unsat_right_setpoint = *right_setpoint;
+        *right_setpoint = Saturate(*right_setpoint, ABS_MAX);
+        *left_setpoint *= *right_setpoint/unsat_right_setpoint;
+    } else {
+        float unsat_left_setpoint = *left_setpoint;
+        *left_setpoint = Saturate(*left_setpoint, ABS_MAX);
+        *right_setpoint *= *left_setpoint/unsat_left_setpoint;
+    }
+}
+
 unsigned long controller_update_prev_time = 0;
 void Skid_Steer_Update(float left_meas, float right_meas){
     unsigned long currTime = millis();
@@ -111,15 +123,7 @@ void Skid_Steer_Update(float left_meas, float right_meas){
     float left_setpoint = Controller_Update(&controller_left, left_meas, deltaTime);
     float right_setpoint = Controller_Update(&controller_right, right_meas, deltaTime);
 
-    if (left_setpoint < right_setpoint) {
-        float unsat_right_setpoint = right_setpoint;
-        right_setpoint = Saturate(right_setpoint, MOTOR_MAX);
-        left_setpoint *= right_setpoint/unsat_right_setpoint;
-    } else {
-        float unsat_left_setpoint = left_setpoint;
-        left_setpoint = Saturate(left_setpoint, MOTOR_MAX);
-        right_setpoint *= left_setpoint/unsat_left_setpoint;
-    }
+    Saturate_Setpoints(&left_setpoint, &right_setpoint, MOTOR_MAX);
     
     tankDrive(left_setpoint, right_setpoint);
 }
