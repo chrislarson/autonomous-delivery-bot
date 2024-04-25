@@ -56,7 +56,6 @@ float Controller_Last(Controller* cont){
  * to match the measurement so it starts with zero error.
  */
 void Controller_SetTo(Controller* cont, float measurement){
-    cont->target_pos = measurement;
     cont->input_last = measurement;
     cont->output_last = measurement;
 }

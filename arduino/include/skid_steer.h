@@ -3,6 +3,8 @@
 
 #include "Arduino.h"
 
+#include "motors.h"
+
 #define kp_L 0.0
 #define A1_L 0.0
 #define B0_L 0.0
@@ -17,14 +19,15 @@
 #define max_lin_vel 0.5
 #define max_ang_acc 0.0
 #define max_ang_vel 0.0
-#define wheel_base 0.0
+#define mm_to_counts (1 / mm_per_count)
+#define wheel_base (0.0 * mm_per_count)
 #define update_period_ms 10
 
 void Initialize_Skid_Steer(float left_meas, float right_meas);
 
 void Skid_Steer_Set_Velocity(float lin_vel, float ang_vel);
 
-void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp);
+void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp, float left_meas, float right_meas);
 
 void Skid_Steer_Update(float left_meas, float right_meas);
 

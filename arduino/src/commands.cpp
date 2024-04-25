@@ -2,6 +2,7 @@
 
 #include "motors.h"
 #include "led.h"
+#include "skid_steer.h"
 
 /// Private Functions
 
@@ -25,6 +26,7 @@ void execPWMCmd() {
     PwmCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
     tankDrive(cmd.data.left, cmd.data.right);
+    Skid_Steer_Set_Enabled(false);
     //sendCommand(PWM, &cmd);
 }
 
@@ -43,9 +45,10 @@ void execSysIDCmd() {
 void execWayPointCmd() {
     WayPointCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
-    // convert waypoint into left and right
-    //  distance targets and send PWM command
+    Skid_Steer_Set_Displacement(cmd.data.y_coord, 0, getLeftEncoderCounts(), getRightEncoderCounts());
+    Skid_Steer_Set_Enabled(true);
 }
+
 void execDisableCmd() {
     DisableCmd cmd;
     cmd.data.cmd = DISABLE;
@@ -53,6 +56,7 @@ void execDisableCmd() {
     sendCommand(DISABLE, &cmd);
     setLed(0);
     tankDrive(0,0);
+    Skid_Steer_Set_Enabled(false);
     enabled = false;
 }
 
