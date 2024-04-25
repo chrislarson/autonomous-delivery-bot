@@ -82,7 +82,15 @@ float calcTargetVelocity(float curr_disp, float target_disp, float prev_vel, flo
     return target_vel;
 }
 
-void Skid_Steer_Update(float left_meas, float right_meas, float dt){
+unsigned long controller_update_prev_time = 0;
+void Skid_Steer_Update(float left_meas, float right_meas){
+    unsigned long currTime = millis();
+    unsigned long deltaTime = currTime - controller_update_prev_time;
+
+    if (deltaTime <= update_period_ms) {
+        return;
+    }
+
     if (!skid_steer_enabled) {
         Controller_SetTo(&controller_left, left_meas);
         Controller_SetTo(&controller_right, right_meas);
@@ -95,13 +103,13 @@ void Skid_Steer_Update(float left_meas, float right_meas, float dt){
     calcDisplacement(left_meas, right_meas);
 
     if (!velocity_mode) {
-        float target_lin_vel = calcTargetVelocity(curr_lin_disp, target_lin_disp, prev_lin_vel, max_lin_vel, max_lin_acc, dt);
-        float target_ang_vel = calcTargetVelocity(curr_ang_disp, target_ang_disp, prev_ang_vel, max_ang_vel, max_ang_acc, dt);
+        float target_lin_vel = calcTargetVelocity(curr_lin_disp, target_lin_disp, prev_lin_vel, max_lin_vel, max_lin_acc, deltaTime);
+        float target_ang_vel = calcTargetVelocity(curr_ang_disp, target_ang_disp, prev_ang_vel, max_ang_vel, max_ang_acc, deltaTime);
         setControllerVelocities(target_lin_vel, target_ang_vel);
     }
 
-    float left_setpoint = Controller_Update(&controller_left, left_meas, dt);
-    float right_setpoint = Controller_Update(&controller_right, right_meas, dt);
+    float left_setpoint = Controller_Update(&controller_left, left_meas, deltaTime);
+    float right_setpoint = Controller_Update(&controller_right, right_meas, deltaTime);
 
     if (left_setpoint < right_setpoint) {
         float unsat_right_setpoint = right_setpoint;

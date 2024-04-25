@@ -173,8 +173,8 @@ unsigned long sys_id_prev_time = 0;
 void sendSysID() {
   if (sys_id_period >= 0) {
     unsigned long currTime = millis();
-    signed long deltaTime = currTime - sys_id_prev_time;
-    if (deltaTime >= sys_id_period) {
+    unsigned long deltaTime = currTime - sys_id_prev_time;
+    if (deltaTime >= (unsigned long) sys_id_period) {
       sys_id_prev_time = currTime;
       SysResponseCmd sysResponseCmd;
       sysResponseCmd.data.cmd = SYS_RESPONSE;

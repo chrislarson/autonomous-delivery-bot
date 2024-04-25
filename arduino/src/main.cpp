@@ -36,28 +36,8 @@ void loop() {
   }
 }
 
-unsigned long update_prev_time = millis();
 void periodic() {
   //updateEncoders();
   sendSysID();
-  Skid_Steer_Update(getLeftEncoderCounts(), getRightEncoderCounts(), update_prev_time - millis());
-  update_prev_time = millis();
-
-  // // Setting controller values.
-  // if (theta > 900)  // Dummy value to signal program end.
-  // {
-  //   pwmL = 0;
-  //   pwmR = 0;
-  // } else if (theta < 0) {
-  //   // Left motor speed up.
-  //   pwmL = pwm + Kp * (abs(theta));
-  //   pwmR = pwm;
-  // } else if (theta > 0) {
-  //   // Right motor speed up.
-  //   pwmL = pwm + 5;
-  //   pwmR = pwm + Kp * (abs(theta));
-  // } else {
-  //   pwmL = pwm + 5;
-  //   pwmR = pwm;
-  // }
+  Skid_Steer_Update(getLeftEncoderCounts(), getRightEncoderCounts());
 }

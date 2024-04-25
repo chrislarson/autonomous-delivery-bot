@@ -12,11 +12,13 @@
 #define A1_R 0.0
 #define B0_R 0.0
 #define B1_R 0.0
+
 #define max_lin_acc 0.5
 #define max_lin_vel 0.5
 #define max_ang_acc 0.0
 #define max_ang_vel 0.0
 #define wheel_base 0.0
+#define update_period_ms 10
 
 void Initialize_Skid_Steer(float left_meas, float right_meas);
 
@@ -24,7 +26,7 @@ void Skid_Steer_Set_Velocity(float lin_vel, float ang_vel);
 
 void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp);
 
-void Skid_Steer_Update(float left_meas, float right_meas, float dt);
+void Skid_Steer_Update(float left_meas, float right_meas);
 
 void Skid_Steer_Set_Enabled(boolean enabled);
 
