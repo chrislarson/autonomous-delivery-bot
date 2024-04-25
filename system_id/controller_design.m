@@ -70,16 +70,16 @@ for f=1:length(files)
 
     % TF Left (Position)
     Gest_l = tfest(data_l, np, nz);
-    Gest_l_filename = strcat("Gest_L_", file.name(1:end-4), ".mat");
-    Gest_l_filepath = fullfile(pwd, "estimated_tfs", Gest_l_filename);
-    save(Gest_l_filepath, 'Gest_l');
+    % Gest_l_filename = strcat("Gest_L_", file.name(1:end-4), ".mat");
+    % Gest_l_filepath = fullfile(pwd, "estimated_tfs", Gest_l_filename);
+    % save(Gest_l_filepath, 'Gest_l');
 
 
     % TF Right (Position)
     Gest_r = tfest(data_r, np, nz);
-    Gest_r_filename = strcat("Gest_R_vel_", file.name(1:end-4), ".mat");
-    Gest_r_filepath = fullfile(pwd, "estimated_tfs", Gest_r_filename);
-    save(Gest_r_filepath, 'Gest_r');
+    % Gest_r_filename = strcat("Gest_R_vel_", file.name(1:end-4), ".mat");
+    % Gest_r_filepath = fullfile(pwd, "estimated_tfs", Gest_r_filename);
+    % save(Gest_r_filepath, 'Gest_r');
 
 
     % Validate the left estimated transfer function
