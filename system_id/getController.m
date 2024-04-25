@@ -1,4 +1,4 @@
-function [Kp, Kd, Alpha, A_coeff,B_coeff, Disc_Controller] = getController(Gest, Tr, os, Hz_control)
+function [Kp, Kd, Alpha, A_coeff,B_coeff, Disc_Controller] = getController(Gest, Tr, os, Hz_control, STEP_INSTEAD_OF_BESSEL)
 
 
 %% Define System ID Values
@@ -29,7 +29,11 @@ lambda_step(3,1) = -N*zeta*wn;
 % By Bessel Response
 [~, lambda_bessel, ~] = besself(order, (2*pi)/Tp);
 
-lambda = lambda_bessel;
+if STEP_INSTEAD_OF_BESSEL
+    lambda = lambda_step;
+else
+    lambda = lambda_bessel;
+end
 
 %% Setup Equations And Calculate Gains/Alpha
 syms kp kd al 'real'
@@ -47,12 +51,12 @@ alpha = eval(soln.al);
 
 control_freq = Hz_control;
 nyquist_freq = control_freq / 2;
-fprintf("Alpha percent of Nyquest at %d Hz control loop: %3.1f%%\n\n", Hz_control, (alpha/(2*pi*nyquist_freq)) *100);
+fprintf("Alpha percent of Nyquist at %d Hz control loop: %3.1f%%\n\n", Hz_control, (alpha/(2*pi*nyquist_freq)) * 100);
 
 
 %% Plot response to determine if acceptable
 s = tf([1 0],1);
-H1 = kp_s+(kd_s*s)*(alpha/(s+alpha));
+H1 = kp_s + (kd_s*s)*(alpha/(s+alpha));
 H2 = kp_s;
 G = a/(s*(s+b)); %GH
 cl_tf = feedback(H2*G, H1/H2);
@@ -107,9 +111,8 @@ fprintf('A coeff:\t%12.12f, %12.12f\n', A{1});
 fprintf('B coeff:\t%12.12f, %12.12f\n', B{1});
 fprintf('Kp: %d\n', kp_s)
 fprintf('Kd: %d\n', kd_s)
+fprintf("Alpha: %d\n", alpha)
 fprintf('Control period: %d\n', 1/Hz_control)
-
-
 
 Kd = kd_s;
 Kp = kp_s;
