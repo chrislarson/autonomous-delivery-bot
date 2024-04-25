@@ -116,44 +116,52 @@ void setMotorOutputs(byte leftVal, byte rightVal) {
 // function to control tank drive
 int32_t leftPWM = 0;
 int32_t rightPWM = 0;
-void tankDrive(int8_t leftVal, int8_t rightVal) {
+void tankDrive(int16_t leftVal, int16_t rightVal) {
   if ((leftVal < 0) != leftDir) setLeftDirection(leftVal < 0);
   if ((rightVal < 0) != rightDir) setRightDirection(rightVal < 0);
-  leftPWM = (255 * leftVal) / 100;
-  rightPWM = (255 * rightVal) / 100;
+  // leftPWM = (255 * leftVal) / 100;
+  // rightPWM = (255 * rightVal) / 100;
   setMotorOutputs(abs(leftPWM), abs(rightPWM));
 }
 
-encoderFrame updateEncoderFrame(const encoderFrame *lastFrame, int newPos, double timeSinceLast) {
-  encoderFrame newFrame;
-  newFrame.pos = newPos;
-  newFrame.vel = (double)(newFrame.pos - lastFrame->pos) / timeSinceLast;
-  newFrame.acc = (newFrame.vel - lastFrame->vel) / timeSinceLast;
-  return newFrame;
+// encoderFrame updateEncoderFrame(const encoderFrame *lastFrame, int newPos, double timeSinceLast) {
+//   encoderFrame newFrame;
+//   newFrame.pos = newPos;
+//   newFrame.vel = (double)(newFrame.pos - lastFrame->pos) / timeSinceLast;
+//   newFrame.acc = (newFrame.vel - lastFrame->vel) / timeSinceLast;
+//   return newFrame;
+// }
+
+// encoderFrame leftEncoderFrame;
+// encoderFrame rightEncoderFrame;
+// int lastSampleTimeMillis = millis();
+// void updateEncoders() {
+//     int currMillis = millis();
+
+//     // Update encoder velocity
+//     int timeSinceEncoderSample = currMillis - lastSampleTimeMillis;
+//     if (timeSinceEncoderSample >= encoderSamplingTime) {
+//         double timeSinceEncoderSampleSec = timeSinceEncoderSample * 1e-3;
+//         updateEncoderFrame(&leftEncoderFrame, leftEncoderCount, timeSinceEncoderSampleSec);
+//         updateEncoderFrame(&rightEncoderFrame, rightEncoderCount, timeSinceEncoderSampleSec);
+//         lastSampleTimeMillis = currMillis;
+//     }
+// }
+
+// encoderFrame* getLeftEncoderFrame() {
+//     return &leftEncoderFrame;
+// }
+
+// encoderFrame* getRightEncoderFrame() {
+//     return &rightEncoderFrame;
+// }
+
+float getLeftEncoderCounts() {
+  return leftEncoderCount;
 }
 
-encoderFrame leftEncoderFrame;
-encoderFrame rightEncoderFrame;
-int lastSampleTimeMillis = millis();
-void updateEncoders() {
-    int currMillis = millis();
-
-    // Update encoder velocity
-    int timeSinceEncoderSample = currMillis - lastSampleTimeMillis;
-    if (timeSinceEncoderSample >= encoderSamplingTime) {
-        double timeSinceEncoderSampleSec = timeSinceEncoderSample * 1e-3;
-        updateEncoderFrame(&leftEncoderFrame, leftEncoderCount, timeSinceEncoderSampleSec);
-        updateEncoderFrame(&rightEncoderFrame, rightEncoderCount, timeSinceEncoderSampleSec);
-        lastSampleTimeMillis = currMillis;
-    }
-}
-
-encoderFrame* getLeftEncoderFrame() {
-    return &leftEncoderFrame;
-}
-
-encoderFrame* getRightEncoderFrame() {
-    return &rightEncoderFrame;
+float getRightEncoderCounts() {
+  return rightEncoderCount;
 }
 
 int16_t sys_id_period = -1;
@@ -173,8 +181,8 @@ void sendSysID() {
       sysResponseCmd.data.time_millis = currTime;
       sysResponseCmd.data.left_pwm = leftPWM;
       sysResponseCmd.data.right_pwm = rightPWM;
-      sysResponseCmd.data.left_enc = leftEncoderCount;
-      sysResponseCmd.data.right_enc = rightEncoderCount;
+      sysResponseCmd.data.left_enc = getLeftEncoderCounts();
+      sysResponseCmd.data.right_enc = getRightEncoderCounts();
       sendCommand(SYS_RESPONSE, &sysResponseCmd);
     }
   }

@@ -4,10 +4,7 @@
 #include "commands.h"
 #include "led.h"
 #include "motors.h"
-#include "controller.h"
-
-encoderFrame* leftEncoder = getLeftEncoderFrame();
-encoderFrame* rightEncoder = getRightEncoderFrame();
+#include "skid_steer.h"
 
 void periodic();
 
@@ -18,6 +15,7 @@ void setup() {
   setupSerial();
   setupLEDs();
   setupMotors();
+  Initialize_Skid_Steer(getLeftEncoderCounts(), getRightEncoderCounts());
 }
 
 //============
@@ -38,9 +36,12 @@ void loop() {
   }
 }
 
+unsigned long update_prev_time = millis();
 void periodic() {
-  updateEncoders();
+  //updateEncoders();
   sendSysID();
+  Skid_Steer_Update(getLeftEncoderCounts(), getRightEncoderCounts(), update_prev_time - millis());
+  update_prev_time = millis();
 
   // // Setting controller values.
   // if (theta > 900)  // Dummy value to signal program end.

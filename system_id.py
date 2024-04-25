@@ -11,7 +11,7 @@ from chirp_trajectory import ChirpTrajectory
 from arduino.serialio import sendCommand, receiveCommand, Command, enableArduino
 
 
-_SERIAL_ENABLED = False
+_SERIAL_ENABLED = True
 _CHIRP_TRAJECTORY = True
 
 

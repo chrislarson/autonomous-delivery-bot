@@ -3,7 +3,7 @@
 /**
  * Function Initialize_Controller sets up the z-transform based controller for the system.
  */
-void Initialize_Controller(Controller* cont, float kp, float* A, float* B, float update_period){
+void Initialize_Controller(Controller* cont, float kp, float* A, float* B){
     cont->A[0] = A[0];
     cont->A[1] = A[1];
     cont->B[0] = B[0];
@@ -20,7 +20,7 @@ void Initialize_Controller(Controller* cont, float kp, float* A, float* B, float
     float right_vel = lin_vel + (wheel_base*0.5*ang_vel);
  */
 void Controller_Set_Target_Velocity(Controller* cont, float vel){
-     cont->target_vel = vel;
+    cont->target_vel = vel;
 }
 
 /**
@@ -56,6 +56,7 @@ float Controller_Last(Controller* cont){
  * to match the measurement so it starts with zero error.
  */
 void Controller_SetTo(Controller* cont, float measurement){
+    cont->target_pos = measurement;
     cont->input_last = measurement;
     cont->output_last = measurement;
 }

@@ -113,8 +113,8 @@ if __name__ == "__main__":
     # msg = sendCommand(ser, Command.ERROR, 2, 2, 2)
     # print(msg)
 
-    response = receiveCommand(ser)
-    print(response)
+    # response = receiveCommand(ser)
+    # print(response)
 
     msg = sendCommand(ser, Command.SYS_ID, 100)
     print(msg)
