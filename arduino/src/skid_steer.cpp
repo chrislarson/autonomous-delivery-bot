@@ -20,6 +20,11 @@ static float enc_right_origin;
 boolean velocity_mode;
 boolean skid_steer_enabled;
 
+static const float mm_to_counts = 1/mm_per_count;
+static const float wheel_base_counts = wheel_base_mm * mm_per_count;
+
+// Private Functions
+
 void Skid_Steer_Zero(float left_meas, float right_meas) {
     Controller_SetTo(&controller_left, left_meas);
     Controller_SetTo(&controller_right, right_meas);
@@ -32,45 +37,20 @@ void Skid_Steer_Zero(float left_meas, float right_meas) {
     velocity_mode = true;
 }
 
-void Initialize_Skid_Steer(float left_meas, float right_meas){
-    Initialize_Controller(&controller_left, kp_L, &A_L[0], &B_L[0]);
-    Initialize_Controller(&controller_right, kp_R, &A_R[0], &B_R[0]);
-    Skid_Steer_Zero(left_meas, right_meas);
-}
-
 void setControllerVelocities(float lin_vel, float ang_vel) {
-    float left_vel = lin_vel - (wheel_base*0.5*ang_vel);
-    float right_vel = lin_vel + (wheel_base*0.5*ang_vel);
+    float left_vel = lin_vel - (wheel_base_counts*0.5*ang_vel);
+    float right_vel = lin_vel + (wheel_base_counts*0.5*ang_vel);
     Controller_Set_Target_Velocity(&controller_left,left_vel);
     Controller_Set_Target_Velocity(&controller_right,right_vel);
     prev_lin_vel = lin_vel;
     prev_ang_vel = ang_vel;
 }
 
-void Skid_Steer_Set_Velocity(float lin_vel, float ang_vel){
-    lin_vel *= mm_to_counts;
-    ang_vel *= mm_to_counts;
-    setControllerVelocities(lin_vel, ang_vel);
-    velocity_mode = true;
-}
-
 void calcDisplacement(float left_meas, float right_meas) {
     float left_disp = left_meas - enc_left_origin;
     float right_disp = right_meas - enc_right_origin;
     curr_lin_disp = 0.5*(left_disp + right_disp);
-    curr_ang_disp = (right_disp - left_disp)/wheel_base;
-}
-
-void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp, float left_meas, float right_meas){
-    left_meas *= mm_to_counts;
-    right_meas *= mm_to_counts;
-    Controller_Set_Target_Position(&controller_left, left_meas);
-    Controller_Set_Target_Position(&controller_right, right_meas);
-    enc_left_origin = left_meas;
-    enc_right_origin = right_meas;
-    target_lin_disp = lin_disp;
-    target_ang_disp = ang_disp;
-    velocity_mode = false;
+    curr_ang_disp = (right_disp - left_disp)/wheel_base_counts;
 }
 
 float calcTargetVelocity(float curr_disp, float target_disp, float prev_vel, float max_vel, float max_acc, float dt) {
@@ -97,6 +77,34 @@ void Saturate_Setpoints(float* left_setpoint, float* right_setpoint, float ABS_M
         *left_setpoint = Saturate(*left_setpoint, ABS_MAX);
         *right_setpoint *= *left_setpoint/unsat_left_setpoint;
     }
+}
+
+// Public Functions
+
+void Initialize_Skid_Steer(float left_meas, float right_meas){
+    Initialize_Controller(&controller_left, kp_L, &A_L[0], &B_L[0]);
+    Initialize_Controller(&controller_right, kp_R, &A_R[0], &B_R[0]);
+    Skid_Steer_Zero(left_meas, right_meas);
+}
+
+void Skid_Steer_Set_Velocity(float lin_vel, float ang_vel){
+    lin_vel *= mm_to_counts;
+    ang_vel *= mm_to_counts;
+    setControllerVelocities(lin_vel, ang_vel);
+    velocity_mode = true;
+}
+
+
+void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp, float left_meas, float right_meas){
+    left_meas *= mm_to_counts;
+    right_meas *= mm_to_counts;
+    Controller_Set_Target_Position(&controller_left, left_meas);
+    Controller_Set_Target_Position(&controller_right, right_meas);
+    enc_left_origin = left_meas;
+    enc_right_origin = right_meas;
+    target_lin_disp = lin_disp;
+    target_ang_disp = ang_disp;
+    velocity_mode = false;
 }
 
 unsigned long controller_update_prev_time = 0;

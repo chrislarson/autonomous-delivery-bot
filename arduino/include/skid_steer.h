@@ -19,8 +19,7 @@
 #define max_lin_vel 0.5
 #define max_ang_acc 0.0
 #define max_ang_vel 0.0
-#define mm_to_counts (1 / mm_per_count)
-#define wheel_base (0.0 * mm_per_count)
+#define wheel_base_mm 0.0
 #define update_period_ms 10
 
 void Initialize_Skid_Steer(float left_meas, float right_meas);
