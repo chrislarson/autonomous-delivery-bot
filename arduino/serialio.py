@@ -13,6 +13,7 @@ class Command(Enum):
     WAYPOINT = 6
     DISABLE = 7
     ERROR = 8
+    DISP = 9
 
 
 class Error(Enum):
@@ -32,6 +33,7 @@ cmd_fmts = {
     Command.SYS_RESPONSE: "BIiiii",
     Command.DISABLE: "B",
     Command.ERROR: "BBii",
+    Command.DISP: "Bff"
 }
 
 

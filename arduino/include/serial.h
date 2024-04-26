@@ -11,7 +11,9 @@ enum Command {
     SYS_RESPONSE = 5,
     WAYPOINT = 6,
     DISABLE = 7,
-    ERROR = 8
+    ERROR = 8,
+    DISP = 9,
+    TRAJ_START = 10
 };
 
 enum Error {
@@ -91,6 +93,23 @@ union ErrorCmd {
         int32_t arg2;
     } data;
     byte raw[10];
+};
+
+union DispCmd{
+    struct __attribute__ ( ( __packed__ ) ) {
+        unsigned char cmd;
+        float lin_disp;
+        float ang_disp;
+    } data;
+    byte raw[9];
+};
+
+union TrajStartCmd{
+    struct __attribute__ ( ( __packed__ ) ) {
+        unsigned char cmd;
+        unsigned char num_cmds;
+    } data;
+    byte raw[9];
 };
 
 // Functions

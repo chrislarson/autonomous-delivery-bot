@@ -9,7 +9,6 @@
 bool enabled = false;
 void execEnableCmd() {
     EnableCmd cmd;
-    cmd.data.cmd = ENABLE;
     cmdReadInto(&cmd, sizeof(cmd));
     sendCommand(ENABLE, &cmd);
     setLed(0);
@@ -51,7 +50,6 @@ void execWayPointCmd() {
 
 void execDisableCmd() {
     DisableCmd cmd;
-    cmd.data.cmd = DISABLE;
     cmdReadInto(&cmd, sizeof(cmd));
     sendCommand(DISABLE, &cmd);
     setLed(0);
@@ -68,6 +66,23 @@ void execInvalidCmd(int cmd_id) {
     cmd.data.arg2 = -1;
     sendCommand(ERROR, &cmd);
     setLed(LED_ERR_ID);
+}
+
+void execDispCmd(){
+    DispCmd cmd;
+    cmdReadInto(&cmd, sizeof(cmd));
+    sendCommand(DISP, &cmd);
+    if (cmd.data.lin_disp < 1){
+        Skid_Steer_Set_Angular_Displacement(0, cmd.data.ang_disp, getLeftEncoderCounts(), getRightEncoderCounts());
+    } else{
+        Skid_Steer_Set_Displacement(cmd.data.lin_disp, cmd.data.ang_disp, getLeftEncoderCounts(), getRightEncoderCounts());
+    }
+    
+}
+
+void execTrajStartCmd() {
+    TrajStartCmd cmd;
+    cmdReadInto(&cmd, sizeof(cmd));
 }
 
 /// Public Functions
@@ -92,6 +107,12 @@ void execCmd(Command cmd){
         break;
     case DISABLE:
         if(isEnabled()) execDisableCmd();
+        break;
+    case DISP:
+        if(isEnabled()) execDispCmd();
+        break;
+    case TRAJ_START:
+        if(isEnabled()) execTrajStartCmd();
         break;
     default:
         execInvalidCmd(nextCmdId());

@@ -50,8 +50,28 @@ void Controller_Set_Target_Velocity(Controller* cont, float vel, ControlMode con
  * Function Controller_Set_Target_Position sets the target postion for the
  * controller, this also sets the target velocity to 0.
  */
-void Controller_Set_Target_Position(Controller* cont, float pos ){
+void Controller_Set_Target_Position_Counts(Controller* cont, float pos ){
     cont->target_pos = pos;
+    cont->target_vel = 0;
+}
+
+/**
+ * Function Controller_Add_Target_Position adds to the target postion for the
+ * controller, this also sets the target velocity to 0.
+ */
+void Controller_Add_Target_Position(Controller* cont, float displacement, ControlMode controlMode ){
+    switch (controlMode)
+    {
+    case VELOCITY:
+    case DISPLACEMENT:
+    default:
+        cont->target_pos = cont->target_pos + (displacement * cont->gains[0].counts_per_mm);
+        break;
+    case ANG_VEL:
+    case ANG_DISP:
+        cont->target_pos = cont->target_pos + (displacement * cont->gains[1].counts_per_mm);
+        break;
+    }
     cont->target_vel = 0;
 }
 
