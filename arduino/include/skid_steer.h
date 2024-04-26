@@ -23,7 +23,9 @@
 enum ControlMode {
     DISABLED = 0,
     VELOCITY = 1,
-    DISPLACEMENT = 2
+    DISPLACEMENT = 2,
+    ANG_DISP = 3,
+    ANG_VEL = 4
 };
 
 void Initialize_Skid_Steer(float left_meas, float right_meas);
@@ -31,6 +33,10 @@ void Initialize_Skid_Steer(float left_meas, float right_meas);
 void Skid_Steer_Set_Velocity(float lin_vel, float ang_vel);
 
 void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp, float left_meas, float right_meas);
+
+void Skid_Steer_Set_Angular_Velocity(float lin_vel, float ang_vel);
+
+void Skid_Steer_Set_Angular_Displacement(float lin_disp, float ang_disp, float left_meas, float right_meas);
 
 void Skid_Steer_Update(float left_meas, float right_meas);
 
