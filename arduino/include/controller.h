@@ -48,7 +48,7 @@ void Controller_Set_Target_Position(Controller* cont, float pos );
  * Function Controller_Update takes in a new measurement and returns the
  * new control value.
  */
-float Controller_Update(Controller* cont, float measurement, float dt_s, ControlMode mode);
+float Controller_Update(Controller* cont, float measurement, float dt_s, ControlMode controlMode);
 
 /**
  * Function Controller_Last returns the last control command

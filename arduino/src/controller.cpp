@@ -59,14 +59,34 @@ void Controller_Set_Target_Position(Controller* cont, float pos ){
  * Function Controller_Update takes in a new measurement and returns the
  * new control value.
  */
-float Controller_Update(Controller* cont, float measurement, float dt_s, ControlMode mode){
-    float output_this = cont->B_0*measurement + cont->B_1*cont->input_last - cont->A_1*cont->output_last;
+float Controller_Update(Controller* cont, float measurement, float dt_s, ControlMode controlMode){
+    float B_0, B_1, A_1, kp;
+    switch (controlMode)
+    {
+    case VELOCITY:
+    case DISPLACEMENT:
+    default:
+        B_0 = cont->gains[0].B_0;
+        B_1 = cont->gains[0].B_1;
+        A_1 = cont->gains[0].A_1;
+        kp = cont->gains[0].kp;
+        break;
+    case ANG_VEL:
+    case ANG_DISP:
+        B_0 = cont->gains[1].B_0;
+        B_1 = cont->gains[1].B_1;
+        A_1 = cont->gains[1].A_1;
+        kp = cont->gains[1].kp;
+        break;
+    }
+    
+    float output_this = B_0*measurement + B_1*cont->input_last - A_1*cont->output_last;
     cont->output_last = output_this;
     cont->input_last = measurement;
 
     cont->target_pos += cont->target_vel*dt_s;
 
-    float pwm = cont->kp * (cont->target_pos - output_this);
+    float pwm = kp * (cont->target_pos - output_this);
     return pwm;
 }
 
