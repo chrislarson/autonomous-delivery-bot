@@ -71,7 +71,19 @@ class SystemID:
                             print(next_cmd)
                         last_sent_cmd = next_cmd
                     cmd_idx += 1
+
+
             outfile.close()
+            if ser_conn is not None:
+                print(
+                    sendCommand(
+                        ser_conn,
+                        Command.PWM,
+                        0,
+                        0,
+                    )
+                )
+                print(sendCommand(ser_conn, Command.DISABLE))
 
         except KeyboardInterrupt:
             print("\nCanceled system id.")
