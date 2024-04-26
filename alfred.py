@@ -6,6 +6,7 @@ from typing import Union
 
 from chirp_trajectory import ChirpTrajectory
 from sysid import SystemID
+from arduino.serialio import enableArduino, genCmd, sendCommand, Command
 
 class Aifr3dCLI(cmd.Cmd):
     prompt: str = 'Aifr3d>> '
@@ -51,25 +52,33 @@ class Aifr3dCLI(cmd.Cmd):
         Generates a frequency sweep (chirp) trajectory.
 
         Usage:
-        gen_sysid_trajectory [duration_sec] [dt_sec]
+            gen_sysid_trajectory [duration_sec] [dt_sec] *[traj_type (^linear OR rotation)]
+
+        * - optional parameter.
+        ^ - optional parameter default value.
         """
         args = line.split(" ")
         try:
             duration_sec = int(args[0])
             dt_sec = float(args[1])
+            traj_type = "LINEAR" if len(args) < 3 else str(args[2])
+            if traj_type[0].upper() == 'L':
+                traj_type = "LINEAR"
+            else:
+                traj_type = "ROTATION"
             chirp_traj = ChirpTrajectory()
-            dir, csv_path = chirp_traj.generate_trajectory(self._session_directory, duration_sec, dt_sec, show_plot=False)
+            dir, csv_path = chirp_traj.generate_trajectory(self._session_directory, duration_sec, dt_sec, traj_type=traj_type, show_plot=False)
             self._sysid_traj = csv_path
             print("SystemID trajectory generated and saved in", dir)
         except Exception as e:
             print(e)
-            print("Invalid arguments, please try again. gen_sysid_trajectory [duration_sec] [dt_sec]")
+            print("Something went wrong. Please try again!")
 
     def do_id_system(self, line):
         """
         Usage:
 
-        id_system *[traj_path(csv)]
+            id_system *[traj_path(csv)]
 
         * - optional parameter.
         """
@@ -99,7 +108,31 @@ class Aifr3dCLI(cmd.Cmd):
             print(e)
             print("Something went wrong! Please try again.")
 
+    def do_drive(self, line):
+        """
+        Sends drive command to the robot (if connected) else prints the drive command to console.
 
+        Usage:
+            drive [mode (displacement OR velocity)] [linear_value] [angular_value]
+        """
+        try:
+            args = line.split(" ")
+            arg_mode = str(args[0])
+            arg_linear_val = float(args[1])
+            arg_angular_val = float(args[2])
+
+            if self._serial is not None:
+                # Connected, send to robot.
+                self._serial.reset_input_buffer()
+                enableArduino(self._serial)
+                msg = sendCommand(self._serial, Command.WAYPOINT, arg_angular_val, arg_linear_val)
+                print(msg)
+            else:
+                # Not connected, print to console.
+                print(arg_mode, arg_linear_val, arg_angular_val)
+        except Exception as e:
+            print(e)
+            print("Something went wrong. Please try again!")
 
     # def do_find_targets(self, line):
     #     """Locates person targets on the Oak-D Lite and saves their 3D world coordinates."""
@@ -127,23 +160,3 @@ class Aifr3dCLI(cmd.Cmd):
 
 if __name__ == '__main__':
     Aifr3dCLI().cmdloop()
-
-
-# OPTIONS:
-    # Search timeout
-    #
-
-#1. Connect to the robot over serial.
-
-#2. Send "Enable" command.
-
-#3. Send "Status -> Ready" command.
-
-#3. Wait for a "Go" signal.
-
-#4. Upon "Go",
-# Send "Status -> Searching" command.
-# Identify people.
-# Generate trajectory.
-# Send "Status -> Delivery In Progress" command.
-# Send trajectory.

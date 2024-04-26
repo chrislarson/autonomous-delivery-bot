@@ -12,7 +12,7 @@ class ChirpTrajectory:
         data_dir: str,
         duration_sec: int,
         dt_sec: float,
-        type: Union[Literal["ROTATION"],Literal["LINEAR"]] = "LINEAR",
+        traj_type: Union[Literal["ROTATION"],Literal["LINEAR"]] = "LINEAR",
         start_freq: float = 0.01,
         end_freq: float = 1.0,
         pwm_max: int = 100,
@@ -44,13 +44,9 @@ class ChirpTrajectory:
         ts = np.concatenate((ts_lin, ts_fs))
         pwms = np.concatenate((pwm_lin, pwm_fs))
 
-
-        #TODO: If Linear, same dir.
-        #TODO: If Rotation, opposite dirs.
-
-        # IF turn dynamics, lag?
+        # Set left and right PWM based on traj type and max pwm
         pwm_left = pwm_max * pwms
-        pwm_right = pwm_left
+        pwm_right =  pwm_left if traj_type=="LINEAR" else -1*pwm_left
 
         trajectory = np.stack((ts, pwm_left, pwm_right), axis=-1)
         self._trajectory = trajectory
@@ -60,7 +56,7 @@ class ChirpTrajectory:
         os.mkdir(traj_dir)
 
         # Save trajectory as csv
-        csv_path = os.path.join(traj_dir, "chirp_traj.csv")
+        csv_path = os.path.join(traj_dir, "chirp_traj_" + traj_type + ".csv")
         np.savetxt(csv_path, trajectory, delimiter=",", fmt="%10.2f")
 
         # Save trajectory as png
@@ -86,7 +82,7 @@ class ChirpTrajectory:
             label="- Deadband",
         )
         ax.set_ylim(ymin=-pwm_max, ymax=pwm_max)
-        fig_path = os.path.join(traj_dir, "chirp_trajectory.png")
+        fig_path = os.path.join(traj_dir, "chirp_traj_" + traj_type + ".png")
         plt.savefig(fig_path)
         if show_plot:
             plt.show()
