@@ -70,6 +70,19 @@ void execInvalidCmd(int cmd_id) {
     setLed(LED_ERR_ID);
 }
 
+void execDispCmd(){
+    DispCmd cmd;
+    cmd.data.cmd = DISP;
+    cmdReadInto(&cmd, sizeof(cmd));
+    sendCommand(DISP, &cmd);
+    if (cmd.data.lin_disp < 1){
+        Skid_Steer_Set_Angular_Displacement(0, cmd.data.ang_disp, getLeftEncoderCounts(), getRightEncoderCounts());
+    } else{
+        Skid_Steer_Set_Displacement(cmd.data.lin_disp, cmd.data.ang_disp, getLeftEncoderCounts(), getRightEncoderCounts());
+    }
+    
+}
+
 /// Public Functions
 
 void execCmd(Command cmd){
@@ -92,6 +105,9 @@ void execCmd(Command cmd){
         break;
     case DISABLE:
         if(isEnabled()) execDisableCmd();
+        break;
+    case DISP:
+        if(isEnabled()) execDispCmd();
         break;
     default:
         execInvalidCmd(nextCmdId());

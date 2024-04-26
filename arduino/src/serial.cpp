@@ -57,10 +57,19 @@ void echoCommand() {
         break;
     }
     case ERROR:
+    {   
         ErrorCmd errorCmd;
         cmdReadInto(&errorCmd, sizeof(errorCmd));
         sendCommand(cmd, &errorCmd);
         break;
+    }
+    case DISP:
+    {
+        DispCmd dispCmd;
+        cmdReadInto(&dispCmd, sizeof(dispCmd));
+        sendCommand(cmd, &dispCmd);
+        break;
+    }
     }
 }
 
@@ -83,6 +92,8 @@ int cmdSize(Command cmd) {
         return sizeof(DisableCmd);
     case ERROR:
         return sizeof(ErrorCmd);
+    case DISP:
+        return sizeof(DispCmd);
     default:
         return receive_buffer_len-1;
     }
@@ -157,8 +168,17 @@ void sendCommand(Command cmd, void* cmdStruct) {
         break;
     }
     case ERROR:
+    {    
         ErrorCmd* errorCmd = (ErrorCmd*) cmdStruct;
         Serial.write(&errorCmd->raw[0], sizeof(errorCmd->raw));
+        break;
+    }
+    case DISP:
+    {
+        DispCmd* dispCmd = (DispCmd*) cmdStruct;
+        Serial.write(&dispCmd->raw[0], sizeof(dispCmd->raw));
+        break;
+    }
     }
 
     Serial.write('\n');
