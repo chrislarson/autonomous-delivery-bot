@@ -6,11 +6,16 @@ typedef struct
     float B_0;
     float B_1;
     float kp;
+    float counts_per_mm;
+} ControlerGains;
+
+typedef struct
+{
+    ControlerGains gains[2];
     float target_pos;
     float target_vel;
     float input_last;
     float output_last;
-    float counts_per_mm;
 } Controller;
 
 
@@ -25,13 +30,13 @@ inline float Saturate( float value, float ABS_MAX )
 /**
  * Function Initialize_Controller sets up the z-transform based controller for the system.
  */
-void Initialize_Controller(Controller* cont, float kp, float A_1, float B_0, float B_1, float cpmm);
+void Initialize_Controller(Controller* cont, ControlMode mode, float kp, float A_1, float B_0, float B_1, float cpmm);
 
 /**
  * Function Controller_Set_Target_Velocity sets the target velocity for the
  * controller.
  */
-void Controller_Set_Target_Velocity(Controller* cont, float vel);
+void Controller_Set_Target_Velocity(Controller* cont, float vel, ControlMode controlMode);
 
 /**
  * Function Controller_Set_Target_Position sets the target postion for the

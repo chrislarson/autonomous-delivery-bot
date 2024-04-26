@@ -3,12 +3,27 @@
 /**
  * Function Initialize_Controller sets up the z-transform based controller for the system.
  */
-void Initialize_Controller(Controller* cont, float kp, float A_1, float B_0, float B_1, float cpmm){
-    cont->A_1 = A_1;
-    cont->B_0 = B_0;
-    cont->B_1 = B_1;
-    cont->kp = kp;
-    cont->counts_per_mm = cpmm;
+void Initialize_Controller(Controller* cont, ControlMode controlMode, float kp, float A_1, float B_0, float B_1, float cpmm){
+    switch (controlMode)
+    {
+    case VELOCITY:
+    case DISPLACEMENT:
+    default:
+        cont->gains[0].A_1 = A_1;
+        cont->gains[0].B_0 = B_0;
+        cont->gains[0].B_1 = B_1;
+        cont->gains[0].kp = kp;
+        cont->gains[0].counts_per_mm = cpmm;
+        break;
+    case ANG_VEL:
+    case ANG_DISP:
+        cont->gains[1].A_1 = A_1;
+        cont->gains[1].B_0 = B_0;
+        cont->gains[1].B_1 = B_1;
+        cont->gains[1].kp = kp;
+        cont->gains[1].counts_per_mm = cpmm;
+        break;
+    }
 }
 
 /**
@@ -16,8 +31,19 @@ void Initialize_Controller(Controller* cont, float kp, float A_1, float B_0, flo
  * controller.
     float right_vel = lin_vel + (wheel_base*0.5*ang_vel);
  */
-void Controller_Set_Target_Velocity(Controller* cont, float vel){
-    cont->target_vel = vel;
+void Controller_Set_Target_Velocity(Controller* cont, float vel, ControlMode controlMode){
+    switch (controlMode)
+    {
+    case VELOCITY:
+    case DISPLACEMENT:
+    default:
+        cont->target_vel = vel * cont->gains[0].counts_per_mm;
+        break;
+    case ANG_VEL:
+    case ANG_DISP:
+        cont->target_vel = vel * cont->gains[1].counts_per_mm;
+        break;
+    }
 }
 
 /**
