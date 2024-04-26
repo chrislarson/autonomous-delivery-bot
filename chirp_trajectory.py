@@ -1,93 +1,73 @@
-from typing import Any
+from typing import Any, Literal, Union, Tuple
 import numpy as np
 from scipy.signal import chirp
 import matplotlib.pyplot as plt
 import os
+import time
 
 
 class ChirpTrajectory:
-    _test_dir: str
-    _duration_sec: int
-    _dt_sec: int
-    _pwm_max: int
-    _pwm_deadband: int
-    _exclude_deadband: bool
-    _include_turn_dynamics: bool
-    _trajectory: np.ndarray[Any]
-
-    def __init__(
-        self,
-        test_dir: str,
-        duration_sec: int,
-        dt_sec: float,
-        pwm_max: int = 100,
-        pwm_deadband: int = 20,
-        include_turn_dynamics=True,
-        exclude_deadband: bool = True,
-    ):
-        self._test_dir = test_dir
-        self._duration_sec = duration_sec
-        self._dt_sec = dt_sec
-        self._pwm_max = pwm_max
-        self._pwm_deadband = pwm_deadband
-        self._exclude_deadband = exclude_deadband
-        self._include_turn_dynamics = include_turn_dynamics
-        self._trajectory = None
 
     def generate_trajectory(
         self,
-        test_dir,
+        data_dir: str,
         duration_sec: int,
         dt_sec: float,
+        traj_type: Union[Literal["ROTATION"], Literal["LINEAR"]] = "LINEAR",
         start_freq: float = 0.01,
         end_freq: float = 1.0,
-    ):
+        pwm_max: int = 100,
+        pwm_deadband: int = 20,
+        include_turn_dynamics: bool = False,
+        show_plot: bool = True,
+    ) -> Tuple[str, str]:
 
-        # Frequency sweep segment
-        start = 0
-        stop = duration_sec
-        num = int((stop - start) / dt_sec)
+        if duration_sec < 5:
+            # TODO: Exception
+            pass
 
-        t = np.linspace(start, stop, num)
-        w = chirp(t, f0=start_freq, f1=end_freq, t1=stop, method="linear")
+        # Create a linearly increasing PWM segment to begin the trajectory.
+        start_lin = 0
+        stop_lin = 1
+        num_lin_steps = int((stop_lin - start_lin) / dt_sec)
+        ts_lin = np.linspace(start_lin, stop_lin, num_lin_steps)
+        pwm_lin = np.interp(ts_lin, [start_lin, stop_lin], [start_lin, stop_lin])
 
-        # Linear increase segment
-        start1 = 0
-        stop1 = 1
-        num1 = int((stop1 - start1) / dt_sec)
-        lint = np.linspace(start1, stop1, num1)
+        # Create a frequency sweep (chirp) PWM segment.
+        start_fs = 0
+        stop_fs = duration_sec
+        num_fs_steps = int((stop_fs - start_fs) / dt_sec)
+        ts_fs = np.linspace(start_fs, stop_fs, num_fs_steps)
+        pwm_fs = chirp(ts_fs, f0=start_freq, f1=end_freq, t1=stop_fs, method="linear")
 
-        lin = np.interp(lint, [start1, stop1], [start1, stop1])
+        # Create a combined (linear + chirp) trajectory.
+        ts_fs = ts_fs + stop_lin  # Shift all FS times to be after linear seg.
+        ts = np.concatenate((ts_lin, ts_fs))
+        pwms = np.concatenate((pwm_lin, pwm_fs))
 
-        t = stop1 + t
-        t = np.concatenate((lint, t))
-        w = np.concatenate((lin, w))
+        # Set left and right PWM based on traj type and max pwm
+        pwm_left = pwm_max * pwms
+        pwm_right = pwm_left if traj_type == "LINEAR" else -1 * pwm_left
 
-        pwm_left = self._pwm_max * w
-        pwm_right = pwm_left
-        traj = np.stack((t, pwm_left, pwm_right), axis=-1)
-        self._trajectory = traj
-        csv_path = os.path.join(test_dir, "chirp_traj.csv")
-        np.savetxt(csv_path, traj, delimiter=",", fmt="%10.2f")
-        return traj
+        trajectory = np.stack((ts, pwm_left, pwm_right), axis=-1)
+        self._trajectory = trajectory
 
-    def plot_trajectory(self, test_dir: str, save_fig=True):
-        if self._trajectory is None:
-            self.generate_trajectory()
+        # Create timestamped directory in data_dir for this trajectory
+        traj_dir = os.path.join(data_dir, "sysid_" + str(int(time.monotonic())))
+        os.mkdir(traj_dir)
 
+        # Save trajectory as csv
+        csv_path = os.path.join(traj_dir, "chirp_traj_" + traj_type + ".csv")
+        np.savetxt(csv_path, trajectory, delimiter=",", fmt="%10.2f")
+
+        # Save trajectory as png
         fig, ax = plt.subplots()
-
         ax.set_xlabel("Time (s)")
         ax.set_ylabel("PWM")
-
-        times = self._trajectory[:, 0]
-        pwm_left = self._trajectory[:, 1]
-        pwm_right = self._trajectory[:, 2]
-
-        plt.step(times, pwm_left, where="pre")
-        plt.step(times, pwm_right, where="pre")
+        plt.step(ts, pwm_left, where="pre")
+        plt.step(ts, pwm_right, where="pre")
         ax.axhline(
-            y=self._pwm_deadband,
+            y=pwm_deadband,
             color="black",
             linewidth=0.8,
             alpha=0.5,
@@ -95,21 +75,23 @@ class ChirpTrajectory:
             label="+ Deadband",
         )
         ax.axhline(
-            y=-self._pwm_deadband,
+            y=-pwm_deadband,
             color="black",
             linewidth=0.8,
             alpha=0.5,
             ls="--",
             label="- Deadband",
         )
-        ax.set_ylim(ymin=-self._pwm_max, ymax=self._pwm_max)
-        if save_fig:
-            fig_path = os.path.join(test_dir, "chirp_trajectory.png")
-            plt.savefig(fig_path)
-        else:
+        ax.set_ylim(ymin=-pwm_max, ymax=pwm_max)
+        fig_path = os.path.join(traj_dir, "chirp_traj_" + traj_type + ".png")
+        plt.savefig(fig_path)
+        if show_plot:
             plt.show()
+
+        return (traj_dir, csv_path)
 
 
 if __name__ == "__main__":
+    data_dir = os.path.join(os.getcwd(), "data")
     chirp_traj = ChirpTrajectory()
-    chirp_traj.generate_trajectory(10, 0.02)
+    chirp_traj.generate_trajectory(data_dir, 20, 0.02, "LINEAR")

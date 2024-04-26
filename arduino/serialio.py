@@ -31,7 +31,7 @@ cmd_fmts = {
     Command.WAYPOINT: "Bff",
     Command.SYS_RESPONSE: "BIiiii",
     Command.DISABLE: "B",
-    Command.ERROR: "BBii"
+    Command.ERROR: "BBii",
 }
 
 
@@ -42,7 +42,10 @@ def decodeError(err: Error, *args):
         case Error.BUFFER_OVERFLOW:
             print("ERROR: BUFFER OVERFLOW")
         case Error.SIZE_MISMATCH:
-            print("ERROR: SIZE MISMATCH, expected size: %i, received size: %i" % (args[0], args[1]))
+            print(
+                "ERROR: SIZE MISMATCH, expected size: %i, received size: %i"
+                % (args[0], args[1])
+            )
         case Error.EXEC_FAIL:
             print("ERROR: EXECUTION FAILED, ID: %i" % (args[0]))
         case Error.INVALID_CMD:
@@ -52,7 +55,7 @@ def decodeError(err: Error, *args):
 
 
 def genCmd(cmd: Command, *args):
-    return struct.pack("<" + cmd_fmts[cmd], cmd.value, *args) + b'\n'
+    return struct.pack("<" + cmd_fmts[cmd], cmd.value, *args) + b"\n"
 
 
 def sendCommand(ser: serial.Serial, cmd: Command, *args):
@@ -68,10 +71,10 @@ def receiveCommand(ser: serial.Serial):
         return None
     msg_len = struct.calcsize("<" + cmd_fmts[Command(cmd[0])])
     msg = ser.read(msg_len)
-    if len(msg) != msg_len or msg[-1] != ord('\n'):
+    if len(msg) != msg_len or msg[-1] != ord("\n"):
         print("MSG ERR:", len(msg), ",", msg)
-        print(msg_len, '!=', len(msg))
-        print(msg[-1], '!=', ord('\n'))
+        print(msg_len, "!=", len(msg))
+        print(msg[-1], "!=", ord("\n"))
         return None
 
     # print(len(msg), msg)
@@ -94,7 +97,7 @@ def receiveCommand(ser: serial.Serial):
 
 def enableArduino(ser: serial.Serial):
     response = None
-    while (response is None or response[0] != 1):
+    while response is None or response[0] != 1:
         msg = sendCommand(ser, Command.ENABLE)
         print(msg)
 
