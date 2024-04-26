@@ -5,11 +5,11 @@
 Controller controller_left;
 Controller controller_right;
 
-static float curr_lin_vel;
-static float curr_ang_vel;
-static float curr_lin_disp;
+static float curr_lin_vel = 0.0;
+static float curr_ang_vel = 0.0;
+static float curr_lin_disp = 0.0;
 static float target_lin_disp;
-static float curr_ang_disp;
+static float curr_ang_disp = 0.0;
 static float target_ang_disp;
 static float enc_left_origin;
 static float enc_right_origin;
@@ -28,8 +28,8 @@ void Skid_Steer_Zero(float left_meas, float right_meas) {
     Controller_Set_Target_Position_Counts(&controller_right, right_meas);
     enc_left_origin = left_meas;
     enc_right_origin = right_meas;
-    curr_lin_vel = 0.0;
-    curr_ang_vel = 0.0;
+    // curr_lin_vel = 0.0;
+    // curr_ang_vel = 0.0;
     curr_lin_disp = 0.0;
     curr_ang_disp = 0.0;
 }
@@ -41,11 +41,11 @@ void setControllerVelocities(float lin_vel, float ang_vel) {
     Controller_Set_Target_Velocity(&controller_right, right_vel, controlMode);
 }
 
-void addControllerDisplacements(float lin_vel, float ang_vel, float dt) {
-    float left_vel = lin_vel - (wheel_base_mm*0.5*ang_vel);
-    float right_vel = lin_vel + (wheel_base_mm*0.5*ang_vel);
-    Controller_Add_Target_Position(&controller_left, left_vel*dt, controlMode);
-    Controller_Add_Target_Position(&controller_right, right_vel*dt, controlMode);
+void addControllerDisplacements(float lin_disp, float ang_disp) {
+    float left_disp = lin_disp - (wheel_base_mm*0.5*ang_disp);
+    float right_disp = lin_disp + (wheel_base_mm*0.5*ang_disp);
+    Controller_Add_Target_Position(&controller_left, left_disp, controlMode);
+    Controller_Add_Target_Position(&controller_right, right_disp, controlMode);
 }
 
 // void calcDisplacement(float left_meas, float right_meas) {
@@ -70,14 +70,14 @@ void addControllerDisplacements(float lin_vel, float ang_vel, float dt) {
 // }
 
 float calcTrapezoidalVelocity(float curr_disp, float target_disp, float prev_vel, float max_vel, float max_acc, float dt_s) {
-    //float dir = curr_disp <= target_disp ? 1.0 : -1.0;
+    float dir = curr_disp <= target_disp ? 1.0 : -1.0;
     float target_vel;
     float decel_disp = fabs(target_disp) - (prev_vel*prev_vel)/(2*max_acc);
     if (fabs(curr_disp) < decel_disp) {
-        target_vel = prev_vel + max_acc*dt_s;
+        target_vel = prev_vel + dir*max_acc*dt_s;
         target_vel = Saturate(target_vel, max_vel);
     } else if (fabs(prev_vel) > max_acc*dt_s) {
-        target_vel = prev_vel - max_acc*dt_s;
+        target_vel = prev_vel - dir*max_acc*dt_s;
     } else {
         target_vel = 0;
     }
@@ -188,8 +188,11 @@ void Skid_Steer_Update(float left_meas, float right_meas){
     float deltaTimeSeconds = deltaTime * 1e-3;
 
     // calcDisplacement(left_meas, right_meas);
-    curr_lin_disp += curr_lin_vel * deltaTimeSeconds;
-    curr_ang_vel += curr_ang_vel * deltaTimeSeconds;
+    float delta_lin_disp = Saturate(curr_lin_vel * deltaTimeSeconds, fabs(target_lin_disp-curr_lin_disp));
+    float delta_ang_disp = Saturate(curr_ang_vel * deltaTimeSeconds, fabs(target_ang_disp-curr_ang_disp));
+    addControllerDisplacements(delta_lin_disp, delta_ang_disp);
+    curr_lin_disp += delta_lin_disp;
+    curr_ang_disp += delta_ang_disp;
     switch (controlMode)
     {
     case DISPLACEMENT:
@@ -201,7 +204,6 @@ void Skid_Steer_Update(float left_meas, float right_meas){
         break;
     }
     //setControllerVelocities(curr_lin_vel, curr_ang_vel);
-    addControllerDisplacements(curr_lin_vel, curr_ang_vel, deltaTimeSeconds);
 
     float left_setpoint = Controller_Update(&controller_left, left_meas, deltaTimeSeconds, controlMode);
     float right_setpoint = Controller_Update(&controller_right, right_meas, deltaTimeSeconds, controlMode);
