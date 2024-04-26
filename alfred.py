@@ -16,6 +16,7 @@ class Aifr3dCLI(cmd.Cmd):
     _session_directory: str
 
     _ser_port: str = "/dev/ttyAMC0"
+    _ser_port2: str = "/dev/tty.usbmodem2101"
     _ser_baud: int = 115200
 
     _serial: Union[serial.Serial, None] = None
@@ -37,16 +38,28 @@ class Aifr3dCLI(cmd.Cmd):
         print("** Session ID:", session_id)
         print("** Session Directory:", session_dir)
         try:
-            ser = serial.Serial(self._ser_port, self._ser_baud, timeout=1)
-            ser.reset_input_buffer()
-            ser.read_all()
-            self._serial = ser
-            self._connected = True
-            print(
-                "** // CONNECTED! // to robot on serial port {} with BAUD {}!".format(
-                    self._ser_port, self._ser_baud
+            ser = None
+            ser_port: str = ""
+            try:
+                ser = serial.Serial(self._ser_port, self._ser_baud, timeout=1)
+                ser_port = self._ser_port
+            except serial.SerialException:
+                ser = serial.Serial(self._ser_port2, self._ser_baud, timeout=1)
+                ser_port = self._ser_port2
+            except Exception as e:
+                print(e)
+
+            if ser is not None:
+                ser.reset_input_buffer()
+                ser.read_all()
+                self._serial = ser
+                self._connected = True
+                print()
+                print(
+                    "** // CONNECTED! // to robot on serial port {} with BAUD {}!".format(
+                        ser_port, self._ser_baud
+                    )
                 )
-            )
         except:
             print("** // NOT CONNECTED! // to robot. Running in disconnected mode.")
         print("------------------------------------")
@@ -143,7 +156,7 @@ class Aifr3dCLI(cmd.Cmd):
                 msg = sendCommand(
                     self._serial, Command.WAYPOINT, arg_angular_val, arg_linear_val
                 )
-                print(msg)
+                # print(msg)
             else:
                 # Not connected, print to console.
                 print(arg_mode, arg_linear_val, arg_angular_val)
@@ -163,14 +176,50 @@ class Aifr3dCLI(cmd.Cmd):
     #     for item in files_and_dirs:
     #         print(item)
 
+    def do_enable(self, line):
+        """
+        If connected to robot, send an Enable command over serial.
+        """
+        if self._serial is not None:
+            msg = sendCommand(self._serial, Command.ENABLE)
+            print("Enabled robot.")
+        else:
+            print("Not connected to robot. Cannot enable.")
+
+    def do_disable(self, line):
+        """
+        If connected to robot, send a Disable command over serial.
+        """
+        if self._serial is not None:
+            msg = sendCommand(self._serial, Command.DISABLE)
+            print("Disabled robot.")
+        else:
+            print("Not connected to robot. Cannot disable.")
+
     def do_quit(self, line):
-        """Exit the CLI."""
+        """
+        Exit the CLI.
+        If connected to robot, it will send a Disable command.
+        """
+        if self._serial is not None:
+            self.do_disable("")
         return True
+
+
+    def is_connected(self):
+        if self._serial is not None:
+            return self._serial.is_open
+        return False
 
     def postcmd(self, stop, line):
         print()  # Add an empty line for better readability
         return stop
 
-
 if __name__ == "__main__":
-    Aifr3dCLI().cmdloop()
+    alfred = Aifr3dCLI()
+    try:
+        alfred.cmdloop()
+    except KeyboardInterrupt:
+        if alfred.is_connected():
+            alfred.do_disable("")
+            print("Exiting.")
