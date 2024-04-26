@@ -33,7 +33,7 @@ void Controller_Set_Target_Position(Controller* cont, float pos ){
  * Function Controller_Update takes in a new measurement and returns the
  * new control value.
  */
-float Controller_Update(Controller* cont, float measurement, float dt_s){
+float Controller_Update(Controller* cont, float measurement, float dt_s, ControlMode mode){
     float output_this = cont->B_0*measurement + cont->B_1*cont->input_last - cont->A_1*cont->output_last;
     cont->output_last = output_this;
     cont->input_last = measurement;

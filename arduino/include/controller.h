@@ -1,5 +1,5 @@
 #include "Arduino.h"
-
+#include "skid_steer.h"
 typedef struct
 {
     float A_1;
@@ -43,7 +43,7 @@ void Controller_Set_Target_Position(Controller* cont, float pos );
  * Function Controller_Update takes in a new measurement and returns the
  * new control value.
  */
-float Controller_Update(Controller* cont, float measurement, float dt_s);
+float Controller_Update(Controller* cont, float measurement, float dt_s, ControlMode mode);
 
 /**
  * Function Controller_Last returns the last control command

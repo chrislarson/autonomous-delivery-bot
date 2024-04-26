@@ -116,6 +116,38 @@ void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp, float left_meas
     controller_update_prev_time = millis();
 }
 
+void Skid_Steer_Set_Angular_Velocity(float lin_vel, float ang_vel){
+    // convert from mm to counts
+    // float lin_vel_counts = lin_vel * counts_per_mm;
+    // float ang_vel_counts = ang_vel * counts_per_mm;
+
+    // set velocity targets
+    target_lin_vel = lin_vel;
+    target_ang_vel = ang_vel;
+
+    // switch to angular velocity mode
+    controlMode = ANG_VEL;
+
+    setControllerVelocities(target_lin_vel, target_ang_vel);
+    controller_update_prev_time = millis();
+}
+
+void Skid_Steer_Set_Angular_Displacement(float lin_disp, float ang_disp, float left_meas, float right_meas){
+    // // convert from mm to counts
+    // lin_disp *= counts_per_mm;
+    // ang_disp *= counts_per_mm;
+    
+    // set displacement targets
+    target_lin_disp = lin_disp;
+    target_ang_disp = ang_disp;
+
+    // zero out controllers so that the velocity starts at 0
+    Skid_Steer_Zero(left_meas, right_meas);
+    
+    // switch to angular displacement mode
+    controlMode = ANG_DISP;
+    controller_update_prev_time = millis();
+}
 void Skid_Steer_Disable() {
     controlMode = DISABLED;
 }
@@ -133,15 +165,8 @@ void Skid_Steer_Update(float left_meas, float right_meas){
     calcDisplacement(left_meas, right_meas);
     switch (controlMode)
     {
-    case LIN_DISP:
-        target_lin_vel = calcTrapezoidalVelocity(curr_lin_disp, target_lin_disp, target_lin_vel, max_lin_vel, max_lin_acc, deltaTimeSeconds);
-        target_ang_vel = 0;
-        break;
-    case ANG_DISP:
-        target_lin_vel = 0;
-        target_ang_vel = calcTrapezoidalVelocity(curr_ang_disp, target_ang_disp, target_ang_vel, max_ang_vel, max_ang_acc, deltaTimeSeconds);
-        break;
     case DISPLACEMENT:
+    case ANG_DISP:
         target_lin_vel = calcTrapezoidalVelocity(curr_lin_disp, target_lin_disp, target_lin_vel, max_lin_vel, max_lin_acc, deltaTimeSeconds);
         target_ang_vel = calcTrapezoidalVelocity(curr_ang_disp, target_ang_disp, target_ang_vel, max_ang_vel, max_ang_acc, deltaTimeSeconds);
         break;
@@ -150,8 +175,8 @@ void Skid_Steer_Update(float left_meas, float right_meas){
     }
     setControllerVelocities(target_lin_vel, target_ang_vel);
 
-    float left_setpoint = Controller_Update(&controller_left, left_meas, deltaTimeSeconds);
-    float right_setpoint = Controller_Update(&controller_right, right_meas, deltaTimeSeconds);
+    float left_setpoint = Controller_Update(&controller_left, left_meas, deltaTimeSeconds, controlMode);
+    float right_setpoint = Controller_Update(&controller_right, right_meas, deltaTimeSeconds, controlMode);
     //Saturate_Setpoints(&left_setpoint, &right_setpoint, MOTOR_MAX);
     left_setpoint = Saturate(left_setpoint, MOTOR_MAX);
     right_setpoint = Saturate(right_setpoint, MOTOR_MAX);
