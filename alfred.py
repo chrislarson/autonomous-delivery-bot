@@ -56,7 +56,7 @@ class Aifr3dCLI(cmd.Cmd):
                 self._connected = True
                 print()
                 print(
-                    "** // CONNECTED! // to robot on serial port {} with BAUD {}!".format(
+                    "** // CONNECTED! // to robot on serial port {} with BAUD {} :)".format(
                         ser_port, self._ser_baud
                     )
                 )
