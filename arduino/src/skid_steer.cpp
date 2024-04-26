@@ -35,13 +35,27 @@ void Skid_Steer_Zero(float left_meas, float right_meas) {
 void setControllerVelocities(float lin_vel, float ang_vel) {
     float left_vel = lin_vel - (wheel_base_mm*0.5*ang_vel);
     float right_vel = lin_vel + (wheel_base_mm*0.5*ang_vel);
-    Controller_Set_Target_Velocity(&controller_left,left_vel * controller_left.counts_per_mm);
-    Controller_Set_Target_Velocity(&controller_right,right_vel * controller_right.counts_per_mm);
+    Controller_Set_Target_Velocity(&controller_left, left_vel, controlMode);
+    Controller_Set_Target_Velocity(&controller_right, right_vel, controlMode);
 }
 
 void calcDisplacement(float left_meas, float right_meas) {
-    float left_disp = (left_meas - enc_left_origin)/controller_left.counts_per_mm;
-    float right_disp = (right_meas - enc_right_origin)/controller_right.counts_per_mm;
+    float left_disp;
+    float right_disp;
+    switch (controlMode)
+    {
+    case VELOCITY:
+    case DISPLACEMENT:
+    default:
+        left_disp = (left_meas - enc_left_origin)/controller_left.gains[0].counts_per_mm;
+        right_disp = (right_meas - enc_right_origin)/controller_right.gains[0].counts_per_mm;
+        break;
+    case ANG_VEL:
+    case ANG_DISP:
+        left_disp = (left_meas - enc_left_origin)/controller_left.gains[1].counts_per_mm;
+        right_disp = (right_meas - enc_right_origin)/controller_right.gains[1].counts_per_mm;
+        break;
+    }
     curr_lin_disp = 0.5*(left_disp + right_disp);
     curr_ang_disp = (right_disp - left_disp)/wheel_base_mm;
 }
@@ -76,8 +90,8 @@ void Saturate_Setpoints(float* left_setpoint, float* right_setpoint, float ABS_M
 // Public Functions
 
 void Initialize_Skid_Steer(float left_meas, float right_meas){
-    Initialize_Controller(&controller_left, kp_L, A1_L, B0_L, B1_L, 1.5785/0.94);
-    Initialize_Controller(&controller_right, kp_R, A1_R, B0_R, B1_R, 1.5215/0.94);
+    Initialize_Controller(&controller_left, DISPLACEMENT, kp_L, A1_L, B0_L, B1_L, 1.5785/0.94);
+    Initialize_Controller(&controller_right, DISPLACEMENT, kp_R, A1_R, B0_R, B1_R, 1.5215/0.94);
     Skid_Steer_Zero(left_meas, right_meas);
     controlMode = DISABLED;
 }
@@ -133,10 +147,6 @@ void Skid_Steer_Update(float left_meas, float right_meas){
     calcDisplacement(left_meas, right_meas);
     switch (controlMode)
     {
-    case LIN_DISP:
-        target_lin_vel = calcTrapezoidalVelocity(curr_lin_disp, target_lin_disp, target_lin_vel, max_lin_vel, max_lin_acc, deltaTimeSeconds);
-        target_ang_vel = 0;
-        break;
     case ANG_DISP:
         target_lin_vel = 0;
         target_ang_vel = calcTrapezoidalVelocity(curr_ang_disp, target_ang_disp, target_ang_vel, max_ang_vel, max_ang_acc, deltaTimeSeconds);
