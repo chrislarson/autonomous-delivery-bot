@@ -130,10 +130,18 @@ void Skid_Steer_Update(float left_meas, float right_meas){
     
     float deltaTimeSeconds = deltaTime * 1e-3;
 
+    calcDisplacement(left_meas, right_meas);
     switch (controlMode)
     {
+    case LIN_DISP:
+        target_lin_vel = calcTrapezoidalVelocity(curr_lin_disp, target_lin_disp, target_lin_vel, max_lin_vel, max_lin_acc, deltaTimeSeconds);
+        target_ang_vel = 0;
+        break;
+    case ANG_DISP:
+        target_lin_vel = 0;
+        target_ang_vel = calcTrapezoidalVelocity(curr_ang_disp, target_ang_disp, target_ang_vel, max_ang_vel, max_ang_acc, deltaTimeSeconds);
+        break;
     case DISPLACEMENT:
-        calcDisplacement(left_meas, right_meas);
         target_lin_vel = calcTrapezoidalVelocity(curr_lin_disp, target_lin_disp, target_lin_vel, max_lin_vel, max_lin_acc, deltaTimeSeconds);
         target_ang_vel = calcTrapezoidalVelocity(curr_ang_disp, target_ang_disp, target_ang_vel, max_ang_vel, max_ang_acc, deltaTimeSeconds);
         break;

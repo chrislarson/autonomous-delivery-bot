@@ -23,7 +23,9 @@
 enum ControlMode {
     DISABLED = 0,
     VELOCITY = 1,
-    DISPLACEMENT = 2
+    DISPLACEMENT = 2,
+    LIN_DISP = 3,
+    ANG_DISP = 4,
 };
 
 void Initialize_Skid_Steer(float left_meas, float right_meas);
