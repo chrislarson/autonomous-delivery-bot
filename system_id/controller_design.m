@@ -7,8 +7,8 @@ files = dir("sysid_73916/output.csv");
 
 SECONDS_PER_MILLISECOND = 0.001;
 
-MM_PER_ENCODER_TICK = 1.55; % Experimentally captured
-M_PER_ENCODER_TICK = MM_PER_ENCODER_TICK / 1000;
+ENCODER_TICKS_PER_MM = 1.55; % Experimentally captured
+M_PER_ENCODER_TICK = ENCODER_TICKS_PER_MM / 1000;
 
 for f=1:length(files)
     file = files(f,:);
@@ -35,18 +35,23 @@ for f=1:length(files)
     % Collect left into iddata - POSITION MODE (millimeters)
     data_l = iddata(y_ls, u_ls, dt_avg);
     data_l.InputName = 'PWM_L';
-    data_l.InputUnit = 'PWM_val';
-    data_l.OutputName = 'Position_L (mm)';
-    data_l.OutputUnit = 'mm';
+    data_l.InputUnit = 'PWM_val (-255,255)';
+    data_l.OutputName = 'Position_L';
+    data_l.OutputUnit = 'encoder ticks';
     data_l.TimeUnit = 'seconds';
 
     % Collect right into iddata - POSITION MODE (millimeters)
     data_r = iddata(y_rs, u_rs, dt_avg);
     data_r.InputName = 'PWM_R';
-    data_r.InputUnit = 'PWM_val';
-    data_r.OutputName = 'Position_R (mm)';
-    data_r.OutputUnit = 'mm';
+    data_r.InputUnit = 'PWM_val (-255,255)';
+    data_r.OutputName = 'Position_R';
+    data_r.OutputUnit = 'encoder ticks';
     data_r.TimeUnit = 'seconds';
+
+    % Plot input and output over time
+    figure((10 * f) + 1);
+    plot(data_l, data_r)
+    grid on
 
 
     % Estimate transfer functions
@@ -78,6 +83,8 @@ for f=1:length(files)
 
 end
 
+
+% 1M/s
 
 Tr_des = 0.1;
 OS_des = 0.03;
