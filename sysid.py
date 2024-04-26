@@ -1,4 +1,3 @@
-
 # Send CMD, PWM_L, PWM_R,
 from typing import Any, Union
 import serial
@@ -62,7 +61,10 @@ class SystemID:
                         if ser_conn is not None:
                             print(
                                 sendCommand(
-                                    ser_conn, Command.PWM, int(next_cmd[1]), int(next_cmd[2])
+                                    ser_conn,
+                                    Command.PWM,
+                                    int(next_cmd[1]),
+                                    int(next_cmd[2]),
                                 )
                             )
                         else:

@@ -8,13 +8,14 @@ from chirp_trajectory import ChirpTrajectory
 from sysid import SystemID
 from arduino.serialio import enableArduino, genCmd, sendCommand, Command
 
+
 class Aifr3dCLI(cmd.Cmd):
-    prompt: str = 'Aifr3d>> '
+    prompt: str = "Aifr3d>> "
     intro: str = 'Welcome to AIFR3D. Type "help" for available commands.'
 
     _session_directory: str
 
-    _ser_port: str = '/dev/ttyAMC0'
+    _ser_port: str = "/dev/ttyAMC0"
     _ser_baud: int = 115200
 
     _serial: Union[serial.Serial, None] = None
@@ -41,7 +42,11 @@ class Aifr3dCLI(cmd.Cmd):
             ser.read_all()
             self._serial = ser
             self._connected = True
-            print("** // CONNECTED! // to robot on serial port {} with BAUD {}!".format(self._ser_port, self._ser_baud))
+            print(
+                "** // CONNECTED! // to robot on serial port {} with BAUD {}!".format(
+                    self._ser_port, self._ser_baud
+                )
+            )
         except:
             print("** // NOT CONNECTED! // to robot. Running in disconnected mode.")
         print("------------------------------------")
@@ -62,12 +67,18 @@ class Aifr3dCLI(cmd.Cmd):
             duration_sec = int(args[0])
             dt_sec = float(args[1])
             traj_type = "LINEAR" if len(args) < 3 else str(args[2])
-            if traj_type[0].upper() == 'L':
+            if traj_type[0].upper() == "L":
                 traj_type = "LINEAR"
             else:
                 traj_type = "ROTATION"
             chirp_traj = ChirpTrajectory()
-            dir, csv_path = chirp_traj.generate_trajectory(self._session_directory, duration_sec, dt_sec, traj_type=traj_type, show_plot=False)
+            dir, csv_path = chirp_traj.generate_trajectory(
+                self._session_directory,
+                duration_sec,
+                dt_sec,
+                traj_type=traj_type,
+                show_plot=False,
+            )
             self._sysid_traj = csv_path
             print("SystemID trajectory generated and saved in", dir)
         except Exception as e:
@@ -86,9 +97,13 @@ class Aifr3dCLI(cmd.Cmd):
             args = line.split(" ")
             traj_path = str(args[0])
             if len(traj_path) < 1:
-                print("No path to trajectory .csv provided. Attempting to use last trajectory generated during session...")
+                print(
+                    "No path to trajectory .csv provided. Attempting to use last trajectory generated during session..."
+                )
                 if self._sysid_traj is None:
-                    print("No trajectory generated during this session. Generating one...")
+                    print(
+                        "No trajectory generated during this session. Generating one..."
+                    )
                     self.do_gen_sysid_trajectory("20 0.02")
                     traj_path = str(self._sysid_traj)
                 else:
@@ -125,7 +140,9 @@ class Aifr3dCLI(cmd.Cmd):
                 # Connected, send to robot.
                 self._serial.reset_input_buffer()
                 enableArduino(self._serial)
-                msg = sendCommand(self._serial, Command.WAYPOINT, arg_angular_val, arg_linear_val)
+                msg = sendCommand(
+                    self._serial, Command.WAYPOINT, arg_angular_val, arg_linear_val
+                )
                 print(msg)
             else:
                 # Not connected, print to console.
@@ -150,13 +167,10 @@ class Aifr3dCLI(cmd.Cmd):
         """Exit the CLI."""
         return True
 
-    def do_exit(self, line):
-        """Exit the CLI."""
-        return True
-
     def postcmd(self, stop, line):
         print()  # Add an empty line for better readability
         return stop
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     Aifr3dCLI().cmdloop()

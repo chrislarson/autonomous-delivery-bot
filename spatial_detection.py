@@ -10,6 +10,7 @@ import time
 from roboticstoolbox import mstraj
 import matplotlib.pyplot as plt
 from person import Person
+
 # from cv2 import MatLike
 
 """
@@ -24,7 +25,9 @@ _MOBILENET_PERSON_LABEL = 15
 _TARGET_LOCK_THRESHOLD = 15
 
 
-def add_person_bounding_box(frame, confidence:float, x1:int, x2:int, y1:int, y2:int):
+def add_person_bounding_box(
+    frame, confidence: float, x1: int, x2: int, y1: int, y2: int
+):
     cv2.putText(
         frame,
         str("Person"),

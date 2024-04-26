@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import os
 import time
 
+
 class ChirpTrajectory:
 
     def generate_trajectory(
@@ -12,13 +13,13 @@ class ChirpTrajectory:
         data_dir: str,
         duration_sec: int,
         dt_sec: float,
-        traj_type: Union[Literal["ROTATION"],Literal["LINEAR"]] = "LINEAR",
+        traj_type: Union[Literal["ROTATION"], Literal["LINEAR"]] = "LINEAR",
         start_freq: float = 0.01,
         end_freq: float = 1.0,
         pwm_max: int = 100,
         pwm_deadband: int = 20,
         include_turn_dynamics: bool = False,
-        show_plot: bool = True
+        show_plot: bool = True,
     ) -> Tuple[str, str]:
 
         if duration_sec < 5:
@@ -40,19 +41,19 @@ class ChirpTrajectory:
         pwm_fs = chirp(ts_fs, f0=start_freq, f1=end_freq, t1=stop_fs, method="linear")
 
         # Create a combined (linear + chirp) trajectory.
-        ts_fs = ts_fs + stop_lin # Shift all FS times to be after linear seg.
+        ts_fs = ts_fs + stop_lin  # Shift all FS times to be after linear seg.
         ts = np.concatenate((ts_lin, ts_fs))
         pwms = np.concatenate((pwm_lin, pwm_fs))
 
         # Set left and right PWM based on traj type and max pwm
         pwm_left = pwm_max * pwms
-        pwm_right =  pwm_left if traj_type=="LINEAR" else -1*pwm_left
+        pwm_right = pwm_left if traj_type == "LINEAR" else -1 * pwm_left
 
         trajectory = np.stack((ts, pwm_left, pwm_right), axis=-1)
         self._trajectory = trajectory
 
         # Create timestamped directory in data_dir for this trajectory
-        traj_dir = os.path.join(data_dir, 'sysid_' + str(int(time.monotonic())))
+        traj_dir = os.path.join(data_dir, "sysid_" + str(int(time.monotonic())))
         os.mkdir(traj_dir)
 
         # Save trajectory as csv
