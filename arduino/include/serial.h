@@ -12,7 +12,8 @@ enum Command {
     WAYPOINT = 6,
     DISABLE = 7,
     ERROR = 8,
-    DISP = 9
+    DISP = 9,
+    TRAJ_START = 10
 };
 
 enum Error {
@@ -99,6 +100,14 @@ union DispCmd{
         unsigned char cmd;
         float lin_disp;
         float ang_disp;
+    } data;
+    byte raw[9];
+};
+
+union TrajStartCmd{
+    struct __attribute__ ( ( __packed__ ) ) {
+        unsigned char cmd;
+        unsigned char num_cmds;
     } data;
     byte raw[9];
 };

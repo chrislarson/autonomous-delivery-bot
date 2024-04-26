@@ -70,6 +70,13 @@ void echoCommand() {
         sendCommand(cmd, &dispCmd);
         break;
     }
+    case TRAJ_START:
+    {
+        TrajStartCmd trajStartCmd;
+        cmdReadInto(&trajStartCmd, sizeof(trajStartCmd));
+        sendCommand(cmd, &trajStartCmd);
+        break;
+    }
     }
 }
 
@@ -94,6 +101,8 @@ int cmdSize(Command cmd) {
         return sizeof(ErrorCmd);
     case DISP:
         return sizeof(DispCmd);
+    case TRAJ_START:
+        return sizeof(TrajStartCmd);
     default:
         return receive_buffer_len-1;
     }
@@ -177,6 +186,12 @@ void sendCommand(Command cmd, void* cmdStruct) {
     {
         DispCmd* dispCmd = (DispCmd*) cmdStruct;
         Serial.write(&dispCmd->raw[0], sizeof(dispCmd->raw));
+        break;
+    }
+    case TRAJ_START:
+    {
+        TrajStartCmd* trajStartCmd = (TrajStartCmd*) cmdStruct;
+        Serial.write(&trajStartCmd->raw[0], sizeof(trajStartCmd->raw));
         break;
     }
     }
