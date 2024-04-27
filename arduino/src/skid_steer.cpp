@@ -106,11 +106,11 @@ void Saturate_Setpoints(float* left_setpoint, float* right_setpoint,
 
 void Initialize_Skid_Steer(float left_meas, float right_meas) {
   Initialize_Controller(&controller_left, DISPLACEMENT, kp_L, A1_L, B0_L, B1_L,
-                        1.5785 / 0.9);
+                        1.5785 / 0.80);
   Initialize_Controller(&controller_right, DISPLACEMENT, kp_R, A1_R, B0_R, B1_R,
                         1.5785 / 0.94);
   Initialize_Controller(&controller_left, ANG_DISP, kp_L, A1_L, B0_L, B1_L,
-                        1.5785 / 0.9);
+                        1.5785 / 0.94);
   Initialize_Controller(&controller_right, ANG_DISP, kp_R, A1_R, B0_R, B1_R,
                         1.5785 / 0.94);
   Skid_Steer_Zero(left_meas, right_meas);
