@@ -112,7 +112,9 @@ def enableArduino(ser: serial.Serial):
 
 
 if __name__ == "__main__":
-    ser = serial.Serial("/dev/ttyACM0", 115200, timeout=1)
+
+    # ser = serial.Serial("/dev/ttyACM0", 115200, timeout=1)
+    ser = serial.Serial("/dev/tty.usbmodem101", 115200, timeout=1)
     ser.reset_input_buffer()
 
     enableArduino(ser)
@@ -124,7 +126,7 @@ if __name__ == "__main__":
     # response = receiveCommand(ser)
     # print(response)
 
-    msg = sendCommand(ser, Command.SYS_ID, 100)
+    msg = sendCommand(ser, Command.SYS_ID, 20)
     print(msg)
 
     # msg = sendCommand(ser, Command.WAYPOINT, 0.0, 1000)
@@ -133,10 +135,10 @@ if __name__ == "__main__":
     msg = sendCommand(ser, Command.TRAJ_START, 2)
     print(msg)
 
-    msg = sendCommand(ser, Command.DISP, 500, 0)
+    msg = sendCommand(ser, Command.DISP, 750, 0)
     print(msg)
 
-    msg = sendCommand(ser, Command.DISP, 500, 0)
+    msg = sendCommand(ser, Command.DISP, 750, 0)
     print(msg)
 
     # msg = sendCommand(ser, Command.DISABLE)

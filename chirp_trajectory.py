@@ -15,7 +15,7 @@ class ChirpTrajectory:
         dt_sec: float,
         traj_type: Union[Literal["ROTATION"], Literal["LINEAR"]] = "LINEAR",
         start_freq: float = 0.01,
-        end_freq: float = 1.0,
+        end_freq: float = 0.9,
         pwm_max: int = 100,
         pwm_deadband: int = 20,
         include_turn_dynamics: bool = False,

@@ -2,8 +2,12 @@
 clc; clear; clear vars;
 
 % files = dir("data/*_OUTPUT.csv");
-files = dir("sysid_73916/output.csv");
 
+% LINEAR
+% files = dir("1093/sysid_1106/output.csv");
+
+% ROTATION
+files = dir("1222/sysid_1228/output.csv");
 
 SECONDS_PER_MILLISECOND = 0.001;
 
@@ -86,14 +90,14 @@ end
 
 % 1M/s
 
-Tr_des = 0.1;
-OS_des = 0.03;
+Tr_des = 0.2;
+OS_des = 0.001;
 
 dt_des = 0.01;
 control_hz = 1/dt_des;
 
 
-PICK_POLES_WITH_STEP_INSTEAD_OF_BESSEL = false;
+PICK_POLES_WITH_STEP_INSTEAD_OF_BESSEL = true;
 
 disp("-------------");
 disp("\n\nLEFT CONTROLLER - POSITION\n\n");

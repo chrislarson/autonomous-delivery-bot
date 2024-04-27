@@ -2,7 +2,7 @@ import cmd
 import os
 import serial
 import time
-from typing import Union
+from typing import Union, Any
 
 from chirp_trajectory import ChirpTrajectory
 from system_id import SystemID
@@ -17,13 +17,14 @@ class Aifr3dCLI(cmd.Cmd):
     _session_directory: str
 
     _ser_port: str = "/dev/ttyACM0"
-    _ser_port2: str = "/dev/tty.usbmodem2101"
+    _ser_port2: str = "/dev/tty.usbmodem101"
     _ser_baud: int = 115200
 
     _serial: Union[serial.Serial, None] = None
     _connected: bool = False
 
     _sysid_traj: Union[str, None] = None
+    _traj_waypoints: Any
 
     def __init__(self):
         super().__init__()
@@ -155,7 +156,10 @@ class Aifr3dCLI(cmd.Cmd):
                 self._serial.reset_input_buffer()
                 enableArduino(self._serial)
                 msg = sendCommand(
-                    self._serial, Command.DISP, arg_linear_val, arg_angular_val,
+                    self._serial,
+                    Command.DISP,
+                    arg_linear_val,
+                    arg_angular_val,
                 )
                 # print(msg)
             else:
