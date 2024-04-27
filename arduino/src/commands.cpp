@@ -4,6 +4,15 @@
 #include "led.h"
 #include "skid_steer.h"
 
+struct {
+    float distance;
+    float theta;
+} cmdBuffer[TRAJ_BUFFER_LEN];
+
+byte bufferFront = 0;
+byte bufferBack = 0;
+byte numCommands = 1;
+
 /// Private Functions
 
 bool enabled = false;
@@ -72,17 +81,35 @@ void execDispCmd(){
     DispCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
     sendCommand(DISP, &cmd);
-    if (cmd.data.lin_disp < 1){
-        Skid_Steer_Set_Angular_Displacement(0, cmd.data.ang_disp, getLeftEncoderCounts(), getRightEncoderCounts());
-    } else{
-        Skid_Steer_Set_Displacement(cmd.data.lin_disp, cmd.data.ang_disp, getLeftEncoderCounts(), getRightEncoderCounts());
+
+    if (bufferBack >= numCommands){
+        bufferBack = 0;
+        bufferFront = 0;
+        numCommands = 1;
     }
-    
+
+    cmdBuffer[bufferBack].distance = cmd.data.lin_disp;
+    cmdBuffer[bufferBack].theta = cmd.data.ang_disp;
+    bufferBack ++;
+        
 }
 
 void execTrajStartCmd() {
     TrajStartCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
+    if (cmd.data.num_cmds <= TRAJ_BUFFER_LEN){
+        bufferFront = 0;
+        bufferBack = 0;
+        numCommands = cmd.data.num_cmds;
+    } else{
+        ErrorCmd error;
+        error.data.cmd = ERROR;
+        error.data.errorCode = SIZE_MISMATCH;
+        error.data.arg1 = TRAJ_BUFFER_LEN;
+        error.data.arg2 = cmd.data.num_cmds;
+        sendCommand(ERROR, &error);
+        setLed(LED_ERR_ID);
+    }
 }
 
 /// Public Functions
