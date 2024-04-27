@@ -45,7 +45,7 @@ void periodic() {
     float linear;
     float angular;
     bool next = getNextCmd(&linear,&angular);
-    if ( linear < 1 && next){
+    if ( fabs(linear) < 1 && next){
         Skid_Steer_Set_Angular_Displacement(0, angular, getLeftEncoderCounts(), getRightEncoderCounts());
     } else if (next){
         Skid_Steer_Set_Displacement(linear, angular, getLeftEncoderCounts(), getRightEncoderCounts());

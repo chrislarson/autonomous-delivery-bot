@@ -2,6 +2,7 @@ import serial
 import struct
 import time
 from enum import Enum
+import math
 
 
 class Command(Enum):
@@ -115,8 +116,8 @@ def enableArduino(ser: serial.Serial):
 
 if __name__ == "__main__":
 
-    # ser = serial.Serial("/dev/ttyACM0", 115200, timeout=1)
-    ser = serial.Serial("/dev/tty.usbmodem101", 115200, timeout=1)
+    ser = serial.Serial("/dev/ttyACM0", 115200, timeout=1)
+    # ser = serial.Serial("/dev/tty.usbmodem101", 115200, timeout=1)
     ser.reset_input_buffer()
 
     enableArduino(ser)
@@ -134,16 +135,19 @@ if __name__ == "__main__":
     # msg = sendCommand(ser, Command.WAYPOINT, 0.0, 1000)
     # print(msg)
 
-    msg = sendCommand(ser, Command.TRAJ_START, 2)
+    msg = sendCommand(ser, Command.TRAJ_START, 3)
     print(msg)
 
     msg = sendCommand(ser, Command.DISP, 1000, 0)
     print(msg)
 
-    msg = sendCommand(ser, Command.DISP, 0, 0)
+    msg = sendCommand(ser, Command.DISP, 0, math.pi)
     print(msg)
 
-    # msg = sendCommand(ser, Command.DISP, 0, 0)
+    msg = sendCommand(ser, Command.DISP, 1000, 0)
+    print(msg)
+
+    # msg = sendCommand(ser, Command.PWM, 40, 40)
     # print(msg)
 
     # msg = sendCommand(ser, Command.DISABLE)
