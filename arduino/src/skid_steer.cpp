@@ -173,8 +173,13 @@ void Skid_Steer_Set_Angular_Displacement(float lin_disp, float ang_disp, float l
     controlMode = ANG_DISP;
     controller_update_prev_time = millis();
 }
+
 void Skid_Steer_Disable() {
     controlMode = DISABLED;
+}
+
+ControlMode Skid_Steer_Get_Control_Mode() {
+    return controlMode;
 }
 
 void Skid_Steer_Update(float left_meas, float right_meas){
@@ -199,6 +204,9 @@ void Skid_Steer_Update(float left_meas, float right_meas){
     case ANG_DISP:
         curr_lin_vel = calcTrapezoidalVelocity(curr_lin_disp, target_lin_disp, curr_lin_vel, max_lin_vel, max_lin_acc, deltaTimeSeconds);
         curr_ang_vel = calcTrapezoidalVelocity(curr_ang_disp, target_ang_disp, curr_ang_vel, max_ang_vel, max_ang_acc, deltaTimeSeconds);
+        if (fabs(curr_lin_vel) < 1e-6 && fabs(curr_ang_vel) < 1e-6) {
+            controlMode = DISABLED;
+        }
         break;
     default:
         break;

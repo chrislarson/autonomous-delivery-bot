@@ -38,8 +38,10 @@ void Skid_Steer_Set_Angular_Velocity(float lin_vel, float ang_vel);
 
 void Skid_Steer_Set_Angular_Displacement(float lin_disp, float ang_disp, float left_meas, float right_meas);
 
-void Skid_Steer_Update(float left_meas, float right_meas);
-
 void Skid_Steer_Disable();
+
+ControlMode Skid_Steer_Get_Control_Mode();
+
+void Skid_Steer_Update(float left_meas, float right_meas);
 
 #endif
