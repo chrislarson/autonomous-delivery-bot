@@ -2,6 +2,7 @@
 #define SKID_STEER_H
 
 #include "motors.h"
+#include "math.h"
 
 // #define kp_L 13.752f
 // #define A1_L -0.568096f
@@ -36,10 +37,10 @@
 
 // // Poles generated via bessel filter.
 
-#define max_lin_acc 250.0f
-#define max_lin_vel 300.0f
-#define max_ang_acc 150.0f
-#define max_ang_vel 300.0f
+#define max_lin_acc 175.0f
+#define max_lin_vel 350.0f
+#define max_ang_acc PI/2.0f
+#define max_ang_vel PI
 #define wheel_base_mm 220.0f
 #define update_period_ms 10.0f
 
