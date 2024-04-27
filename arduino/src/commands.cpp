@@ -149,3 +149,16 @@ void execCmd(Command cmd){
 bool isEnabled() {
     return enabled;
 }
+
+bool getNextCmd(float* dist, float* rads){
+    
+    if (bufferFront >= bufferBack){
+        return false;
+    } else{
+        *dist = cmdBuffer[bufferFront].distance;
+        *rads = cmdBuffer[bufferFront].theta;
+        bufferFront++;
+        return true;
+    }
+
+}

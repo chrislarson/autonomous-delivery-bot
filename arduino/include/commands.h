@@ -6,4 +6,4 @@ void execCmd(Command cmd);
 
 bool isEnabled();
 
-void addToBuffer(float distance, float theta);
+bool getNextCmd(float* dist, float* rads);
