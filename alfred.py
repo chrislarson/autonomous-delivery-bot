@@ -5,7 +5,8 @@ import time
 from typing import Union
 
 from chirp_trajectory import ChirpTrajectory
-from sysid import SystemID
+from system_id import SystemID
+from detect_persons import DetectPersons
 from arduino.serialio import enableArduino, genCmd, sendCommand, Command
 
 
@@ -164,11 +165,28 @@ class Aifr3dCLI(cmd.Cmd):
             print(e)
             print("Something went wrong. Please try again!")
 
-    # def do_find_targets(self, line):
-    #     """Locates person targets on the Oak-D Lite and saves their 3D world coordinates."""
-    #     files_and_dirs = os.listdir(self.current_directory)
-    #     for item in files_and_dirs:
-    #         print(item)
+    def do_find_targets(self, line):
+        """
+        Locates person targets on the Oak-D Lite and saves their 3D world coordinates.
+
+        Usage:
+            find_targets [timeout_sec] [show_preview]
+
+        * - optional parameter
+        ^ - optional parameter default value
+        """
+        try:
+            args = line.split(" ")
+            arg_timeout = int(args[0])
+            arg_show_prev = bool(args[1])
+            timeout = arg_timeout if arg_timeout > 0 else 15
+
+            detector = DetectPersons()
+            detector.detect(self._session_directory, timeout, arg_show_prev)
+
+        except Exception as e:
+            print(e)
+            print("Something went wrong. Please try again!")
 
     # def do_deliver(self, line):
     #     """List files and directories in the current directory."""
@@ -204,7 +222,6 @@ class Aifr3dCLI(cmd.Cmd):
         if self._serial is not None:
             self.do_disable("")
         return True
-
 
     def is_connected(self):
         if self._serial is not None:

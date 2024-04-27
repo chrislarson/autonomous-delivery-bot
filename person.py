@@ -26,11 +26,9 @@ class Person:
         ma = np.ma.average(self.coordinates[:window], axis=0, keepdims=True)
         self.ma_coord = ma
 
-    def check_match(self, coord: np.ndarray[float]):
+    def check_match(self, coord: np.ndarray[Any]):
         # Check distance between coord and ma_coord.
         distance = np.linalg.norm(self.ma_coord - coord)
-        print("Euclidean distance to tracked person (mm): ", distance)
         if distance < _MATCH_DISTANCE:
-            print("Match: TRUE")
             return True
         return False
