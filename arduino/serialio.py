@@ -16,6 +16,7 @@ class Command(Enum):
     DISP = 9
     # skip 10, because it gets read as '\n'
     TRAJ_START = 11
+    DEBUG = 12
 
 
 class Error(Enum):
@@ -37,6 +38,7 @@ cmd_fmts = {
     Command.ERROR: "BBii",
     Command.DISP: "Bff",
     Command.TRAJ_START: "BB",
+    Command.DEBUG: "BIiiii",
 }
 
 
@@ -126,8 +128,8 @@ if __name__ == "__main__":
     # response = receiveCommand(ser)
     # print(response)
 
-    msg = sendCommand(ser, Command.SYS_ID, 20)
-    print(msg)
+    # msg = sendCommand(ser, Command.SYS_ID, 20)
+    # print(msg)
 
     # msg = sendCommand(ser, Command.WAYPOINT, 0.0, 1000)
     # print(msg)
@@ -135,10 +137,10 @@ if __name__ == "__main__":
     msg = sendCommand(ser, Command.TRAJ_START, 2)
     print(msg)
 
-    msg = sendCommand(ser, Command.DISP, 750, 0)
+    msg = sendCommand(ser, Command.DISP, 2000, 0)
     print(msg)
 
-    msg = sendCommand(ser, Command.DISP, 750, 0)
+    msg = sendCommand(ser, Command.DISP, 0, 0)
     print(msg)
 
     # msg = sendCommand(ser, Command.DISABLE)

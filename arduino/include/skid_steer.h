@@ -37,7 +37,7 @@
 // // Poles generated via bessel filter.
 
 #define max_lin_acc 250.0f
-#define max_lin_vel 500.0f
+#define max_lin_vel 300.0f
 #define max_ang_acc 150.0f
 #define max_ang_vel 300.0f
 #define wheel_base_mm 220.0f
@@ -75,5 +75,8 @@ void Skid_Steer_Disable();
 ControlMode Skid_Steer_Get_Control_Mode();
 
 void Skid_Steer_Update(float left_meas, float right_meas);
+
+void sendDebug(float num1, float num2, float num3, float num4,
+               float debug_period);
 
 #endif
