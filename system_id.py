@@ -71,7 +71,6 @@ class SystemID:
                         last_sent_cmd = next_cmd
                     cmd_idx += 1
 
-
             outfile.close()
             if ser_conn is not None:
                 print(
