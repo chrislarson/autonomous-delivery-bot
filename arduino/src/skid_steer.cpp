@@ -204,7 +204,10 @@ void Skid_Steer_Update(float left_meas, float right_meas){
     case ANG_DISP:
         curr_lin_vel = calcTrapezoidalVelocity(curr_lin_disp, target_lin_disp, curr_lin_vel, max_lin_vel, max_lin_acc, deltaTimeSeconds);
         curr_ang_vel = calcTrapezoidalVelocity(curr_ang_disp, target_ang_disp, curr_ang_vel, max_ang_vel, max_ang_acc, deltaTimeSeconds);
-        if (fabs(curr_lin_vel) < 1e-6 && fabs(curr_ang_vel) < 1e-6) {
+        if (fabs(curr_lin_vel) < 1e-6 &&
+            fabs(curr_ang_vel) < 1e-6 &&
+            fabs(left_meas - controller_left.input_last) < 1e-6 &&
+            fabs(right_meas - controller_right.input_last) < 1e-6) {
             controlMode = DISABLED;
         }
         break;
@@ -219,7 +222,11 @@ void Skid_Steer_Update(float left_meas, float right_meas){
     left_setpoint = Saturate(left_setpoint, MOTOR_MAX);
     right_setpoint = Saturate(right_setpoint, MOTOR_MAX);
     
-    tankDrive(left_setpoint, right_setpoint);
+    if (controlMode != DISABLED) {
+        tankDrive(left_setpoint, right_setpoint);
+    } else {
+        tankDrive(0, 0);
+    }
 
     controller_update_prev_time = currTime;
 }

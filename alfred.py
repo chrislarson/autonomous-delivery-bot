@@ -16,7 +16,7 @@ class Aifr3dCLI(cmd.Cmd):
 
     _session_directory: str
 
-    _ser_port: str = "/dev/ttyAMC0"
+    _ser_port: str = "/dev/ttyACM0"
     _ser_port2: str = "/dev/tty.usbmodem2101"
     _ser_baud: int = 115200
 
@@ -155,7 +155,7 @@ class Aifr3dCLI(cmd.Cmd):
                 self._serial.reset_input_buffer()
                 enableArduino(self._serial)
                 msg = sendCommand(
-                    self._serial, Command.WAYPOINT, arg_angular_val, arg_linear_val
+                    self._serial, Command.DISP, arg_linear_val, arg_angular_val,
                 )
                 # print(msg)
             else:
@@ -231,6 +231,7 @@ class Aifr3dCLI(cmd.Cmd):
     def postcmd(self, stop, line):
         print()  # Add an empty line for better readability
         return stop
+
 
 if __name__ == "__main__":
     alfred = Aifr3dCLI()
