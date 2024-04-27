@@ -13,7 +13,8 @@ enum Command {
     DISABLE = 7,
     ERROR = 8,
     DISP = 9,
-    TRAJ_START = 10
+    // skip 10, because it gets read as '\n'
+    TRAJ_START = 11
 };
 
 enum Error {
@@ -109,7 +110,7 @@ union TrajStartCmd{
         unsigned char cmd;
         unsigned char num_cmds;
     } data;
-    byte raw[9];
+    byte raw[2];
 };
 
 // Functions

@@ -14,6 +14,8 @@ class Command(Enum):
     DISABLE = 7
     ERROR = 8
     DISP = 9
+    # skip 10, because it gets read as '\n'
+    TRAJ_START = 11
 
 
 class Error(Enum):
@@ -33,7 +35,8 @@ cmd_fmts = {
     Command.SYS_RESPONSE: "BIiiii",
     Command.DISABLE: "B",
     Command.ERROR: "BBii",
-    Command.DISP: "Bff"
+    Command.DISP: "Bff",
+    Command.TRAJ_START: "BB",
 }
 
 
@@ -124,11 +127,17 @@ if __name__ == "__main__":
     msg = sendCommand(ser, Command.SYS_ID, 100)
     print(msg)
 
-    msg = sendCommand(ser, Command.WAYPOINT, 0.0, 1000)
+    # msg = sendCommand(ser, Command.WAYPOINT, 0.0, 1000)
+    # print(msg)
+
+    msg = sendCommand(ser, Command.TRAJ_START, 2)
     print(msg)
 
-    # msg = sendCommand(ser, Command.PWM, 50, 50)
-    # print(msg)
+    msg = sendCommand(ser, Command.DISP, 500, 0)
+    print(msg)
+
+    msg = sendCommand(ser, Command.DISP, 500, 0)
+    print(msg)
 
     # msg = sendCommand(ser, Command.DISABLE)
     # print(msg)

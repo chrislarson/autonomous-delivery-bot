@@ -53,8 +53,8 @@ void execSysIDCmd() {
 void execWayPointCmd() {
     WayPointCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
-    //Skid_Steer_Set_Velocity(cmd.data.y_coord, 0);
-    Skid_Steer_Set_Displacement(cmd.data.y_coord, 0, getLeftEncoderCounts(), getRightEncoderCounts());
+    Skid_Steer_Set_Velocity(cmd.data.y_coord, 0);
+    //Skid_Steer_Set_Displacement(cmd.data.y_coord, 0, getLeftEncoderCounts(), getRightEncoderCounts());
 }
 
 void execDisableCmd() {
@@ -160,5 +160,4 @@ bool getNextCmd(float* dist, float* rads){
         bufferFront++;
         return true;
     }
-
 }
