@@ -128,8 +128,8 @@ if __name__ == "__main__":
     # response = receiveCommand(ser)
     # print(response)
 
-    # msg = sendCommand(ser, Command.SYS_ID, 20)
-    # print(msg)
+    msg = sendCommand(ser, Command.SYS_ID, 20)
+    print(msg)
 
     # msg = sendCommand(ser, Command.WAYPOINT, 0.0, 1000)
     # print(msg)
@@ -137,11 +137,14 @@ if __name__ == "__main__":
     msg = sendCommand(ser, Command.TRAJ_START, 2)
     print(msg)
 
-    msg = sendCommand(ser, Command.DISP, 2000, 0)
+    msg = sendCommand(ser, Command.DISP, 1000, 0)
     print(msg)
 
     msg = sendCommand(ser, Command.DISP, 0, 0)
     print(msg)
+
+    # msg = sendCommand(ser, Command.DISP, 0, 0)
+    # print(msg)
 
     # msg = sendCommand(ser, Command.DISABLE)
     # print(msg)

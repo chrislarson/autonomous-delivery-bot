@@ -199,7 +199,6 @@ void Skid_Steer_Update(float left_meas, float right_meas) {
 
   float deltaTimeSeconds = deltaTime * 1e-3;
 
-  // calcDisplacement(left_meas, right_meas);
   float delta_lin_disp = Saturate(curr_lin_vel * deltaTimeSeconds,
                                   fabs(target_lin_disp - curr_lin_disp));
   float delta_ang_disp = Saturate(curr_ang_vel * deltaTimeSeconds,
@@ -207,6 +206,8 @@ void Skid_Steer_Update(float left_meas, float right_meas) {
   addControllerDisplacements(delta_lin_disp, delta_ang_disp);
   curr_lin_disp += delta_lin_disp;
   curr_ang_disp += delta_ang_disp;
+  // calcDisplacement(left_meas, right_meas);
+
   switch (controlMode) {
     case DISPLACEMENT:
     case ANG_DISP:
@@ -225,6 +226,7 @@ void Skid_Steer_Update(float left_meas, float right_meas) {
     default:
       break;
   }
+
   // setControllerVelocities(curr_lin_vel, curr_ang_vel);
 
   float left_setpoint = Controller_Update(&controller_left, left_meas,
@@ -235,7 +237,8 @@ void Skid_Steer_Update(float left_meas, float right_meas) {
   left_setpoint = Saturate(left_setpoint, MOTOR_MAX);
   right_setpoint = Saturate(right_setpoint, MOTOR_MAX);
 
-  sendDebug(delta_lin_disp, curr_lin_vel, left_setpoint, right_setpoint, 20.0);
+  //   sendDebug(delta_lin_disp, curr_lin_vel, left_setpoint,
+  //   right_setpoint, 20.0);
 
   if (controlMode != DISABLED) {
     tankDrive(left_setpoint, right_setpoint);
