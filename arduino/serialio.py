@@ -28,6 +28,11 @@ class Error(Enum):
     INVALID_CMD = 5
 
 
+class LED(Enum):
+    READY = 2
+    FIND_TARGETS = 5
+
+
 cmd_fmts = {
     Command.ENABLE: "B",
     Command.STATUS: "BB",
