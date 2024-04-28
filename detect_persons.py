@@ -275,7 +275,8 @@ class DetectPersons:
                 )
 
                 if show_preview:
-                    cv2.imshow("preview", frame)
+                    #cv2.imshow("preview", frame)
+                    pass
 
                 if cv2.waitKey(1) == ord("q"):
                     break
@@ -306,7 +307,7 @@ class DetectPersons:
 
                 now_ts = time.monotonic()
                 if now_ts - start_ts > 10:
-                    cv2.destroyWindow("preview")
+                    #cv2.destroyWindow("preview")
                     fig_path = os.path.join(
                         data_dir,
                         "person_track_NO_LOCK_" + str(int(time.monotonic())) + ".png",
@@ -332,7 +333,7 @@ class DetectPersons:
                 data_dir, "person_track_LOCK_" + str(int(time.monotonic())) + ".png"
             )
             cv2.imwrite(fig_path, frame)
-            cv2.destroyWindow("preview")
+           # cv2.destroyWindow("preview")
 
             # waypoint_coords = np.append(waypoint_coords, [[0, 0]], axis=0)
             print("Waypoint coordinates:\n", waypoint_coords)

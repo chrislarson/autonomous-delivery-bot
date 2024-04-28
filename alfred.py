@@ -230,16 +230,16 @@ class Aifr3dCLI(cmd.Cmd):
             for i in range(min(num_rots, num_disps)):
                 # First send rotation.
                 msg_rot = (
-                    sendCommand(self._serial, Command.DISP, self._traj_thetas[i], 0)
+                    sendCommand(self._serial, Command.DISP, 0, self._traj_thetas[i])
                     if self.is_connected()
                     else "Rotation of {} rads".format(self._traj_thetas[i])
                 )
                 print("Rotation message:", msg_rot)
                 # Then send displacement.
                 msg_disp = (
-                    sendCommand(self._serial, Command.DISP, 0, self.disps[i])
+                    sendCommand(self._serial, Command.DISP, self._traj_disps[i], 0)
                     if self.is_connected()
-                    else "Displacement of {} mm".format(self.disps[i])
+                    else "Displacement of {} mm".format(self._traj_disps[i])
                 )
                 print("Displacement message:", msg_disp)
         else:
