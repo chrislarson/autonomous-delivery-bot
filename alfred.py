@@ -2,7 +2,7 @@ import cmd
 import os
 import serial
 import time
-from typing import Union, Any
+from typing import Union, List, Any
 
 from chirp_trajectory import ChirpTrajectory
 from system_id import SystemID
@@ -25,6 +25,8 @@ class Aifr3dCLI(cmd.Cmd):
 
     _sysid_traj: Union[str, None] = None
     _traj_waypoints: Any
+    _traj_thetas: List[float] = []
+    _traj_disps: List[float] = []
 
     def __init__(self):
         super().__init__()
@@ -186,17 +188,64 @@ class Aifr3dCLI(cmd.Cmd):
             timeout = arg_timeout if arg_timeout > 0 else 15
 
             detector = DetectPersons()
-            detector.detect(self._session_directory, timeout, arg_show_prev)
+            waypoints, thetas, disps = detector.detect(
+                self._session_directory, timeout, arg_show_prev
+            )
+            if waypoints is not None:
+                # Found targets.
+                self._traj_waypoints = waypoints
+                self._traj_thetas = thetas
+                self._traj_disps = disps
 
         except Exception as e:
             print(e)
             print("Something went wrong. Please try again!")
 
-    # def do_deliver(self, line):
-    #     """List files and directories in the current directory."""
-    #     files_and_dirs = os.listdir(self.current_directory)
-    #     for item in files_and_dirs:
-    #         print(item)
+    def do_deliver(self, line):
+        """
+        Sends a trajectory (a series of rotation and displacement commands) to the robot if connected. If not connected,
+        prints them.
+
+        Usage:
+            deliver
+        """
+
+        if self.is_connected():
+            print("Connected to robot. Sending commands for trajectory.")
+        else:
+            print("Not connect to robot. Printing trajectory commands.")
+
+        num_rots = len(self._traj_thetas)
+        num_disps = len(self._traj_disps)
+        traj_length = num_rots + num_disps
+
+        if traj_length > 0:
+
+            msg_traj = (
+                sendCommand(self._serial, Command.TRAJ_START, traj_length)
+                if self.is_connected()
+                else "Start trajectory of length {} steps".format(traj_length)
+            )
+            print("Trajectory message:", msg_traj)
+            for i in range(min(num_rots, num_disps)):
+                # First send rotation.
+                msg_rot = (
+                    sendCommand(self._serial, Command.DISP, self._traj_thetas[i], 0)
+                    if self.is_connected()
+                    else "Rotation of {} rads".format(self._traj_thetas[i])
+                )
+                print("Rotation message:", msg_rot)
+                # Then send displacement.
+                msg_disp = (
+                    sendCommand(self._serial, Command.DISP, 0, self.disps[i])
+                    if self.is_connected()
+                    else "Displacement of {} mm".format(self._traj_thetas[i])
+                )
+                print("Displacement message:", msg_disp)
+        else:
+            print(
+                "Trajectory has zero rotations and displacements. Try finding targets before making a delivery."
+            )
 
     def do_enable(self, line):
         """

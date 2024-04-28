@@ -1,19 +1,15 @@
-
 from pathlib import Path
-import sys
 from typing import List
 import cv2
 import depthai as dai
 import numpy as np
 import time
-# from roboticstoolbox import mstraj
-import matplotlib.pyplot as plt
 from person import Person
+import os
+import math
 
 
-def add_person_bounding_box(
-    frame, person_detected, x1: int, x2: int, y1: int, y2: int
-):
+def add_person_bounding_box(frame, person_detected, x1: int, x2: int, y1: int, y2: int):
     cv2.putText(
         frame,
         str("Person"),
@@ -68,13 +64,15 @@ class DetectPersons:
     def __init__(self):
         # Get argument first
         self._nnBlobPath = str(
-            (Path(__file__).parent / Path("models/mobilenet-ssd_openvino_2021.4_6shave.blob"))
+            (
+                Path(__file__).parent
+                / Path("models/mobilenet-ssd_openvino_2021.4_5shave.blob")
+            )
             .resolve()
             .absolute()
         )
         if not Path(self._nnBlobPath).exists():
             raise FileNotFoundError(f"Required NN model file/s not found.")
-
 
     def detect(self, data_dir: str, timeout=15, show_preview=False):
         syncNN = True
@@ -84,7 +82,9 @@ class DetectPersons:
 
         # Define sources and outputs.
         camRgb = pipeline.create(dai.node.ColorCamera)
-        spatialDetectionNetwork = pipeline.create(dai.node.MobileNetSpatialDetectionNetwork)
+        spatialDetectionNetwork = pipeline.create(
+            dai.node.MobileNetSpatialDetectionNetwork
+        )
         monoLeft = pipeline.create(dai.node.MonoCamera)
         monoRight = pipeline.create(dai.node.MonoCamera)
         stereo = pipeline.create(dai.node.StereoDepth)
@@ -113,7 +113,9 @@ class DetectPersons:
         # Align depth map to the perspective of RGB camera, on which inference is done.
         stereo.setDepthAlign(dai.CameraBoardSocket.CAM_A)
         stereo.setSubpixel(True)
-        stereo.setOutputSize(monoLeft.getResolutionWidth(), monoLeft.getResolutionHeight())
+        stereo.setOutputSize(
+            monoLeft.getResolutionWidth(), monoLeft.getResolutionHeight()
+        )
 
         spatialDetectionNetwork.setBlobPath(Path(self._nnBlobPath))
         spatialDetectionNetwork.setConfidenceThreshold(0.7)
@@ -137,6 +139,7 @@ class DetectPersons:
         stereo.depth.link(spatialDetectionNetwork.inputDepth)
         spatialDetectionNetwork.passthroughDepth.link(xoutDepth.input)
 
+        start_ts = time.monotonic()
 
         # Connect to device and start pipeline.
         with dai.Device(pipeline) as device:
@@ -176,15 +179,17 @@ class DetectPersons:
                     startTime = current_time
 
                 frame = in_preview.getCvFrame()
-                depth_frame = in_depth.getFrame()  # depth_frame values are in millimeters
+                depth_frame = (
+                    in_depth.getFrame()
+                )  # depth_frame values are in millimeters
 
                 depth_downscaled = depth_frame[::4]
                 if np.all(depth_downscaled == 0):
-                    min_depth = (
-                        0  # Set a default minimum depth value when all elements are zero
-                    )
+                    min_depth = 0  # Set a default minimum depth value when all elements are zero
                 else:
-                    min_depth = np.percentile(depth_downscaled[depth_downscaled != 0], 1)
+                    min_depth = np.percentile(
+                        depth_downscaled[depth_downscaled != 0], 1
+                    )
                 max_depth = np.percentile(depth_downscaled, 99)
 
                 detections = in_detection.detections
@@ -269,7 +274,8 @@ class DetectPersons:
                     (255, 255, 255),
                 )
 
-                cv2.imshow("preview", frame)
+                if show_preview:
+                    cv2.imshow("preview", frame)
 
                 if cv2.waitKey(1) == ord("q"):
                     break
@@ -288,7 +294,8 @@ class DetectPersons:
                     missed_match_frames = 0
                     if len(persons_tracked) > 0:
                         all_locked = all(
-                            p.match_count > self._TARGET_LOCK_THRESHOLD for p in persons_tracked
+                            p.match_count > self._TARGET_LOCK_THRESHOLD
+                            for p in persons_tracked
                         )
                         if all_locked:
                             tracking_in_progress = False
@@ -297,15 +304,51 @@ class DetectPersons:
 
                 iter_matches_cnt = 0
 
+                now_ts = time.monotonic()
+                if now_ts - start_ts > 10:
+                    cv2.destroyWindow("preview")
+                    fig_path = os.path.join(
+                        data_dir,
+                        "person_track_NO_LOCK_" + str(int(time.monotonic())) + ".png",
+                    )
+                    cv2.imwrite(fig_path, frame)
+                    print(
+                        "Could not find target within timeout range ({} seconds)".format(
+                            timeout
+                        )
+                    )
+                    return None
+
             # Done tracking. Generate trajectory.
-            waypoint_coords = np.array([[0, 0], [0, 250]])
+            waypoint_coords = np.array([[0, 0]])
             for person_tr in persons_tracked:
                 person_x = person_tr.ma_coord[0, 0]
                 person_z = person_tr.ma_coord[0, 2]
-                waypoint_coords = np.append(waypoint_coords, [[person_x, person_z]], axis=0)
+                waypoint_coords = np.append(
+                    waypoint_coords, [[person_x, person_z]], axis=0
+                )
+
+            fig_path = os.path.join(
+                data_dir, "person_track_LOCK_" + str(int(time.monotonic())) + ".png"
+            )
+            cv2.imwrite(fig_path, frame)
+            cv2.destroyWindow("preview")
 
             # waypoint_coords = np.append(waypoint_coords, [[0, 0]], axis=0)
             print("Waypoint coordinates:\n", waypoint_coords)
+
+            thetas = []
+            disps = []
+
+            for i in range(len(waypoint_coords)):
+                if i == 1:
+                    disp = np.linalg.norm(waypoint_coords[i] - waypoint_coords[i - 1])
+                    disps.append(disp)
+                    theta2 = math.acos(waypoint_coords[i, 1] / disp)
+                    thetas.append(theta2)
+                    print("Theta {i}:", theta2)
+                    print("Disp {i}:", disp)
+            return waypoint_coords, thetas, disps
 
 
 if __name__ == "__main__":
