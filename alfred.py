@@ -212,6 +212,7 @@ class Aifr3dCLI(cmd.Cmd):
 
         if self.is_connected():
             print("Connected to robot. Sending commands for trajectory.")
+            enableArduino(self._serial)
         else:
             print("Not connect to robot. Printing trajectory commands.")
 
