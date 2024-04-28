@@ -132,5 +132,6 @@ void sendCommand(Command cmd, void* cmdStruct);
 int nextCmdId();
 Command nextCmdType();
 bool cmdReadInto(void* v_ptr, byte len);
+void clearReceiveBuffer();
 
 #endif

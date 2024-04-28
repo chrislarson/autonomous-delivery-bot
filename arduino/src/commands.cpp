@@ -122,24 +122,31 @@ void execCmd(Command cmd){
         break;
     case STATUS:
         if(isEnabled()) execStatusCmd();
+        else clearReceiveBuffer();
         break;
     case PWM:
         if(isEnabled()) execPWMCmd();
+        else clearReceiveBuffer();
         break;
     case SYS_ID:
         if(isEnabled()) execSysIDCmd();
+        else clearReceiveBuffer();
         break;
     case WAYPOINT:
         if(isEnabled()) execWayPointCmd();
+        else clearReceiveBuffer();
         break;
     case DISABLE:
         if(isEnabled()) execDisableCmd();
+        else clearReceiveBuffer();
         break;
     case DISP:
         if(isEnabled()) execDispCmd();
+        else clearReceiveBuffer();
         break;
     case TRAJ_START:
         if(isEnabled()) execTrajStartCmd();
+        else clearReceiveBuffer();
         break;
     default:
         execInvalidCmd(nextCmdId());
