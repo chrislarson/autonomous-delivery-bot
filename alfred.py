@@ -186,7 +186,7 @@ class Aifr3dCLI(cmd.Cmd):
             if self.is_connected():
                 print("Connected to robot. Sending commands for trajectory.")
                 enableArduino(self._serial)
-                msg = sendCommand(self._serial, Command.STATUS, LED.FIND_TARGETS)
+                msg = sendCommand(self._serial, Command.STATUS, LED.FIND_TARGETS.value)
 
             else:
                 print("Not connect to robot. Printing trajectory commands.")
@@ -210,7 +210,7 @@ class Aifr3dCLI(cmd.Cmd):
             print("Something went wrong. Please try again!")
         finally:
             if self.is_connected():
-                msg = sendCommand(self._serial, Command.STATUS, LED.READY)
+                msg = sendCommand(self._serial, Command.STATUS, LED.READY.value)
 
     def do_deliver(self, line):
         """
