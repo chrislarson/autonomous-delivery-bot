@@ -20,7 +20,7 @@ void execEnableCmd() {
     EnableCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
     sendCommand(ENABLE, &cmd);
-    setLed(0);
+    setLed(LED_READY_ID);
     enabled = true;
 }
 
@@ -35,6 +35,7 @@ void execPWMCmd() {
     cmdReadInto(&cmd, sizeof(cmd));
     Skid_Steer_Disable();
     tankDrive(cmd.data.left, cmd.data.right);
+    setLed(LED_PWM_ID);
     //sendCommand(PWM, &cmd);
 }
 
@@ -55,6 +56,7 @@ void execWayPointCmd() {
     cmdReadInto(&cmd, sizeof(cmd));
     Skid_Steer_Set_Velocity(cmd.data.y_coord, 0);
     //Skid_Steer_Set_Displacement(cmd.data.y_coord, 0, getLeftEncoderCounts(), getRightEncoderCounts());
+    setLed(LED_DRIVE_ID);
 }
 
 void execDisableCmd() {
@@ -81,17 +83,18 @@ void execDispCmd(){
     DispCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
     sendCommand(DISP, &cmd);
+    setLed(LED_DRIVE_ID);
 
     if (bufferBack >= numCommands){
         bufferBack = 0;
         bufferFront = 0;
         numCommands = 1;
+        setLed(LED_ERR_ID);
     }
 
     cmdBuffer[bufferBack].distance = cmd.data.lin_disp;
     cmdBuffer[bufferBack].theta = cmd.data.ang_disp;
     bufferBack ++;
-        
 }
 
 void execTrajStartCmd() {
