@@ -13,8 +13,10 @@
 // Orange - A-Phase
 // Green - B-Phase
 
-// fast version of digital read that reads the input register directly. For use with macros.
-# define fastDigitalRead(P) (*portInputRegister(digitalPinToPort(P)) & digitalPinToBitMask(P))
+// fast version of digital read that reads the input register directly. For use
+// with macros.
+#define fastDigitalRead(P) \
+  (*portInputRegister(digitalPinToPort(P)) & digitalPinToBitMask(P))
 
 // struct encoderFrame
 // {
@@ -24,33 +26,31 @@
 // };
 
 // Motor B (LEFT) and encoder B (LEFT)
-# define ENL 6
-# define dirL1 8
-# define dirL2 7
-# define encoderLA 3  // A-Phase
-# define encoderLB 5  // B-Phase
-# define readEncoderLA() (fastDigitalRead(encoderLA))
-# define readEncoderLB() (fastDigitalRead(encoderLB))
-# define invertLeft false
-
+#define ENL 6
+#define dirL1 8
+#define dirL2 7
+#define encoderLA 3  // A-Phase
+#define encoderLB 5  // B-Phase
+#define readEncoderLA() (fastDigitalRead(encoderLA))
+#define readEncoderLB() (fastDigitalRead(encoderLB))
+#define invertLeft false
 
 // Motor A (RIGHT) and encoder A (RIGHT)
-# define ENR 11
-# define dirR1 10
-# define dirR2 9
-# define encoderRA 2  // A-Phase
-# define encoderRB 4  // B-Phase
-# define readEncoderRA() (fastDigitalRead(encoderRA))
-# define readEncoderRB() (fastDigitalRead(encoderRB))
-# define invertRight false
+#define ENR 11
+#define dirR1 10
+#define dirR2 9
+#define encoderRA 2  // A-Phase
+#define encoderRB 4  // B-Phase
+#define readEncoderRA() (fastDigitalRead(encoderRA))
+#define readEncoderRB() (fastDigitalRead(encoderRB))
+#define invertRight false
 
 // Drive train characteristics
-#define LRRatio 1.0 // value <= 1.0; multiply rightVal by LRRatio to get equivalent leftVal
+#define LRRatio 1.0
 #define MOTOR_MAX 255
-// #define RLRatio 1.0 // value <= 1.0; multiply leftVal by LRRatio to get equivalent rightVal
-// #define encoderSamplingTime 100 // sampling time in milliseconds
-// Wheel characteristics
-// #define counts_per_mm 1.55
+// #define RLRatio 1.0 // value <= 1.0; multiply leftVal by LRRatio to get
+// equivalent rightVal #define encoderSamplingTime 100 // sampling time in
+// milliseconds Wheel characteristics #define counts_per_mm 1.55
 
 // PD controller gains.
 #define Kp 2

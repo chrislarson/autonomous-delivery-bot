@@ -17,7 +17,7 @@ class Aifr3dCLI(cmd.Cmd):
     _session_directory: str
 
     _ser_port: str = "/dev/ttyACM0"
-    _ser_port2: str = "/dev/tty.usbmodem101"
+    _ser_port2: str = "/dev/tty.usbmodem1101"
     _ser_baud: int = 115200
 
     _serial: Union[serial.Serial, None] = None
