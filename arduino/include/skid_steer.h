@@ -37,8 +37,8 @@
 
 // // Poles generated via bessel filter.
 
-#define max_lin_acc 175.0f
-#define max_lin_vel 350.0f
+#define max_lin_acc 150.0f
+#define max_lin_vel 250.0f
 #define max_ang_acc PI/2.0f
 #define max_ang_vel PI
 #define wheel_base_mm 220.0f

@@ -9,6 +9,10 @@
 
 // LED IDs
 # define LED_ERR_ID 1
+# define LED_READY_ID 2
+# define LED_DRIVE_ID 3
+# define LED_PWM_ID 4
+# define LED_FIND_TARGETS_ID 5 // Jetson sets this
 
 // Misc Settings
 #define LED_RAINBOW_PERIOD 500

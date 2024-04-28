@@ -199,9 +199,14 @@ bool cmdReadInto(void* v_ptr, byte len) {
     for (uint8_t i = 0; i < len; i++) {
       b_ptr[i] = receive_buffer[i];
     }
-    receive_buffer_len = 0;
+    clearReceiveBuffer();
     return true;
   } else {
+    clearReceiveBuffer();
     return false;
   }
+}
+
+void clearReceiveBuffer() {
+  receive_buffer_len = 0;
 }

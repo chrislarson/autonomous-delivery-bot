@@ -7,7 +7,7 @@ from typing import Union, List, Any
 from chirp_trajectory import ChirpTrajectory
 from system_id import SystemID
 from detect_persons import DetectPersons
-from arduino.serialio import enableArduino, genCmd, sendCommand, Command
+from arduino.serialio import enableArduino, genCmd, sendCommand, Command, LED
 
 
 class Aifr3dCLI(cmd.Cmd):
@@ -17,7 +17,7 @@ class Aifr3dCLI(cmd.Cmd):
     _session_directory: str
 
     _ser_port: str = "/dev/ttyACM0"
-    _ser_port2: str = "/dev/tty.usbmodem101"
+    _ser_port2: str = "/dev/tty.usbmodem1101"
     _ser_baud: int = 115200
 
     _serial: Union[serial.Serial, None] = None
@@ -181,7 +181,16 @@ class Aifr3dCLI(cmd.Cmd):
         * - optional parameter
         ^ - optional parameter default value
         """
+
         try:
+            if self.is_connected():
+                print("Connected to robot. Sending commands for trajectory.")
+                enableArduino(self._serial)
+                msg = sendCommand(self._serial, Command.STATUS, LED.FIND_TARGETS.value)
+
+            else:
+                print("Not connect to robot. Printing trajectory commands.")
+
             args = line.split(" ")
             arg_timeout = int(args[0])
             arg_show_prev = bool(args[1])
@@ -196,10 +205,12 @@ class Aifr3dCLI(cmd.Cmd):
                 self._traj_waypoints = waypoints
                 self._traj_thetas = thetas
                 self._traj_disps = disps
-
         except Exception as e:
             print(e)
             print("Something went wrong. Please try again!")
+        finally:
+            if self.is_connected():
+                msg = sendCommand(self._serial, Command.STATUS, LED.READY.value)
 
     def do_deliver(self, line):
         """
@@ -212,6 +223,8 @@ class Aifr3dCLI(cmd.Cmd):
 
         if self.is_connected():
             print("Connected to robot. Sending commands for trajectory.")
+            enableArduino(self._serial)
+            # Send LED status 5
         else:
             print("Not connect to robot. Printing trajectory commands.")
 
@@ -230,16 +243,16 @@ class Aifr3dCLI(cmd.Cmd):
             for i in range(min(num_rots, num_disps)):
                 # First send rotation.
                 msg_rot = (
-                    sendCommand(self._serial, Command.DISP, self._traj_thetas[i], 0)
+                    sendCommand(self._serial, Command.DISP, 0, self._traj_thetas[i])
                     if self.is_connected()
                     else "Rotation of {} rads".format(self._traj_thetas[i])
                 )
                 print("Rotation message:", msg_rot)
                 # Then send displacement.
                 msg_disp = (
-                    sendCommand(self._serial, Command.DISP, 0, self.disps[i])
+                    sendCommand(self._serial, Command.DISP, self._traj_disps[i], 0)
                     if self.is_connected()
-                    else "Displacement of {} mm".format(self._traj_thetas[i])
+                    else "Displacement of {} mm".format(self._traj_disps[i])
                 )
                 print("Displacement message:", msg_disp)
         else:

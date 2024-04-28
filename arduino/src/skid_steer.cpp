@@ -106,13 +106,13 @@ void Saturate_Setpoints(float* left_setpoint, float* right_setpoint,
 
 void Initialize_Skid_Steer(float left_meas, float right_meas) {
   Initialize_Controller(&controller_left, DISPLACEMENT, kp_L, A1_L, B0_L, B1_L,
-                        1.5785 / 0.80);
+                        1.5785 * 1.035 * 1.06);
   Initialize_Controller(&controller_right, DISPLACEMENT, kp_R, A1_R, B0_R, B1_R,
-                        1.5785 / 0.94);
+                        1.5785 * 1.035);
   Initialize_Controller(&controller_left, ANG_DISP, kp_L, A1_L, B0_L, B1_L,
-                        1.5785 / 0.94);
+                        1.5785 * 1.035);
   Initialize_Controller(&controller_right, ANG_DISP, kp_R, A1_R, B0_R, B1_R,
-                        1.5785 / 0.94);
+                        1.5785 * 1.035);
   Skid_Steer_Zero(left_meas, right_meas);
   controlMode = DISABLED;
 }
@@ -228,16 +228,18 @@ void Skid_Steer_Update(float left_meas, float right_meas) {
       break;
   }
 
-  // sendDebug(curr_lin_vel, fabs(curr_ang_vel), fabs(left_meas - controller_left.input_last), fabs(right_meas - controller_right.input_last), 20.0);
+  // sendDebug(curr_lin_vel, fabs(curr_ang_vel), fabs(left_meas -
+  // controller_left.input_last), fabs(right_meas -
+  // controller_right.input_last), 20.0);
 
   // float delta_lin_disp = curr_lin_vel * deltaTimeSeconds;
   // if (fabs(curr_lin_vel) < 1e-6) {
   //   delta_lin_disp = target_lin_disp - curr_lin_disp;
-  // } 
+  // }
   // float delta_ang_disp = curr_ang_vel * deltaTimeSeconds;
   // if (fabs(curr_ang_vel) < 1e-6) {
   //   delta_ang_disp = target_ang_disp - curr_ang_disp;
-  // } 
+  // }
   // addControllerDisplacements(delta_lin_disp, delta_ang_disp);
   // curr_lin_disp += delta_lin_disp;
   // curr_ang_disp += delta_ang_disp;
@@ -252,11 +254,11 @@ void Skid_Steer_Update(float left_meas, float right_meas) {
   left_setpoint = Saturate(left_setpoint, MOTOR_MAX);
   right_setpoint = Saturate(right_setpoint, MOTOR_MAX);
 
-  if (left_setpoint*target_lin_disp < 0) {
+  if (left_setpoint * target_lin_disp < 0) {
     left_setpoint = 0;
   }
 
-  if (right_setpoint*target_lin_disp < 0) {
+  if (right_setpoint * target_lin_disp < 0) {
     right_setpoint = 0;
   }
 

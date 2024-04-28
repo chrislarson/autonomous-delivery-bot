@@ -4,22 +4,21 @@
 
 volatile int32_t leftEncoderCount = 0;
 void indexLeftEncoderCount() {
-  byte encoder_phase = (bool) readEncoderLB();
-  encoder_phase |= (bool) readEncoderLA() << 1;
-  switch (encoder_phase)
-  {
-  case 0b00:
-    leftEncoderCount--;
-    break;
-  case 0b01:
-    leftEncoderCount++;
-    break;
-  case 0b10:
-    leftEncoderCount++;
-    break;
-  case 0b11:
-    leftEncoderCount--;
-    break;
+  byte encoder_phase = (bool)readEncoderLB();
+  encoder_phase |= (bool)readEncoderLA() << 1;
+  switch (encoder_phase) {
+    case 0b00:
+      leftEncoderCount--;
+      break;
+    case 0b01:
+      leftEncoderCount++;
+      break;
+    case 0b10:
+      leftEncoderCount++;
+      break;
+    case 0b11:
+      leftEncoderCount--;
+      break;
   }
   // if (!readEncoderLB()) {
   //   leftEncoderCount++;
@@ -29,23 +28,22 @@ void indexLeftEncoderCount() {
 }
 
 volatile int32_t rightEncoderCount = 0;
-void indexRightEncoderCount() { 
-  byte encoder_phase = (bool) readEncoderRB();
-  encoder_phase |= (bool) readEncoderRA() << 1;
-  switch (encoder_phase)
-  {
-  case 0b00:
-    rightEncoderCount++;
-    break;
-  case 0b01:
-    rightEncoderCount--;
-    break;
-  case 0b10:
-    rightEncoderCount--;
-    break;
-  case 0b11:
-    rightEncoderCount++;
-    break;
+void indexRightEncoderCount() {
+  byte encoder_phase = (bool)readEncoderRB();
+  encoder_phase |= (bool)readEncoderRA() << 1;
+  switch (encoder_phase) {
+    case 0b00:
+      rightEncoderCount++;
+      break;
+    case 0b01:
+      rightEncoderCount--;
+      break;
+    case 0b10:
+      rightEncoderCount--;
+      break;
+    case 0b11:
+      rightEncoderCount++;
+      break;
   }
   // if (readEncoderRB()) {
   //   rightEncoderCount++;
@@ -55,30 +53,32 @@ void indexRightEncoderCount() {
 }
 
 void setupMotors() {
-    // Motor A (LEFT) pin setup.
-    pinMode(ENL, OUTPUT);
-    pinMode(dirL1, OUTPUT);
-    pinMode(dirL2, OUTPUT);
-    pinMode(encoderLA, INPUT_PULLUP);
-    pinMode(encoderLB, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(encoderLA), indexLeftEncoderCount, RISING);
+  // Motor A (LEFT) pin setup.
+  pinMode(ENL, OUTPUT);
+  pinMode(dirL1, OUTPUT);
+  pinMode(dirL2, OUTPUT);
+  pinMode(encoderLA, INPUT_PULLUP);
+  pinMode(encoderLB, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(encoderLA), indexLeftEncoderCount,
+                  RISING);
 
-    // Motor B (RIGHT) pin setup.
-    pinMode(ENR, OUTPUT);
-    pinMode(dirR1, OUTPUT);
-    pinMode(dirR2, OUTPUT);
-    pinMode(encoderRA, INPUT_PULLUP);
-    pinMode(encoderRB, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(encoderRA), indexRightEncoderCount, RISING);
+  // Motor B (RIGHT) pin setup.
+  pinMode(ENR, OUTPUT);
+  pinMode(dirR1, OUTPUT);
+  pinMode(dirR2, OUTPUT);
+  pinMode(encoderRA, INPUT_PULLUP);
+  pinMode(encoderRB, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(encoderRA), indexRightEncoderCount,
+                  RISING);
 
-    // Set initial motor directions
-    setLeftDirection(0);
-    setRightDirection(0);
+  // Set initial motor directions
+  setLeftDirection(0);
+  setRightDirection(0);
 }
 
 bool leftDir = 0;
 // 0 = 01, 1 = 10; never set dirL1 and dirL2 to 1 at the same time
-void setLeftDirection(bool direction){
+void setLeftDirection(bool direction) {
   if (direction != invertLeft) {
     digitalWrite(dirL1, 0);
     digitalWrite(dirL2, 1);
@@ -91,7 +91,7 @@ void setLeftDirection(bool direction){
 
 bool rightDir = 0;
 // 0 = 01, 1 = 10; never set dirL1 and dirL2 to 1 at the same time
-void setRightDirection(bool direction){
+void setRightDirection(bool direction) {
   if (direction != invertRight) {
     digitalWrite(dirR1, 0);
     digitalWrite(dirR2, 1);
@@ -103,14 +103,14 @@ void setRightDirection(bool direction){
 }
 
 void setMotorOutputs(byte leftVal, byte rightVal) {
-  # ifdef LRRatio
+#ifdef LRRatio
   analogWrite(ENR, 255 * rightVal / 100);
   analogWrite(ENL, 255 * leftVal / 100);
-  # endif
-  # ifdef RLRatio
-  analogWrite(ENR, (int) 255 * rightVal * RLRatio);
-  analogWrite(ENL, (int) 255 * leftVal);
-  # endif
+#endif
+#ifdef RLRatio
+  analogWrite(ENR, (int)255 * rightVal * RLRatio);
+  analogWrite(ENL, (int)255 * leftVal);
+#endif
 }
 
 // function to control tank drive
@@ -126,7 +126,8 @@ void tankDrive(int16_t leftVal, int16_t rightVal) {
   setMotorOutputs(abs(leftPWM), abs(rightPWM));
 }
 
-// encoderFrame updateEncoderFrame(const encoderFrame *lastFrame, int newPos, double timeSinceLast) {
+// encoderFrame updateEncoderFrame(const encoderFrame *lastFrame, int newPos,
+// double timeSinceLast) {
 //   encoderFrame newFrame;
 //   newFrame.pos = newPos;
 //   newFrame.vel = (double)(newFrame.pos - lastFrame->pos) / timeSinceLast;
@@ -144,9 +145,10 @@ void tankDrive(int16_t leftVal, int16_t rightVal) {
 //     int timeSinceEncoderSample = currMillis - lastSampleTimeMillis;
 //     if (timeSinceEncoderSample >= encoderSamplingTime) {
 //         double timeSinceEncoderSampleSec = timeSinceEncoderSample * 1e-3;
-//         updateEncoderFrame(&leftEncoderFrame, leftEncoderCount, timeSinceEncoderSampleSec);
-//         updateEncoderFrame(&rightEncoderFrame, rightEncoderCount, timeSinceEncoderSampleSec);
-//         lastSampleTimeMillis = currMillis;
+//         updateEncoderFrame(&leftEncoderFrame, leftEncoderCount,
+//         timeSinceEncoderSampleSec); updateEncoderFrame(&rightEncoderFrame,
+//         rightEncoderCount, timeSinceEncoderSampleSec); lastSampleTimeMillis =
+//         currMillis;
 //     }
 // }
 
@@ -159,24 +161,28 @@ void tankDrive(int16_t leftVal, int16_t rightVal) {
 // }
 
 float getLeftEncoderCounts() {
-  return leftEncoderCount;
+  noInterrupts();
+  float lec = leftEncoderCount;
+  interrupts();
+  return lec;
 }
 
 float getRightEncoderCounts() {
-  return rightEncoderCount;
+  noInterrupts();
+  float rec = rightEncoderCount;
+  interrupts();
+  return rec;
 }
 
 int16_t sys_id_period = -1;
-void setSysIDPeriod(int16_t period) {
-  sys_id_period = period;
-}
+void setSysIDPeriod(int16_t period) { sys_id_period = period; }
 
 unsigned long sys_id_prev_time = 0;
 void sendSysID() {
   if (sys_id_period >= 0) {
     unsigned long currTime = millis();
     unsigned long deltaTime = currTime - sys_id_prev_time;
-    if (deltaTime >= (unsigned long) sys_id_period) {
+    if (deltaTime >= (unsigned long)sys_id_period) {
       sys_id_prev_time = currTime;
       SysResponseCmd sysResponseCmd;
       sysResponseCmd.data.cmd = SYS_RESPONSE;
