@@ -11,6 +11,8 @@ from roboticstoolbox import mstraj
 import matplotlib.pyplot as plt
 from person import Person
 
+# from cv2 import MatLike
+
 """
 Spatial detection network demo.
     Performs inference on RGB camera and retrieves spatial location coordinates: x,y,z relative to the center of depth map.
@@ -23,7 +25,9 @@ _MOBILENET_PERSON_LABEL = 15
 _TARGET_LOCK_THRESHOLD = 15
 
 
-def add_person_bounding_box(frame, confidence, x1, x2, y1, y2):
+def add_person_bounding_box(
+    frame, confidence: float, x1: int, x2: int, y1: int, y2: int
+):
     cv2.putText(
         frame,
         str("Person"),

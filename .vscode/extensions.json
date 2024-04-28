@@ -1,9 +1,15 @@
 {
+    // See http://go.microsoft.com/fwlink/?LinkId=827846
+    // for the documentation about the extensions.json format
     "recommendations": [
-        "nvarner.typst-lsp",
-        "tomoki1207.pdf",
-        "ms-vscode.cpptools-extension-pack",
+        "ms-python.black-formatter",
         "ms-python.python",
-        "ms-python.black-formatter"
+        "ms-vscode.cpptools-extension-pack",
+        "nvarner.typst-lsp",
+        "platformio.platformio-ide",
+        "tomoki1207.pdf"
+    ],
+    "unwantedRecommendations": [
+        "ms-vscode.cpptools-extension-pack"
     ]
 }

@@ -4,9 +4,7 @@
 #include "commands.h"
 #include "led.h"
 #include "motors.h"
-
-encoderFrame* leftEncoder = getLeftEncoderFrame();
-encoderFrame* rightEncoder = getRightEncoderFrame();
+#include "skid_steer.h"
 
 void periodic();
 
@@ -17,6 +15,7 @@ void setup() {
   setupSerial();
   setupLEDs();
   setupMotors();
+  Initialize_Skid_Steer(getLeftEncoderCounts(), getRightEncoderCounts());
 }
 
 //============
@@ -25,6 +24,8 @@ void loop() {
   while (Serial.available()) {
     if (updateSerial()) {
       execCmd(nextCmdType());
+    } else {
+      break;
     }
   }
 
@@ -36,23 +37,18 @@ void loop() {
 }
 
 void periodic() {
-  updateEncoders();
+  //updateEncoders();
+  sendSysID();
+  Skid_Steer_Update(getLeftEncoderCounts(), getRightEncoderCounts());
 
-  // // Setting controller values.
-  // if (theta > 900)  // Dummy value to signal program end.
-  // {
-  //   pwmL = 0;
-  //   pwmR = 0;
-  // } else if (theta < 0) {
-  //   // Left motor speed up.
-  //   pwmL = pwm + Kp * (abs(theta));
-  //   pwmR = pwm;
-  // } else if (theta > 0) {
-  //   // Right motor speed up.
-  //   pwmL = pwm + 5;
-  //   pwmR = pwm + Kp * (abs(theta));
-  // } else {
-  //   pwmL = pwm + 5;
-  //   pwmR = pwm;
-  // }
+  if (Skid_Steer_Get_Control_Mode() == DISABLED){
+    float linear;
+    float angular;
+    bool next = getNextCmd(&linear,&angular);
+    if ( fabs(linear) < 1 && next){
+        Skid_Steer_Set_Angular_Displacement(0, angular, getLeftEncoderCounts(), getRightEncoderCounts());
+    } else if (next){
+        Skid_Steer_Set_Displacement(linear, angular, getLeftEncoderCounts(), getRightEncoderCounts());
+    }
+  }
 }
