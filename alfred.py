@@ -7,7 +7,7 @@ from typing import Union, List, Any
 from chirp_trajectory import ChirpTrajectory
 from system_id import SystemID
 from detect_persons import DetectPersons
-from arduino.serialio import enableArduino, genCmd, sendCommand, Command
+from arduino.serialio import enableArduino, genCmd, sendCommand, Command, LED
 
 
 class Aifr3dCLI(cmd.Cmd):
@@ -181,7 +181,16 @@ class Aifr3dCLI(cmd.Cmd):
         * - optional parameter
         ^ - optional parameter default value
         """
+
         try:
+            if self.is_connected():
+                print("Connected to robot. Sending commands for trajectory.")
+                enableArduino(self._serial)
+                msg = sendCommand(self._serial, Command.STATUS, LED.FIND_TARGETS)
+
+            else:
+                print("Not connect to robot. Printing trajectory commands.")
+
             args = line.split(" ")
             arg_timeout = int(args[0])
             arg_show_prev = bool(args[1])
@@ -196,10 +205,12 @@ class Aifr3dCLI(cmd.Cmd):
                 self._traj_waypoints = waypoints
                 self._traj_thetas = thetas
                 self._traj_disps = disps
-
         except Exception as e:
             print(e)
             print("Something went wrong. Please try again!")
+        finally:
+            if self.is_connected():
+                msg = sendCommand(self._serial, Command.STATUS, LED.READY)
 
     def do_deliver(self, line):
         """
@@ -213,6 +224,7 @@ class Aifr3dCLI(cmd.Cmd):
         if self.is_connected():
             print("Connected to robot. Sending commands for trajectory.")
             enableArduino(self._serial)
+            # Send LED status 5
         else:
             print("Not connect to robot. Printing trajectory commands.")
 
