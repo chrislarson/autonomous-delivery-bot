@@ -239,7 +239,7 @@ class Aifr3dCLI(cmd.Cmd):
                 msg_disp = (
                     sendCommand(self._serial, Command.DISP, 0, self.disps[i])
                     if self.is_connected()
-                    else "Displacement of {} mm".format(self._traj_thetas[i])
+                    else "Displacement of {} mm".format(self.disps[i])
                 )
                 print("Displacement message:", msg_disp)
         else:
