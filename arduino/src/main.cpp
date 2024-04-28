@@ -46,9 +46,13 @@ void periodic() {
     float angular;
     bool next = getNextCmd(&linear,&angular);
     if ( fabs(linear) < 1 && next){
-        Skid_Steer_Set_Angular_Displacement(0, angular, getLeftEncoderCounts(), getRightEncoderCounts());
+      Skid_Steer_Set_Angular_Displacement(0, angular, getLeftEncoderCounts(), getRightEncoderCounts());
+      setLed(LED_DRIVE_ID);
     } else if (next){
-        Skid_Steer_Set_Displacement(linear, angular, getLeftEncoderCounts(), getRightEncoderCounts());
+      Skid_Steer_Set_Displacement(linear, angular, getLeftEncoderCounts(), getRightEncoderCounts());
+      setLed(LED_DRIVE_ID);
+    } else {
+      setLed(LED_READY_ID);
     }
   }
 }
