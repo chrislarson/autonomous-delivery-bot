@@ -51,12 +51,12 @@ void execSysIDCmd() {
     // respond with format "Bibbii" -> CMD, time, inputs, outputs
 }
 
-void execWayPointCmd() {
-    WayPointCmd cmd;
+void execVelocityCmd() {
+    VelocityCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
-    Skid_Steer_Set_Velocity(cmd.data.y_coord, 0);
+    Skid_Steer_Set_Velocity(cmd.data.linear, cmd.data.angular);
     //Skid_Steer_Set_Displacement(cmd.data.y_coord, 0, getLeftEncoderCounts(), getRightEncoderCounts());
-    setLed(LED_DRIVE_ID);
+    setLed(LED_VELOCITY_ID);
 }
 
 void execDisableCmd() {
@@ -83,7 +83,6 @@ void execDispCmd(){
     DispCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
     sendCommand(DISP, &cmd);
-    setLed(LED_DRIVE_ID);
 
     if (bufferBack >= numCommands){
         bufferBack = 0;
@@ -135,8 +134,8 @@ void execCmd(Command cmd){
         if(isEnabled()) execSysIDCmd();
         else clearReceiveBuffer();
         break;
-    case WAYPOINT:
-        if(isEnabled()) execWayPointCmd();
+    case VELOCITY_CMD:
+        if(isEnabled()) execVelocityCmd();
         else clearReceiveBuffer();
         break;
     case DISABLE:

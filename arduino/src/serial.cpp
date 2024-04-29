@@ -1,6 +1,6 @@
 #include "serial.h"
 
-#define receive_buffer_size sizeof(WayPointCmd) + 1
+#define receive_buffer_size sizeof(DispCmd) + 1
 byte receive_buffer[receive_buffer_size];
 byte receive_buffer_len;
 
@@ -37,8 +37,8 @@ void echoCommand() {
       SysResponseCmd sysResponseCmd;
       cmdReadInto(&sysResponseCmd, sizeof(sysResponseCmd));
       sendCommand(cmd, &sysResponseCmd);
-    case WAYPOINT: {
-      WayPointCmd wayPointCmd;
+    case VELOCITY_CMD: {
+      VelocityCmd wayPointCmd;
       cmdReadInto(&wayPointCmd, sizeof(wayPointCmd));
       sendCommand(cmd, &wayPointCmd);
       break;
@@ -88,8 +88,8 @@ int cmdSize(Command cmd) {
       return sizeof(SysIDCmd);
     case SYS_RESPONSE:
       return sizeof(SysResponseCmd);
-    case WAYPOINT:
-      return sizeof(WayPointCmd);
+    case VELOCITY_CMD:
+      return sizeof(VelocityCmd);
     case DISABLE:
       return sizeof(DisableCmd);
     case ERROR:
@@ -153,9 +153,9 @@ void sendCommand(Command cmd, void* cmdStruct) {
       Serial.write(&sysResponseCmd->raw[0], sizeof(sysResponseCmd->raw));
       break;
     }
-    case WAYPOINT: {
-      WayPointCmd* wayPointCmd = (WayPointCmd*)cmdStruct;
-      Serial.write(&wayPointCmd->raw[0], sizeof(wayPointCmd->raw));
+    case VELOCITY_CMD: {
+      VelocityCmd* velocityCmd = (VelocityCmd*)cmdStruct;
+      Serial.write(&velocityCmd->raw[0], sizeof(velocityCmd->raw));
       break;
     }
     case DISABLE: {
