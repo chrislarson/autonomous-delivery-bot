@@ -17,6 +17,7 @@ static float enc_right_origin;
 ControlMode controlMode;
 
 unsigned long controller_update_prev_time = 0;
+unsigned long wait_time_ms = 0;
 
 // static const float wheel_base_counts = wheel_base_mm * counts_per_mm;
 
@@ -185,6 +186,15 @@ void Skid_Steer_Set_Angular_Displacement(float lin_disp, float ang_disp,
   controller_update_prev_time = millis();
 }
 
+void Skid_Steer_Wait(unsigned long period_ms) {
+  // set wait time
+  wait_time_ms = period_ms;
+  
+  // switch to wait mode
+  controlMode = WAIT;
+  controller_update_prev_time = millis();
+}
+
 void Skid_Steer_Disable() { controlMode = DISABLED; }
 
 ControlMode Skid_Steer_Get_Control_Mode() { return controlMode; }
@@ -193,7 +203,10 @@ void Skid_Steer_Update(float left_meas, float right_meas) {
   unsigned long currTime = millis();
   unsigned long deltaTime = currTime - controller_update_prev_time;
 
-  if (deltaTime < update_period_ms || controlMode == DISABLED) {
+  if (controlMode == WAIT && deltaTime >= wait_time_ms) {
+    controlMode = DISABLED;
+    return;
+  } else if (controlMode == DISABLED || deltaTime < update_period_ms) {
     return;
   }
 

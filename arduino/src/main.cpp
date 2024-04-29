@@ -48,9 +48,12 @@ void periodic() {
     if ( fabs(linear) < 1 && next){
       Skid_Steer_Set_Angular_Displacement(0, angular, getLeftEncoderCounts(), getRightEncoderCounts());
       setLed(LED_DRIVE_ID);
-    } else if (next){
+    } else if (fabs(angular) > 1 && next){
       Skid_Steer_Set_Displacement(linear, angular, getLeftEncoderCounts(), getRightEncoderCounts());
       setLed(LED_DRIVE_ID);
+    } else if (next) {
+      Skid_Steer_Wait(1000);
+      setLed(LED_WAIT_ID);
     } else {
       setLed(LED_READY_ID);
     }
