@@ -9,7 +9,7 @@ enum Command {
   PWM = 3,
   SYS_ID = 4,
   SYS_RESPONSE = 5,
-  WAYPOINT = 6,
+  VELOCITY_CMD = 6,
   DISABLE = 7,
   ERROR = 8,
   DISP = 9,
@@ -70,11 +70,11 @@ union SysResponseCmd {
   byte raw[21];
 };
 
-union WayPointCmd {
+union VelocityCmd {
   struct __attribute__((__packed__)) {
     unsigned char cmd;
-    float x_coord;
-    float y_coord;
+    float linear;
+    float angular;
   } data;
   byte raw[9];
 };

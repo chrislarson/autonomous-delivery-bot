@@ -11,7 +11,7 @@ class Command(Enum):
     PWM = 3
     SYS_ID = 4
     SYS_RESPONSE = 5
-    WAYPOINT = 6
+    VELOCITY = 6
     DISABLE = 7
     ERROR = 8
     DISP = 9
@@ -38,7 +38,7 @@ cmd_fmts = {
     Command.STATUS: "BB",
     Command.PWM: "Bbb",
     Command.SYS_ID: "Bi",
-    Command.WAYPOINT: "Bff",
+    Command.VELOCITY: "Bff",
     Command.SYS_RESPONSE: "BIiiii",
     Command.DISABLE: "B",
     Command.ERROR: "BBii",
@@ -136,9 +136,6 @@ if __name__ == "__main__":
 
     msg = sendCommand(ser, Command.SYS_ID, 20)
     print(msg)
-
-    # msg = sendCommand(ser, Command.WAYPOINT, 0.0, 1000)
-    # print(msg)
 
     msg = sendCommand(ser, Command.TRAJ_START, 1)
     print(msg)

@@ -17,12 +17,15 @@ static float enc_right_origin;
 ControlMode controlMode;
 
 unsigned long controller_update_prev_time = 0;
+unsigned long wait_time_ms = 0;
 
 // static const float wheel_base_counts = wheel_base_mm * counts_per_mm;
 
 // Private Functions
 
-void Skid_Steer_Zero(float left_meas, float right_meas) {
+void Skid_Steer_Zero() {
+  float left_meas = getLeftEncoderCounts();
+  float right_meas = getRightEncoderCounts();
   Controller_SetTo(&controller_left, left_meas);
   Controller_SetTo(&controller_right, right_meas);
   Controller_Set_Target_Position_Counts(&controller_left, left_meas);
@@ -35,12 +38,12 @@ void Skid_Steer_Zero(float left_meas, float right_meas) {
   curr_ang_disp = 0.0;
 }
 
-void setControllerVelocities(float lin_vel, float ang_vel) {
-  float left_vel = lin_vel - (wheel_base_mm * 0.5 * ang_vel);
-  float right_vel = lin_vel + (wheel_base_mm * 0.5 * ang_vel);
-  Controller_Set_Target_Velocity(&controller_left, left_vel, controlMode);
-  Controller_Set_Target_Velocity(&controller_right, right_vel, controlMode);
-}
+// void setControllerVelocities(float lin_vel, float ang_vel) {
+//   float left_vel = lin_vel - (wheel_base_mm * 0.5 * ang_vel);
+//   float right_vel = lin_vel + (wheel_base_mm * 0.5 * ang_vel);
+//   Controller_Set_Target_Velocity(&controller_left, left_vel, controlMode);
+//   Controller_Set_Target_Velocity(&controller_right, right_vel, controlMode);
+// }
 
 void addControllerDisplacements(float lin_disp, float ang_disp) {
   float left_disp = lin_disp - (wheel_base_mm * 0.5 * ang_disp);
@@ -113,7 +116,7 @@ void Initialize_Skid_Steer(float left_meas, float right_meas) {
                         1.5785 * 1.035);
   Initialize_Controller(&controller_right, ANG_DISP, kp_R, A1_R, B0_R, B1_R,
                         1.5785 * 1.035);
-  Skid_Steer_Zero(left_meas, right_meas);
+  Skid_Steer_Zero();
   controlMode = DISABLED;
 }
 
@@ -129,12 +132,11 @@ void Skid_Steer_Set_Velocity(float lin_vel, float ang_vel) {
   // switch to velocity mode
   controlMode = VELOCITY;
 
-  setControllerVelocities(curr_lin_vel, curr_ang_vel);
+  //setControllerVelocities(curr_lin_vel, curr_ang_vel);
   controller_update_prev_time = millis();
 }
 
-void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp,
-                                 float left_meas, float right_meas) {
+void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp) {
   // // convert from mm to counts
   // lin_disp *= counts_per_mm;
   // ang_disp *= counts_per_mm;
@@ -144,7 +146,10 @@ void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp,
   target_ang_disp = ang_disp;
 
   // zero out controllers so that the velocity starts at 0
-  Skid_Steer_Zero(left_meas, right_meas);
+  Skid_Steer_Zero();
+
+  // zero out controllers so that the velocity starts at 0
+  Skid_Steer_Zero();
 
   // switch to displacement mode
   controlMode = DISPLACEMENT;
@@ -160,15 +165,17 @@ void Skid_Steer_Set_Angular_Velocity(float lin_vel, float ang_vel) {
   curr_lin_vel = lin_vel;
   curr_ang_vel = ang_vel;
 
+  // zero out controllers so that the velocity starts at 0
+  Skid_Steer_Zero();
+
   // switch to angular velocity mode
   controlMode = ANG_VEL;
 
-  setControllerVelocities(curr_lin_vel, curr_ang_vel);
+  //setControllerVelocities(curr_lin_vel, curr_ang_vel);
   controller_update_prev_time = millis();
 }
 
-void Skid_Steer_Set_Angular_Displacement(float lin_disp, float ang_disp,
-                                         float left_meas, float right_meas) {
+void Skid_Steer_Set_Angular_Displacement(float lin_disp, float ang_disp) {
   // // convert from mm to counts
   // lin_disp *= counts_per_mm;
   // ang_disp *= counts_per_mm;
@@ -178,10 +185,19 @@ void Skid_Steer_Set_Angular_Displacement(float lin_disp, float ang_disp,
   target_ang_disp = ang_disp;
 
   // zero out controllers so that the velocity starts at 0
-  Skid_Steer_Zero(left_meas, right_meas);
+  Skid_Steer_Zero();
 
   // switch to angular displacement mode
   controlMode = ANG_DISP;
+  controller_update_prev_time = millis();
+}
+
+void Skid_Steer_Wait(unsigned long period_ms) {
+  // set wait time
+  wait_time_ms = period_ms;
+  
+  // switch to wait mode
+  controlMode = WAIT;
   controller_update_prev_time = millis();
 }
 
@@ -193,7 +209,10 @@ void Skid_Steer_Update(float left_meas, float right_meas) {
   unsigned long currTime = millis();
   unsigned long deltaTime = currTime - controller_update_prev_time;
 
-  if (deltaTime < update_period_ms || controlMode == DISABLED) {
+  if (controlMode == WAIT && deltaTime >= wait_time_ms) {
+    controlMode = DISABLED;
+    return;
+  } else if (controlMode == DISABLED || deltaTime < update_period_ms) {
     return;
   }
 
@@ -257,7 +276,6 @@ void Skid_Steer_Update(float left_meas, float right_meas) {
   if (left_setpoint * target_lin_disp < 0) {
     left_setpoint = 0;
   }
-
   if (right_setpoint * target_lin_disp < 0) {
     right_setpoint = 0;
   }
