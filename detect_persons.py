@@ -340,10 +340,10 @@ class DetectPersons:
 
             thetas = []
             disps = []
+            prev_heading = 0.0
 
             for i in range(len(waypoint_coords)):
-                prev_heading = 0.0
-                if i == 1:
+                if i >= 1:
                     diff = waypoint_coords[i] - waypoint_coords[i - 1]
                     disp = np.linalg.norm(diff) - 1000
                     disps.append(disp)
@@ -364,6 +364,8 @@ class DetectPersons:
 
                     print("Theta {i}:", theta_corrected)
                     print("Disp {i}:", disp)
+
+                    prev_heading = theta_centered
 
             return waypoint_coords, thetas, disps
 
