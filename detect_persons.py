@@ -342,14 +342,34 @@ class DetectPersons:
             disps = []
 
             for i in range(len(waypoint_coords)):
+                prev_heading = 0.0
                 if i == 1:
-                    disp = np.linalg.norm(waypoint_coords[i] - waypoint_coords[i - 1])
+                    diff = waypoint_coords[i] - waypoint_coords[i - 1]
+                    disp = np.linalg.norm(diff) - 1000
                     disps.append(disp)
-                    theta2 = math.acos(waypoint_coords[i, 1] / disp)
-                    thetas.append(theta2)
-                    print("Theta {i}:", theta2)
+
+                    # theta2 = math.acos(waypoint_coords[i, 1] / disp)
+                    theta = math.atan2(diff[0,1],diff[0,0])
+                    theta_centered = theta - math.pi * 0.5
+                    theta_corrected = theta_centered - prev_heading
+
+                    if abs(theta_corrected) > math.pi:
+                        # print("TURN OUT OF BOUNDS")
+                        if theta_corrected > 0:
+                            theta_corrected -= 2 * math.pi
+                        else:
+                            theta_corrected += 2 * math.pi
+
+
+                    thetas.append(theta_corrected)
+
+                    print("Theta {i}:", theta_corrected)
                     print("Disp {i}:", disp)
+                    
             return waypoint_coords, thetas, disps
+
+
+    def convert_waypoints(x, y):
 
 
 if __name__ == "__main__":
