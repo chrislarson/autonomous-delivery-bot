@@ -280,7 +280,7 @@ void Skid_Steer_Update(float left_meas, float right_meas) {
     right_setpoint = 0;
   }
 
-  if (controlMode != DISABLED) {
+  if (controlMode != DISABLED && controlMode != WAIT) {
     tankDrive(left_setpoint, right_setpoint);
   } else {
     tankDrive(0, 0);
