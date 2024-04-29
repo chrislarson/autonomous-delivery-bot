@@ -38,12 +38,12 @@ void Skid_Steer_Zero() {
   curr_ang_disp = 0.0;
 }
 
-void setControllerVelocities(float lin_vel, float ang_vel) {
-  float left_vel = lin_vel - (wheel_base_mm * 0.5 * ang_vel);
-  float right_vel = lin_vel + (wheel_base_mm * 0.5 * ang_vel);
-  Controller_Set_Target_Velocity(&controller_left, left_vel, controlMode);
-  Controller_Set_Target_Velocity(&controller_right, right_vel, controlMode);
-}
+// void setControllerVelocities(float lin_vel, float ang_vel) {
+//   float left_vel = lin_vel - (wheel_base_mm * 0.5 * ang_vel);
+//   float right_vel = lin_vel + (wheel_base_mm * 0.5 * ang_vel);
+//   Controller_Set_Target_Velocity(&controller_left, left_vel, controlMode);
+//   Controller_Set_Target_Velocity(&controller_right, right_vel, controlMode);
+// }
 
 void addControllerDisplacements(float lin_disp, float ang_disp) {
   float left_disp = lin_disp - (wheel_base_mm * 0.5 * ang_disp);
@@ -132,7 +132,7 @@ void Skid_Steer_Set_Velocity(float lin_vel, float ang_vel) {
   // switch to velocity mode
   controlMode = VELOCITY;
 
-  setControllerVelocities(curr_lin_vel, curr_ang_vel);
+  //setControllerVelocities(curr_lin_vel, curr_ang_vel);
   controller_update_prev_time = millis();
 }
 
@@ -144,6 +144,9 @@ void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp) {
   // set displacement targets
   target_lin_disp = lin_disp;
   target_ang_disp = ang_disp;
+
+  // zero out controllers so that the velocity starts at 0
+  Skid_Steer_Zero();
 
   // zero out controllers so that the velocity starts at 0
   Skid_Steer_Zero();
@@ -162,10 +165,13 @@ void Skid_Steer_Set_Angular_Velocity(float lin_vel, float ang_vel) {
   curr_lin_vel = lin_vel;
   curr_ang_vel = ang_vel;
 
+  // zero out controllers so that the velocity starts at 0
+  Skid_Steer_Zero();
+
   // switch to angular velocity mode
   controlMode = ANG_VEL;
 
-  setControllerVelocities(curr_lin_vel, curr_ang_vel);
+  //setControllerVelocities(curr_lin_vel, curr_ang_vel);
   controller_update_prev_time = millis();
 }
 
@@ -270,7 +276,6 @@ void Skid_Steer_Update(float left_meas, float right_meas) {
   if (left_setpoint * target_lin_disp < 0) {
     left_setpoint = 0;
   }
-
   if (right_setpoint * target_lin_disp < 0) {
     right_setpoint = 0;
   }
