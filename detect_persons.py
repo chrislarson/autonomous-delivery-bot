@@ -275,7 +275,7 @@ class DetectPersons:
                 )
 
                 if show_preview:
-                    #cv2.imshow("preview", frame)
+                    # cv2.imshow("preview", frame)
                     pass
 
                 if cv2.waitKey(1) == ord("q"):
@@ -307,7 +307,7 @@ class DetectPersons:
 
                 now_ts = time.monotonic()
                 if now_ts - start_ts > 10:
-                    #cv2.destroyWindow("preview")
+                    # cv2.destroyWindow("preview")
                     fig_path = os.path.join(
                         data_dir,
                         "person_track_NO_LOCK_" + str(int(time.monotonic())) + ".png",
@@ -333,7 +333,7 @@ class DetectPersons:
                 data_dir, "person_track_LOCK_" + str(int(time.monotonic())) + ".png"
             )
             cv2.imwrite(fig_path, frame)
-           # cv2.destroyWindow("preview")
+            # cv2.destroyWindow("preview")
 
             # waypoint_coords = np.append(waypoint_coords, [[0, 0]], axis=0)
             print("Waypoint coordinates:\n", waypoint_coords)
@@ -349,7 +349,7 @@ class DetectPersons:
                     disps.append(disp)
 
                     # theta2 = math.acos(waypoint_coords[i, 1] / disp)
-                    theta = math.atan2(diff[0,1],diff[0,0])
+                    theta = math.atan2(diff[0, 1], diff[0, 0])
                     theta_centered = theta - math.pi * 0.5
                     theta_corrected = theta_centered - prev_heading
 
@@ -360,16 +360,14 @@ class DetectPersons:
                         else:
                             theta_corrected += 2 * math.pi
 
-
                     thetas.append(theta_corrected)
 
                     print("Theta {i}:", theta_corrected)
                     print("Disp {i}:", disp)
-                    
+
             return waypoint_coords, thetas, disps
 
-
-    def convert_waypoints(x, y):
+    # def convert_waypoints(x, y):
 
 
 if __name__ == "__main__":
