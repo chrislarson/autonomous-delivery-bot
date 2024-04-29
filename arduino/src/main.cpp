@@ -47,7 +47,7 @@ void periodic() {
     bool next = getNextCmd(&linear,&angular);
     if ( fabs(linear) < 1 && next){
       Skid_Steer_Set_Angular_Displacement(0, angular, getLeftEncoderCounts(), getRightEncoderCounts());
-      setLed(LED_DRIVE_ID);
+      setLed(LED_TURN_ID);
     } else if (fabs(angular) > 1 && next){
       Skid_Steer_Set_Displacement(linear, angular, getLeftEncoderCounts(), getRightEncoderCounts());
       setLed(LED_DRIVE_ID);

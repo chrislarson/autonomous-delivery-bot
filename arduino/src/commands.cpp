@@ -83,7 +83,6 @@ void execDispCmd(){
     DispCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
     sendCommand(DISP, &cmd);
-    setLed(LED_DRIVE_ID);
 
     if (bufferBack >= numCommands){
         bufferBack = 0;
