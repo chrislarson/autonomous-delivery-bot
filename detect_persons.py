@@ -346,10 +346,7 @@ class DetectPersons:
                 if i >= 1:
                     diff = waypoint_coords[i] - waypoint_coords[i - 1]
                     disp = np.linalg.norm(diff) 
-                    if disp > 1000:
-                        disp -= 1000
-                    else:
-                        disp *= 0.5
+                    disp *= 0.7
                     disps.append(disp)
 
                     # theta2 = math.acos(waypoint_coords[i, 1] / disp)
