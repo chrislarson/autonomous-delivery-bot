@@ -54,10 +54,10 @@ void execSysIDCmd() {
 void execVelocityCmd() {
     VelocityCmd cmd;
     cmdReadInto(&cmd, sizeof(cmd));
-    if (fabs(cmd.data.linear) < 1) {
-        Skid_Steer_Set_Angular_Velocity(0, cmd.data.angular);
-    } else {
+    if (fabs(cmd.data.linear) > 1) {
         Skid_Steer_Set_Velocity(cmd.data.linear, cmd.data.angular);
+    } else {
+        Skid_Steer_Set_Angular_Velocity(0, cmd.data.angular);
     }
     //Skid_Steer_Set_Displacement(cmd.data.y_coord, 0, getLeftEncoderCounts(), getRightEncoderCounts());
     setLed(LED_VELOCITY_ID);
