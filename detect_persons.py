@@ -343,10 +343,11 @@ class DetectPersons:
             prev_heading = 0.0
 
             for i in range(len(waypoint_coords)):
+                waypoint_coords[i, 1] *= 0.8
                 if i >= 1:
                     diff = waypoint_coords[i] - waypoint_coords[i - 1]
                     disp = np.linalg.norm(diff) 
-                    disp *= 0.7
+                    #disp *= 0.7
                     disps.append(disp)
 
                     # theta2 = math.acos(waypoint_coords[i, 1] / disp)
