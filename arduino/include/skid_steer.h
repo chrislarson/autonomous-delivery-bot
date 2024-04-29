@@ -64,13 +64,11 @@ void Initialize_Skid_Steer(float left_meas, float right_meas);
 
 void Skid_Steer_Set_Velocity(float lin_vel, float ang_vel);
 
-void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp,
-                                 float left_meas, float right_meas);
+void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp);
 
 void Skid_Steer_Set_Angular_Velocity(float lin_vel, float ang_vel);
 
-void Skid_Steer_Set_Angular_Displacement(float lin_disp, float ang_disp,
-                                         float left_meas, float right_meas);
+void Skid_Steer_Set_Angular_Displacement(float lin_disp, float ang_disp);
 
 void Skid_Steer_Wait(unsigned long period_ms);
 

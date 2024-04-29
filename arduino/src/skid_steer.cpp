@@ -23,7 +23,9 @@ unsigned long wait_time_ms = 0;
 
 // Private Functions
 
-void Skid_Steer_Zero(float left_meas, float right_meas) {
+void Skid_Steer_Zero() {
+  float left_meas = getLeftEncoderCounts();
+  float right_meas = getRightEncoderCounts();
   Controller_SetTo(&controller_left, left_meas);
   Controller_SetTo(&controller_right, right_meas);
   Controller_Set_Target_Position_Counts(&controller_left, left_meas);
@@ -114,7 +116,7 @@ void Initialize_Skid_Steer(float left_meas, float right_meas) {
                         1.5785 * 1.035);
   Initialize_Controller(&controller_right, ANG_DISP, kp_R, A1_R, B0_R, B1_R,
                         1.5785 * 1.035);
-  Skid_Steer_Zero(left_meas, right_meas);
+  Skid_Steer_Zero();
   controlMode = DISABLED;
 }
 
@@ -134,8 +136,7 @@ void Skid_Steer_Set_Velocity(float lin_vel, float ang_vel) {
   controller_update_prev_time = millis();
 }
 
-void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp,
-                                 float left_meas, float right_meas) {
+void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp) {
   // // convert from mm to counts
   // lin_disp *= counts_per_mm;
   // ang_disp *= counts_per_mm;
@@ -145,7 +146,7 @@ void Skid_Steer_Set_Displacement(float lin_disp, float ang_disp,
   target_ang_disp = ang_disp;
 
   // zero out controllers so that the velocity starts at 0
-  Skid_Steer_Zero(left_meas, right_meas);
+  Skid_Steer_Zero();
 
   // switch to displacement mode
   controlMode = DISPLACEMENT;
@@ -168,8 +169,7 @@ void Skid_Steer_Set_Angular_Velocity(float lin_vel, float ang_vel) {
   controller_update_prev_time = millis();
 }
 
-void Skid_Steer_Set_Angular_Displacement(float lin_disp, float ang_disp,
-                                         float left_meas, float right_meas) {
+void Skid_Steer_Set_Angular_Displacement(float lin_disp, float ang_disp) {
   // // convert from mm to counts
   // lin_disp *= counts_per_mm;
   // ang_disp *= counts_per_mm;
@@ -179,7 +179,7 @@ void Skid_Steer_Set_Angular_Displacement(float lin_disp, float ang_disp,
   target_ang_disp = ang_disp;
 
   // zero out controllers so that the velocity starts at 0
-  Skid_Steer_Zero(left_meas, right_meas);
+  Skid_Steer_Zero();
 
   // switch to angular displacement mode
   controlMode = ANG_DISP;
