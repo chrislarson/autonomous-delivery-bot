@@ -209,8 +209,11 @@ void Skid_Steer_Update(float left_meas, float right_meas) {
   unsigned long currTime = millis();
   unsigned long deltaTime = currTime - controller_update_prev_time;
 
-  if (controlMode == WAIT && deltaTime >= wait_time_ms) {
-    controlMode = DISABLED;
+  if (controlMode == WAIT) {
+    if (deltaTime >= wait_time_ms) {
+      controlMode = DISABLED;
+    }
+    tankDrive(0,0);
     return;
   } else if (controlMode == DISABLED || deltaTime < update_period_ms) {
     return;
