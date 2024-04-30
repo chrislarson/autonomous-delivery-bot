@@ -343,7 +343,7 @@ class DetectPersons:
             prev_heading = 0.0
 
             for i in range(len(waypoint_coords)):
-                waypoint_coords[i, 1] *= 0.8
+                waypoint_coords[i, 1] *= 0.7
                 if i >= 1:
                     diff = waypoint_coords[i] - waypoint_coords[i - 1]
                     disp = np.linalg.norm(diff) 
