@@ -15,7 +15,7 @@
 //  - path planning     -> sebastian
 //  - motion control    -> chris
 //  - serial            -> keenan
-//  - foam prototype images -> chris
+//  - foam prototype images -> sebastian
 
 // Sensor Description:
 //  - from prev work
