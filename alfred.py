@@ -230,7 +230,7 @@ class Aifr3dCLI(cmd.Cmd):
 
         num_rots = len(self._traj_thetas)
         num_disps = len(self._traj_disps)
-        traj_length = num_rots + num_disps
+        traj_length = num_rots + num_disps + num_disps # add extra disp to account for waits
 
         if traj_length > 0:
 
@@ -255,6 +255,14 @@ class Aifr3dCLI(cmd.Cmd):
                     else "Displacement of {} mm".format(self._traj_disps[i])
                 )
                 print("Displacement message:", msg_disp)
+
+                msg_wait = (
+                    sendCommand(self._serial, Command.DISP, 0, 0) 
+                    if self.is_connected()
+                    else "Wait at waypoint."
+                    )
+                print("Wait message:", msg_wait)
+
         else:
             print(
                 "Trajectory has zero rotations and displacements. Try finding targets before making a delivery."
