@@ -87,28 +87,24 @@ ability to:
   #figure(
     image("pcb_truth_table.png", height: 22%),
     placement: auto,
-    caption: [Truth table for the demux on our PCB. Inputs from A0-A2 set which output Y0-Y7
+    caption: [Truth table for the demux on our PCB [1]. Inputs from A0-A2 set which output Y0-Y7
       to set.],
   )
-
-- #emph("VCC and GND Rails:") The PCB also cleaned up our robot's wiring by
-  supplying 5V power rails for our arduino and motor encoders. These power rails
-  were 8 pin headers connected together by 17 mil traces. Our trace width of 17
-  mil we determined using an online calculator. We set the width so that a 1.4 mil
-  thick copper trace would have a 10 degrees farenheit increase in temperature
-  when conducting 1 Amp at 70 degrees farenheit. 1 Amp is sufficient to handle the
-  Arduino's max current of 1 Amp, in addition to the comparitavly small current
-  requirements of the demux and encoders.
-
-  // sources
-  // https://www.4pcb.com/trace-width-calculator.html
-  // https://docs.oshpark.com/services/two-layer/
 
   #figure(
     image("pcb_schematic.png", height: 22%),
     placement: auto,
     caption: [PCB schematic from KiCad],
   )
+
+- #emph("VCC and GND Rails:") The PCB also cleaned up our robot's wiring by
+  supplying 5V power rails for our arduino and motor encoders. These power rails
+  were 8 pin headers connected together by 17 mil traces. Our trace width of 17
+  mil we determined using an online calculator [2]. We set the width so that a 1.4 mil
+  thick copper trace would have a 10 degrees farenheit increase in temperature
+  when conducting 1 Amp at 70 degrees farenheit. 1 Amp is sufficient to handle the
+  Arduino's max current of 1 Amp, in addition to the comparitavly small current
+  requirements of the demux and encoders.
 
   #figure(stack(
     dir: ltr,
@@ -237,3 +233,9 @@ stopping at arm's reach. Since this is a minimally viable product, it does not h
 ability to actively scan and environment and search for a person. Moreover, the robot
 does not have the ability to detect and avoid any obstacles in its path, so its success
 is limited to unobstructed paths with a person within 5m the camera.
+
+= Works Cited
+
+[1] Texas Instruments, “CD74HC137, CD74HCT137, CD54HC237, CD74HC237, CD74HCT237 datasheet (Rev. F),” SCHS146F, October 2003.
+
+[2] “Printed Circuit Board Trace Width Tool | Advanced Circuits,” www.4pcb.com. https://www.4pcb.com/trace-width-calculator.html
