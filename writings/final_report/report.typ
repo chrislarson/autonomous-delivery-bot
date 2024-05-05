@@ -231,8 +231,12 @@ accurately detect people within a 5m radius. It can accurately generate a trapez
 trajectory that ensures no spillage and can execute the delivery in a straight line
 stopping at arm's reach. Since this is a minimally viable product, it does not have the 
 ability to actively scan and environment and search for a person. Moreover, the robot
-does not have the ability to detect and avoid any obstacles in its path, so its success
-is limited to unobstructed paths with a person within 5m the camera.
+does not have the ability to detect and avoid any obstacles in its path, so its success is 
+limited to unobstructed paths with a person within 5m the camera. In the future, we 
+would like to implement an environment scanning routine to have the robot turn or traverse
+in a circle to actively search for a person and lock onto their position for dynamic 
+deliveries. Moreover, we would modify the trajectory generation to detect and avoid obstacles
+to increase the capabilities of the robot.
 
 = Works Cited
 
