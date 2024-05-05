@@ -50,11 +50,11 @@ void periodic() {
       if ( fabs(linear) > 1){
         Skid_Steer_Set_Displacement(linear, angular);
         setLed(LED_DRIVE_ID);
-      } else if (fabs(angular) > 1){
+      } else if (fabs(angular) > 0.02){
         Skid_Steer_Set_Angular_Displacement(0, angular);
         setLed(LED_TURN_ID);
       } else {
-        Skid_Steer_Wait(1000);
+        Skid_Steer_Wait(5000);
         setLed(LED_WAIT_ID);
       }
     } else {
